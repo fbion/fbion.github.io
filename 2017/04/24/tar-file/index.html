@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="利用目标系统现有工具快速打包目标机器数据"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>利用目标系统现有工具快速打包目标机器数据 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/04/24/tar-file/">
+                利用目标系统现有工具快速打包目标机器数据
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/tar-file/">tar file</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;几乎对所有渗透者来讲,初衷或者最终目的无非就是想对目标实施长期监控,但,具体怎么监控呢[好吧,那又是个非常大的话题,个人能力现在实在有限],无非就是下些各种各样的资料回来[当然,这可能是所有监控里面最朴实无华的一种],今天,我们单就这一点来做些简要说明,事先声明,可以写脚本[有时候确实不太灵活],但大多数脚本的核心可能还是靠这些东西,废话就先到这儿吧,希望下面的内容能帮到你,写的不好,管用就行</p>
+<p>0x02 在linux机器下的快速打包方式[下面这些工具一般在目标机器上都会自带]:</p>
+<p>利用 <code>tar</code>,一般在部署系统时默认都会预先装上,其它还有很多其它的压缩工具,但这里就以最常用的为例,只是打包个数据而已,哪个好用用哪个就行了,没必要在这些问题上过于纠结[我们并不是在研究压缩算法]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">--exclude 排除不打包的文件</div><div class="line">-c 创建文件</div><div class="line">-v 显示打包过程</div><div class="line">-f 指定要打包的文件</div><div class="line">-z 压缩</div><div class="line">-X 把要排除的文件名事先写到文件中然后指定它就可以排除多个了</div><div class="line">-C 解压到指定目录中</div><div class="line">-p 打包的时候保持原有文件属性</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>以 gunzip 格式压缩解压:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># find / -name '*.php' -type f | wc -l</span></div><div class="line"><span class="comment"># tar zcf /tmp/phpfile.tar.gz `find / -name '*.php' -type f` 2&gt; /dev/null &amp;&amp; cd /tmp &amp;&amp; ls ./phpfile.tar.gz &amp;&amp; echo $? &amp;&amp; tar tf phpfile.tar.gz  | wc -l  会带上原有的目录结构</span></div><div class="line"><span class="comment"># tar xf phpfile.tar.gz -C ./  解压</span></div></pre></td></tr></table></figure></p>
+<p>以 bzip 格式压缩解压:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar jcf access.tar.bz access*   	bzip格式打包压缩文件</span></div><div class="line"><span class="comment"># tar jxf access.tar.bz  		zip解压缩</span></div></pre></td></tr></table></figure></p>
+<p>针对大文件的分卷压缩解压:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar cjf - /usr/local/apache2/htdocs/ | split -b 1m - www.bz2 2&gt;/dev/null  1m大小分割,直接压缩到当前目录下</span></div><div class="line"><span class="comment"># cat www.bz2a* | tar xj   分割压缩后的解压方法</span></div><div class="line"><span class="comment"># ls -lR usr/</span></div></pre></td></tr></table></figure></p>
+<p><br><br>0x03 在win机器上的一些快速打包方式[ 通常会配合dir,findstr一起使用,打包一些个人的邮件,还是比较好使的 ]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="number">7</span>z [压缩比相对较高的一种压缩格式,win下首推]:	</div><div class="line">-r 递归压缩</div><div class="line">-o 指定要输出到的目录</div><div class="line">-p 指定密码</div><div class="line">-v 分卷压缩,给的务必要适量,否则文件会非常多</div><div class="line">a 添加压缩文件</div></pre></td></tr></table></figure></p>
+<p>普通压缩解压方式:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 7z.exe -r -padmin a c:\drupal754.7z C:\AppServ\www\drupal-7.54-vuln-sqli-rce\*.*</span></div><div class="line"><span class="comment"># 7z.exe x -padmin drupal754.7z -oc:\xl</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/7z add.png" alt=""><br><img src="/img/woricaonima.png" alt=""></p>
+<p>分卷压缩解压方式:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 7z.exe -r -v1m -padmin a c:\drupal754.7z C:\AppServ\www\drupal-7.54-vuln-sqli-rce\*.*</span></div><div class="line"><span class="comment"># 7z.exe x -padmin drupal754.7z.001 -oc:\xl</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/caonima1.png" alt=""></p>
+<p>rar [把安装好的winrar安装目录的rar.exe提取出来就可以直接用了,前提是你安装winrar的系统和目标的系统版本要对应,不然可能有些问题(自己觉得库应该是兼容的)]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">-a  	添加要压缩的文件</div><div class="line">-p  	指定压缩密码</div><div class="line">-r     递归压缩,默认只压根目录,需要先注册下,把rarreg.key丢到安装winrar目录即可</div><div class="line">-x 	 指定要排除的文件,单位 k,m,g</div><div class="line">-v 	 分卷打包,后面跟上单位就好了,打包大文件会很有用</div><div class="line">-m3,<span class="number">4</span> 	使用较好的压缩方式,速度可能会有些慢</div></pre></td></tr></table></figure></p>
+<p>以 rar 格式压缩解压:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Rar.exe a -r -padmin -m3 -x*.txt -ta c:\drupal754.rar C:\AppServ\www\drupal-7.54-vuln-sqli-rce\*.*  	把指定目录下的所有文件[包括所有子目录及子目录中的文件,排除txt文件]带密码压缩,然后把压缩好的文件放到c的根下命名成drupal754.rar</span></div><div class="line"><span class="comment"># Rar.exe x -padmin c:\drupal754.rar c:\xl	带密码保留原有目录结构解压</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/caonima11.png" alt=""><br><img src="/img/rar shits.png" alt=""></p>
+<p>以 zip 格式压缩解压[用法同上]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Rar.exe a -r -padmin -m3 -x*.txt -ta c:\drupal754.zip C:\AppServ\www\drupal-7.54-vuln-sqli-rce\*.*</span></div><div class="line"><span class="comment"># Rar.exe x -padmin c:\drupal754.zip c:\xl</span></div></pre></td></tr></table></figure></p>
+<p>分卷压缩解压:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Rar.exe a -r -v1m -padmin -m3 -x*.txt -ta c:\drupal754.rar C:\AppServ\www\drupal-7.54-vuln-sqli-rce\*.* 压缩</span></div><div class="line"><span class="comment"># Rar.exe x -padmin c:\drupal754.part01.rar c:\xl	解压</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/rar v part.png" alt=""><br></p>
+<p>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;很显然,通关全文,跟技术几乎没有任何关系[仅仅就是几个小工具的简单使用而已],就当留个备忘吧,留给有需要的朋友,另外,打包的时候务必注意下目标分区的大小,不然空间不够,容易出错,文件的元数据要不要一并保存,正在打包的文件是否被占用什么的,有时候打包可能还会有些小小的问题,相信那对你都不是问题<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/tar-7z-rar/">#tar 7z rar</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

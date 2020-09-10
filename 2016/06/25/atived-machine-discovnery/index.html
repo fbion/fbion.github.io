@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="如何在目标内网中发现更多存活主机 [arp,icmp,tcp/udp,smb,snmp ...]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>如何在目标内网中发现更多存活主机 [arp,icmp,tcp/udp,smb,snmp ...] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/06/25/atived-machine-discovnery/">
+                如何在目标内网中发现更多存活主机 [arp,icmp,tcp/udp,smb,snmp ...]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-06-25</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/pentset/">pentset</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 基于不同平台下的各种arp扫描方法<br>&nbsp;&nbsp;&nbsp;&nbsp;首先,尝试基于arp的各种内网主机发现方式,它可以轻易bypass掉各类应用层防火墙,这是大家都知道的,如果是专业的arp防火墙,呵呵……</p>
+<p>0x02 在win下进行各种arp扫描:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># start /b arpscan.exe -t <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> &gt;&gt; result.txt</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp.png" alt="&#39;&#39;"></p>
+<p>利用powershell脚本进行arp扫描,这也是个人比较推荐的方式,轻量且免杀效果较好,系统自带,灵活方便:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell.exe -<span class="built_in">exec</span> bypass -Command <span class="string">"Import-Module C:\Invoke-ARPScan.ps1;Invoke-ARPScan -CIDR 192.168.3.0/24"</span>  &gt;&gt; result.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_powershell2.png" alt="&#39;&#39;"></p>
+<p>说到powershell 这里就不得不顺带提下<code>empire</code>,它里面同样提供了用于arp扫描的模块,而且比msf的arp更好用[一款优秀的域内网渗透框架,经常进行win内网渗透的朋友,应该用的非常多,这里就不多说了]:<br><img src="/img/common_arp_empire.jpg" alt="&#39;&#39;"></p>
+<p>使用老旧的nmap,另外在win下使用,可能需要你先装好所需的win运行库和npcap,在安装该库的时候,默认选项即可,注意,如果是在中文系统中安装还有点儿问题,推荐用英文系统,所需的所有依赖库在nmap程序包中都已自带,说实话,个人并不建议直接把nmap丢到目标机器上用,没有图形界面的情况下安装依赖库还是比较麻烦的,另外,如果仅仅是存活扫描,它肯定也不会是首选,起码不是自己的首选:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap -sn -PR  <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span>  以arp的方式扫描</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_nmap.png" alt="&#39;&#39;"></p>
+<p>在cain中也带了arp扫描功能,虽然,工具已经n年没有更新过了,但依然经典,建议在03以下的系统使用,另外,它需要免杀:<br><img src="/img/common_ethnet_arp_cain.png" alt="&#39;&#39;"><br></p>
+<p>0x03 在 linux 下进行 arp 扫描 :<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,在一些主流的linux发型版软件包中已经默认自带了nmap,不过是5.0版本的,一般的运维可能也不会装,所以还是自己动手编译装下吧,这里顺便多一嘴,在目标机器上安装工具,尽量源码编译安装,走的时候,相对容易处理干净:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget https://nmap.org/dist/nmap-7.40.tar.bz2</span></div><div class="line"><span class="meta">#</span><span class="bash"> bzip2 -<span class="built_in">cd</span> nmap-7.40.tar.bz2 | tar xvf -</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> nmap-7.40 </span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure  这里可以用--prefix指定安装路径</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> make</span></div><div class="line"><span class="meta">#</span><span class="bash"> make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?	</span></div><div class="line"><span class="meta">#</span><span class="bash"> nmap -sn -PR 192.168.3.0/24  尝试arp扫描</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_arp_nmap_win.jpg" alt="&#39;&#39;"></p>
+<p>编译安装arpscan:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> unzip arpscan.zip</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> arpscan</span></div><div class="line"><span class="meta">#</span><span class="bash"> autoreconf --install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure  工具依赖libpcap库,这里需要先把库装好</span></div><div class="line">     # wget http://www.tcpdump.org/release/libpcap-1.1.1.tar.gz</div><div class="line">     # tar -zxvf libpcap-1.1.1.tar.gz</div><div class="line">     # cd libpcap-1.1.1</div><div class="line">     # ./configure</div><div class="line">     # echo $?</div><div class="line">     # make &amp;&amp; make install</div><div class="line">     # echo $?</div><div class="line">     # cd ..</div><div class="line"><span class="meta">#</span><span class="bash"> ./configure 再次执行检测</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> make</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod -R 755 ./*  先给下权限,不然执行检测时无法通过</span></div><div class="line"><span class="meta">#</span><span class="bash"> make check</span></div><div class="line"><span class="meta">#</span><span class="bash"> make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> arp-scan --interface=eth3 --localnet 扫描指定网卡的网段</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_arp_scan_linux.jpg" alt="&#39;&#39;"></p>
+<p>0x04 其它的一些arp扫描方法:<br>&nbsp;&nbsp;&nbsp;&nbsp;如果你直接就处在别人的vpn内网中,也可以选择用netdiscover(kali自带),指定那个vpn内网的网卡接口进行arp扫描即可,速度还行<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># netdiscover -r <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> -i eth0</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_netdis.png" alt="&#39;&#39;"></p>
+<p>使用msf内置的各种arp扫描模块,还是那句话,如果你目前已经直接处在对方的内网环境中,可以直接用下面的模块<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">msf &gt; use  auxiliary/scanner/discovery/arp_sweep</div><div class="line">msf &gt; show options</div><div class="line">msf &gt; <span class="builtin-name">set</span> <span class="built_in"> interface </span>eth0</div><div class="line">msf &gt; <span class="builtin-name">set</span>  smac 00:0c:29:92:fd:85</div><div class="line">msf &gt; <span class="builtin-name">set</span>  rhosts 192.168.3.0/24</div><div class="line">msf &gt; <span class="builtin-name">set</span>  threads 20</div><div class="line">msf &gt; <span class="builtin-name">set</span>  shost 192.168.3.28</div><div class="line">msf &gt; run</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_msf.png" alt="&#39;&#39;"></p>
+<p>如果你只是拿到对方内网中的一个meterpreter,也可以用meterpreter中内置的arp扫描模块,不过在此之前,你可能还需要在中间先添加一条路由:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">meterpreter &gt; getsystem 	另外,在目标机器上扫描时,务必先提权,纯属个人建议,会方便很多,不然扫描过程中可能会有些问题</div><div class="line">meterpreter &gt; run autoroute -s 192.168.244.0/24</div><div class="line">meterpreter &gt; run post/windows/gather/arp_scanner RHOSTS=192.168.3.0/24</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_arp_scan_msf_linux.jpg" alt="&#39;&#39;"><br><br><br><br>0x05 基于icmp的各种内网主机发现方式,如果防火墙过滤的icmp请求,这种方式基本就废了,不过如果是在域还是挺好使的:</p>
+<p>0x06 在win下进行各种icmp扫描:</p>
+<p>cmd中执行如下命令,对整个C段进行ping扫描<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># for /L %I in (<span class="number">1</span>,<span class="number">1</span>,<span class="number">254</span>) DO @ping -w <span class="number">1</span> -n <span class="number">1</span> <span class="number">192.168</span><span class="number">.3</span>.%I | findstr <span class="string">"TTL="</span> &gt;&gt; result.txt   扫描从<span class="number">1</span>到<span class="number">254</span>这么多台机器</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_dos_icmp.png" alt="&#39;&#39;"></p>
+<p>nmap中同样也提供了基于icmp的扫描方式,PE就是最普通的icmp echo request,另外,还有基于timestamp和netmask request discovery的icmp扫描方式<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap -sn -PE <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_win_nmap_connect.jpg" alt="&#39;&#39;"></p>
+<p>使用nping,在nmap程序包中一般也会自带,win下使用暂时还有些儿问题,工具也比较老了,不多说<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nping --icmp --icmp-type time <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> | findstr <span class="string">"reply"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_dos_nping.png" alt="&#39;&#39;"></p>
+<p>利用powershell对目标内网进行icmp扫描<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">powershell</span><span class="selector-class">.exe</span> <span class="selector-tag">-exec</span> <span class="selector-tag">bypass</span> <span class="selector-tag">-Command</span> "<span class="selector-tag">Import-Module</span> <span class="selector-tag">C</span>:\<span class="selector-tag">Invoke-TSPingSweep</span><span class="selector-class">.ps1</span>;<span class="selector-tag">Invoke-TSPingSweep</span> <span class="selector-tag">-StartAddress</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.1</span> <span class="selector-tag">-EndAddress</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.254</span> <span class="selector-tag">-ResolveHost</span> <span class="selector-tag">-ScanPort</span> <span class="selector-tag">-Port</span> 21,22,23,25,53,80,81,82,83,84,85,86,87,88,89,110,111,143,389,443,445,873,1025,1433,1521,2601,3306,3389,3690,5432,5900,7001,8000,8080,8081,8082,8083,8084,8085,8086,8087,8089,9090,10000"    目标网段,并非仅限<span class="selector-tag">C</span>段,比如你也可以写成这种方式192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.1</span> <span class="selector-tag">-</span> 192<span class="selector-class">.168</span><span class="selector-class">.31</span><span class="selector-class">.254</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_powershell1.png" alt="&#39;&#39;"></p>
+<p>0x07 在linux下使用各类icmp扫描:<br>最简单的方式,将下面的代码保存至shell中,赋予其执行权限,执行该脚本即可<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/bin/bash</span></div><div class="line"><span class="keyword">for</span><span class="built_in"> ip </span><span class="keyword">in</span> 192.168.3.&#123;1<span class="built_in">..</span>254&#125; </div><div class="line"><span class="keyword">do</span> </div><div class="line">  <span class="built_in"> ping </span><span class="variable">$ip</span> -c 1 &amp;&gt; /dev/<span class="literal">null</span> </div><div class="line">   <span class="keyword">if</span> [ $? -eq 0 ];then </div><div class="line">	echo <span class="variable">$ip</span> is alive <span class="built_in">..</span><span class="built_in">..</span> </div><div class="line">   fi </div><div class="line">done</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_ping_scan.jpg" alt="&#39;&#39;"></p>
+<p>同上,依然可以使用nmap的icmp扫描<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap -sn -PE <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_linux_nmap_connect.jpg" alt="&#39;&#39;"></p>
+<p>使用nping,用法依然是跟上面一致<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nping --icmp --icmp-type time <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> | grep <span class="string">"reply"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_nping.jpg" alt="&#39;&#39;"><br><br></p>
+<p>0x07 基于smb和netbios的内网主机发现方式,这种方式通常在win内网中非常实用:<br>win下:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nbtscan.exe -m  <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span>   非常经典的小工具</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_nbtscan.png" alt="&#39;&#39;"></p>
+<p>linux下:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://www.unixwiz.net/tools/nbtscan-source-1.0.35.tgz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar -zxvf nbtscan-source-1.0.35.tgz</span></div><div class="line"><span class="meta">#</span><span class="bash"> make</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./nbtscan -h</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./nbtscan -m 192.168.3.0/24</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_nbtscan_linux.jpg" alt="&#39;&#39;"></p>
+<p>其它的一些smb发现方式:</p>
+<p>通过已经弹回的meterpreter,在目标机器上添加路由之后,使用smb_version模块亦可实现同样的目的:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">/auxiliary/</span>scanner<span class="regexp">/smb/</span>smb_version</div></pre></td></tr></table></figure></p>
+<p><img src="/img/msf_smb_version_s.jpg" alt="&#39;&#39;"><br><br></p>
+<p>0x08 基于常规tcp/udp端口扫描的内网主机发现方式,还是那句话,如果防火墙或者其他防护系统阻隔了对某些端口方法,依然是个废:</p>
+<p>scanline tcp/udp端口扫描,非常经典的小工具,单文件,实际渗透中比较方便:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># sl -htz <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span><span class="number">-160</span>   默认不指定端口的情况下,会按它自己的高危来扫,至于扫哪些端口,请自行查看mcafee官网</div><div class="line"># sl -hz -t <span class="number">21</span>,<span class="number">22</span>,<span class="number">23</span>,<span class="number">25</span>,<span class="number">53</span>,<span class="number">80</span><span class="number">-89</span>,<span class="number">110</span>,<span class="number">111</span>,<span class="number">143</span>,<span class="number">389</span>,<span class="number">443</span>,<span class="number">445</span>,<span class="number">873</span>,<span class="number">1025</span>,<span class="number">1433</span>,<span class="number">1521</span>,<span class="number">2601</span>,<span class="number">3306</span>,<span class="number">3389</span>,<span class="number">3690</span>,<span class="number">5432</span>,<span class="number">5900</span>,<span class="number">7001</span>,<span class="number">8000</span>,<span class="number">8080</span><span class="number">-8089</span>,<span class="number">9090</span>,<span class="number">10000</span> -u <span class="number">161</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span><span class="number">-160</span> &gt;&gt; result.txt</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_sl.png" alt="&#39;&#39;"></p>
+<p>nmap tcp/udp端口扫描:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap --script smb-enum-shares.nse -p445 <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span>  扫描可读写共享,能力非常有限,已经有很多更好的替代品</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_nmap_smbshares.png" alt="&#39;&#39;"></p>
+<p>superscan tcp/udp端口扫描:<br>纯图形化界面,使用非常简单,另外,它也可以专门用来枚举特定机器的信息,只是用于枚举的时候,不能直接指定网段,简直可惜<br><img src="/img/common_superscan.jpg" alt="&#39;&#39;"></p>
+<p>msf中也内置了各种各样的服务端口扫描模块,不过,你可能需要先提权然后添加路由才可以正常使用,当然,如果你直接处在对方内网中就不用了:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/portscan/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/smb/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/smtp/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/snmp/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/telnet/*</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_msf_portscan.jpg" alt="&#39;&#39;"></p>
+<p>另外,还有个非常不错的py小脚本F-NAScan,速度很快,在linux内网机器上会非常好用[前提是要对应版本的py环境才行]<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># python F-NAScan.py -h <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span><span class="number">-192.168</span><span class="number">.3</span><span class="number">.250</span> -p <span class="number">21</span>,<span class="number">22</span>,<span class="number">23</span>,<span class="number">25</span>,<span class="number">53</span>,<span class="number">80</span>,<span class="number">81</span>,<span class="number">82</span>,<span class="number">83</span>,<span class="number">84</span>,<span class="number">85</span>,<span class="number">86</span>,<span class="number">87</span>,<span class="number">88</span>,<span class="number">89</span>,<span class="number">110</span>,<span class="number">111</span>,<span class="number">143</span>,<span class="number">389</span>,<span class="number">443</span>,<span class="number">445</span>,<span class="number">873</span>,<span class="number">1025</span>,<span class="number">1433</span>,<span class="number">1521</span>,<span class="number">2601</span>,<span class="number">3306</span>,<span class="number">3389</span>,<span class="number">3690</span>,<span class="number">5432</span>,<span class="number">5900</span>,<span class="number">7001</span>,<span class="number">8000</span>,<span class="number">8080</span>,<span class="number">8081</span>,<span class="number">8082</span>,<span class="number">8083</span>,<span class="number">8084</span> -m <span class="number">30</span> -t <span class="number">5</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_f_nascan.jpg" alt="&#39;&#39;"><br><br></p>
+<p>0x09 如果你当前shell权限确实很有限或由于其它各种各样的原因导致我们暂时没法代理进内网,借助web脚本实现对内网进行窥探无疑是个非常好的方式:</p>
+<p>基于 aspx 的内网存活探测脚本:<br><img src="/img/web_commom_aspx.jpg" alt="&#39;&#39;"></p>
+<p>基于 php 的内网存活探测脚本:<br><img src="/img/web_commom_php.jpg" alt="&#39;&#39;"></p>
+<p>基于 jsp 的内网存活探测脚本:<br><img src="/img/web_commom_jsp.jpg" alt="&#39;&#39;"></p>
+<p>0x10 在域内环境下的主机发现方式,一般在域内,各种条件相对来说还是比较宽松的,因为大多数都可能是办公网:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> net view</span></div><div class="line"><span class="meta">#</span><span class="bash"> dsquery computer  其实,域内最好用的外部也就是nbtscan了</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/domain.jpg" alt="&#39;&#39;"></p>
+<p>0x11 基于snmp的内网信息搜集方式:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">待续……</div></pre></td></tr></table></figure></p>
+<p>0x12 最后,再介绍个好玩的ip流量监控小工具<br><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">iptraf</span></div></pre></td></tr></table></figure></p>
+<p>一个查端口对应的服务的小工具,有兴趣可自行尝试<br><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">whatportis</span></div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;所有的扫描,有条件的情况下务必都在管理员权限下运行,对于内网主机发现,个人平时大概用到的,基本也就这些了,只不过在实际扫的时候,记得线程给的不要太高,一次扫的端口不要过多,如果工具里面自带的有随机扫ip的选项,最好也把它加上,另外,在内网中,理论上来讲,你应该首先瞄准找一些能快速getshell的内网机器,比如,sa,smb,ftp<code>针对linux</code>,能读写的匿名共享等……严禁大规模漫无目的的扫描,当你拿到一台机器以后,马上上去把能抓的密码hash都抓一下,比如,浏览器中的各种密码,本机的hash,常用软件中的各种密码hash等等……,实在不行再上键盘记录,拿到这些密码以后再慢慢拓展其它机器,切记,尽量不要进行长时间大流量的扫描动作<code>基本上我们现在所用的工具报文标志早已被写进各类ids的识别规则里了,尤其是针对nmap的</code>,会在对方系统中留下大批的扫描日志不说,稍微严谨点儿的内网可能会触发报警,甚至直接锁定ip,内网不比web,在web中你也许可以相对放开点去搞,但内网中,务必小心谨慎,权限来之不易,绝对不能让它轻易的掉了,尽你所能的稳住当前机器,另外,在平时的内网渗透中,能用系统自身工具搞定的,尽量都用系统自带的工具来搞<code>其实,系统自己就已经有非常多的渗透工具,可能只是暂时还没有很好的被发掘出来</code>,这一点非常重要,大家从现在开始,也应该尽量养成自己这样的习惯,尽可能的减少使用一些外部工具,越少越好,安全性没法保障的同时,可能实际使用中也并不是很方便,灵活性就更不用说了,尤其在一些比较畸形的内网中,由于种种限制,从远程下工具还是比较困难的,另外,别人的工具很可能有相当一部分工具都是需要自己免杀的<code>单单基于汇编层免杀还是很有限的</code>,如果你不会免杀,这事儿就很麻烦了,毕竟不是源自自己的手,用别人的始终不太放心,所以,有些东西还是大家自己考量吧……这里只是一点个人建议而已,当然,如果你有喜欢逆别人工具的习惯,这里所说的一切,您都可以直接忽略,如果自己不会逆向,还是谨慎点儿好,如果你想更仔细的去观察基于不同协议更底层的扫描细节,用wireshark吧,它绝对是我见过的最牛最实用的渗透工具,是的,没有之一,祝,愉快</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/discovery/">#discovery</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

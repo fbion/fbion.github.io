@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="跨平台快速文件共享 Samba"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>跨平台快速文件共享 Samba - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/12/12/samba-sec/">
+                跨平台快速文件共享 Samba
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-12-12</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/Samba/">Samba</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 关于smaba<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">主要用于实现不同系统平台间的文件共享,配置非常简单,轻量,适合用于常规办公内网环境中</div><div class="line">linux <span class="tag">&lt;<span class="name">==</span>&gt;</span> windows <span class="tag">&lt;<span class="name">==</span>&gt;</span> unix</div></pre></td></tr></table></figure></p>
+<p>此次演示环境<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">CentOS6<span class="meta">.9</span> x86_64	<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.3</span><span class="meta">.55</span> samba服务器</div><div class="line">CentOS6<span class="meta">.9</span> x86_64	<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.3</span><span class="meta">.57</span> 用来模拟smb客户端进行访问测试</div></pre></td></tr></table></figure></p>
+<p>0x02 samba服务默认所监听的端口<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">137/udp,138/udp nmb 进程提供netbios解析,以满足基于 CIFS 协议的共享访问环境</div><div class="line">138/tcp,445/tcp<span class="built_in"> smb </span>进程主要为客户端提供文件共享,打印机服务以及用户权限验证</div></pre></td></tr></table></figure></p>
+<p>0x03 使用samba客户端工具 <code>smbclient</code>,其实有些类似于ftp的客户端工具,也是一种交互式的访问</p>
+<p><code>在linux下使用smbclient访问windows中的共享目录</code><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> smbclient -L 192.168.3.23 -U administrator</span></div><div class="line"><span class="meta">#</span><span class="bash"> smbclient //192.168.3.23/linux_dir -U dcadmin</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount -t cifs //192.168.3.23/linux_dir /mnt/windows/ -o username=dcadmin 注意,此处要使用cifs协议进行挂载</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p><code>在linux下使用smbclient访问linux中samba服务共享目录</code><br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">smbclient</span> <span class="selector-tag">-L</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.55</span> <span class="selector-tag">-U</span> <span class="selector-tag">webadmin</span></div></pre></td></tr></table></figure></p>
+<p>0x04 安装samba服务所需的各种软件包<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install samba samba-client samba-common -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/nmb start;/etc/init.d/smb start</span></div></pre></td></tr></table></figure></p>
+<p>0x05 先来手工配置samba,编辑samba主配置文件<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cp /etc/samba/smb.conf /etc/samba/smb.conf.bak</span></div><div class="line"><span class="comment"># egrep -v "^$|;|#" /etc/samba/smb.conf</span></div><div class="line"><span class="comment"># vi /etc/samba/smb.conf</span></div><div class="line"></div><div class="line">[global]</div><div class="line">   workgroup = klionsec</div><div class="line">  <span class="built_in"> server </span>string = Samba<span class="built_in"> Server </span>Version %v</div><div class="line">   netbios name = SmbServer	# netbios名称,有点儿类似windows的机器名</div><div class="line">   interfaces = eth0		# 将端口监听在指定的网卡接口上</div><div class="line">   hosts allow = 192.168.3.	# 只允许指定的网段访问</div><div class="line">	</div><div class="line">   # samba日志文件存放位置</div><div class="line">   log file = /var/log/samba/log.%m</div><div class="line">   max log size = 50</div><div class="line"></div><div class="line">   # 启用为用户登陆模式</div><div class="line">   security =<span class="built_in"> user</span></div><div class="line">   passdb backend = tdbsam	</div><div class="line"></div><div class="line">[tools] # 访问时的共享目录名</div><div class="line">   comment = My HackTools	  # 对该共享目录的用途描述</div><div class="line">   path = /data/tools		  # 共享目录所在的绝对路径</div><div class="line">   guest ok = <span class="literal">yes</span>		  # 是否允许以来宾用户身份访问</div><div class="line">   read only = <span class="literal">no</span>	  	  # 表示对该共享目录可写</div><div class="line">   write list = webadmin,dbadmin  # 允许写的用户列表</div><div class="line">   browseable = <span class="literal">yes</span>		  # 是否显示文件或目录列表</div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> testparm   用于测试samba主配置文件是否有语法错误,并显示最终生效的配置</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/smb restart;/etc/init.d/nmb restart</span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig smb on &amp;&amp; chkconfig nmb on</span></div></pre></td></tr></table></figure>
+<p>0x06 创建用于共享访问的目录,并为该共享目录配置好权限,注意,如果要用户能写,务必要保证两点,首先,<code>smb.conf</code>中的共享目录要设置为<code>read only = no</code>,其次,还要对本地文件系统也能写才行,这里纯粹是为了方便才直接用facl来授权,你可以通过修改属主,属组来实现,比较简单,就不赘述了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /data/tools -p</span></div><div class="line"><span class="meta">#</span><span class="bash"> setfacl -m u:sec:rx /data/tools/</span></div><div class="line"><span class="meta">#</span><span class="bash"> setfacl -m g:admins:rwx /data/tools/	直接对指定组setfacl</span></div><div class="line"><span class="meta">#</span><span class="bash"> getfacl -c /data/tools/</span></div></pre></td></tr></table></figure></p>
+<p>0x07 创建samba用户并为每个用户设置samba密码,注意samba的验证方式,samba用户虽为系统本地用户,但samba用户的密码却为samba服务自己的密码,并存在它自己特定格式的数据库中,再次强调,严禁弱口令<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> groupadd admins</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd -G admins -s /sbin/nologin -M webadmin</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd -G admins -s /sbin/nologin -M dbadmin</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M sec</span></div><div class="line"><span class="meta">#</span><span class="bash"> smbpasswd -a webadmin</span></div><div class="line"><span class="meta">#</span><span class="bash"> smbpasswd -a dbadmin</span></div><div class="line"><span class="meta">#</span><span class="bash"> smbpasswd -a sec</span></div></pre></td></tr></table></figure></p>
+<p>0x08 关于smbpasswd的基本使用,主要用来将系统用户添加为samba内置用户<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">d 禁用指定系统用户</span></div><div class="line">-<span class="ruby">e 启用指定系统用户</span></div><div class="line">-<span class="ruby">x 删除指定系统用户</span></div><div class="line">-<span class="ruby">a 添加指定系统用户</span></div></pre></td></tr></table></figure></p>
+<p>0x09 在<code>192.168.3.57</code>测试刚刚设置的权限是都已否生效,正常来讲,我们应该是一个用户对应一个目录,这样权限相对好控制,可自行写脚本实现</p>
+<p>因为<code>webadmin</code>和<code>dbadmin</code>都属<code>admins</code>组,而<code>admins</code>组对共享目录可写,另外,在共享目录的<code>可写用户列表</code>中也有这俩用户,所以它俩才能往共享目录中写<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">smbclient</span> //<span class="number">192.168.3.55</span>/tools -U webadmin</div></pre></td></tr></table></figure></p>
+<p><img src="/img/webadmin access succeed.png" alt=""><br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">smbclient</span> //<span class="number">192.168.3.55</span>/tools -U dbadmin</div></pre></td></tr></table></figure></p>
+<p><img src="/img/dbadmin access succeed.png" alt=""></p>
+<p><code>sec</code>既不属于<code>admins</code>组,也不在<code>可写用户列表</code>中,所以,该用户在共享目录中只能看不能写,如下<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">smbclient</span> //<span class="number">192.168.3.55</span>/tools -U sec</div></pre></td></tr></table></figure></p>
+<p><img src="/img/sec access deined.png" alt=""><br><img src="/img/access res.png" alt=""></p>
+<p>0x10 如果嫌手工配置麻烦的话,还有一款纯图形化samba配置工具,实际中最好用完立马就关掉,个人觉得根本犯不着这样,其实写个一键脚本就好了<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum install samba-swat -y</span></div><div class="line"><span class="comment"># vi /etc/xinetd.d/swat</span></div><div class="line"><span class="built_in"></span></div><div class="line">service swat</div><div class="line">&#123;</div><div class="line">   <span class="built_in"> port	</span>	= 901</div><div class="line">    socket_type	= stream</div><div class="line">    wait 		= <span class="literal">no</span></div><div class="line">    only_from 	= 192.168.3.0/24  # 允许连的ip</div><div class="line">   <span class="built_in"> user	</span>	= root		  # 因为工具中间还涉及到一些服务管理功能,所以此处最好直接用root身份来搞</div><div class="line">   <span class="built_in"> server	</span>	= /usr/sbin/swat</div><div class="line">    log_on_failure	+= USERID</div><div class="line">    <span class="builtin-name">disable</span>		= <span class="literal">no</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment"># 另外,需要注意swat基于xinet管理</span></div><div class="line"><span class="comment"># /etc/init.d/xinetd start</span></div><div class="line"><span class="comment"># chkconfig xinetd on</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/samba swat.png" alt=""><br><img src="/img/samba swat res.png" alt=""></p>
+<p>0x11 关于samba的一些安全问题<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">绝大部分问题都出自samba自身的一些漏洞,如,各类RCE...直接可远程getshell的漏洞就已经出了好几次了,所以建议大家实际中尽量用新一点的版本</div><div class="line">关于权限分配,问题不太大,毕竟只是个内网服务,别傻到直接把端口暴露在公网就行,不然,很可能哪天一不小心就成了别人的`矿鸡`了</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p><br><br>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;服务比较简单,此处仅做学习实验之用,切勿直接照搬用于实际生产环境中…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/Samba/">#Samba</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

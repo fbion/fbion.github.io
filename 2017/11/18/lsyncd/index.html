@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="lsyncd + rsync 实时同步海量小文件"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>lsyncd + rsync 实时同步海量小文件 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/11/18/lsyncd/">
+                lsyncd + rsync 实时同步海量小文件
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-18</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/lsyncd/">lsyncd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 关于lsyncd<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">inotify</span>的优秀替代品,基于<span class="selector-tag">lua</span>,不过,它也依然使用 <span class="selector-tag">linux</span> 2<span class="selector-class">.6</span><span class="selector-class">.13</span>以后内核的<span class="selector-tag">inotify</span>触发机制</div><div class="line">配置简单灵活,在同步海量小文件时,性能表现优异,废话不多讲,咱们直奔主题</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>环境准备:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">RsyncServer</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.4</span></div><div class="line"><span class="selector-tag">RsyncClient26</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.7</span></div></pre></td></tr></table></figure></p>
+<p>0x02 在需要进行实时同步的 rsync 客户端机器上<code>[ 这里是RsyncClient26 ]</code>编译安装lsyncd,如下<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install lua lua-devel asciidoc cmake -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/lsyncd/lsyncd-2.1.5.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf lsyncd-2.1.5.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> lsyncd-2.1.5/</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --prefix=/usr/<span class="built_in">local</span>/lsyncd-2.1.5 &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/lsyncd-2.1.5/ /usr/<span class="built_in">local</span>/lsyncd/</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/lsyncd/bin/ &amp;&amp; ./lsyncd</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x02 关于 <code>lsyncd.conf</code> 配置文件的详细配置及配置项简要说明</p>
+<p><code>settings 部分</code>,其实就是关于lsyncd工具自身的一些选项设置:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">logfile 	  : 指定<span class="type">lsyncd</span>工具本身运行所产生的日志文件存放位置</div><div class="line">statusFile	  : 定义<span class="type">lsyncd</span>监控目录状态文件的存放位置</div><div class="line">statusInterval	  : 隔多少秒记录一次被监控目录的状态</div><div class="line">nodaemon=<span class="literal">true</span> 	  : 默认是不启用守护模式的</div><div class="line">inotifyMode	  : 指定要监控的事件,如,<span class="type">CloseWrite</span>,Modify,CloseWrite <span class="keyword">or</span> Modify</div><div class="line">maxProcesses  	  : 指定同步时进程的最大个数</div><div class="line">maxDelays	  : 当事件被命中累计多少次后才进行一次同步</div></pre></td></tr></table></figure></p>
+<p><code>sync 部分</code>主要用来定义同步时的一些设置,可以同时同步多个目录,只需要在该代码块中事先定义好多个sync即可<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">default.rsync	: 指定<span class="type">lsyncd</span>运行模式,另外,还有default.direct,default.rsyncssh模式,个人建议缺省</div><div class="line">source		: 指定要监控的目录,务必全部用绝对路径</div><div class="line">target		: 要同步到的目标目录,一般为<span class="type">rsync</span>服务端模块下指定的目录</div><div class="line">init		: 为<span class="type">false</span>时表示只同步lsyncd进程启动以后发生改动事件的文件,否则,反之,默认为<span class="literal">true</span></div><div class="line"><span class="keyword">delay</span>		: 当命中的事件累计到多少时再触发同步</div><div class="line">exclude		: 通过此选项排除掉不需要同步的文件,可用它自己的正则进行匹配</div><div class="line">delete		: 和<span class="type">rsync</span> 的 <span class="comment">--delete 作用一样,先清空再同步</span></div></pre></td></tr></table></figure></p>
+<p>下面是关于 <code>rsync 工具自身</code>的一些设置选项<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">compress	: 压缩后再同步</div><div class="line">bwlimit		: 限速同步,当你不想占满带宽时</div><div class="line">archive		: 归档模式同步</div><div class="line">perms		: 保留文件原有属性同步</div></pre></td></tr></table></figure></p>
+<p>0x03 开始实战配置 <code>lsyncd.conf</code><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir -p /usr/<span class="built_in">local</span>/lsyncd-2.1.5/&#123;var,etc&#125;</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi /usr/<span class="built_in">local</span>/lsyncd/etc/lsyncd.conf</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">settings &#123;</div><div class="line">    <span class="attr">logfile</span> =<span class="string">"/usr/local/lsyncd-2.1.5/var/lsyncd.log"</span>,</div><div class="line">    <span class="attr">statusFile</span> =<span class="string">"/usr/local/lsyncd-2.1.5/var/lsyncd.status"</span>,</div><div class="line">    <span class="attr">inotifyMode</span> = <span class="string">"CloseWrite or Modify"</span>,</div><div class="line">    <span class="attr">maxProcesses</span> = <span class="number">10</span>,</div><div class="line">    <span class="attr">statusInterval</span> = <span class="number">10</span>,</div><div class="line">    <span class="attr">nodaemon</span> = <span class="literal">true</span>,</div><div class="line">    <span class="attr">maxDelays</span> = <span class="number">20</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">sync &#123;</div><div class="line">    default.rsync,</div><div class="line">    <span class="attr">source</span> = <span class="string">"/bakdata/"</span>,</div><div class="line">    <span class="attr">target</span> = <span class="string">"rsync_backup@192.168.5.4::webbak"</span>,</div><div class="line">    <span class="attr">delete="true",</span></div><div class="line">    <span class="attr">exclude</span> = &#123; <span class="string">"dir*"</span> &#125;,</div><div class="line">    <span class="attr">delay</span> = <span class="number">10</span>,</div><div class="line">    <span class="attr">init</span> = <span class="literal">false</span>,</div><div class="line">    <span class="attr">rsync</span>  = &#123;</div><div class="line">	<span class="attr">bwlimit=200,</span></div><div class="line">        <span class="attr">binary</span> = <span class="string">"/usr/bin/rsync"</span>,</div><div class="line">        <span class="attr">archive</span> = <span class="literal">true</span>,</div><div class="line">        <span class="attr">compress</span> = <span class="literal">true</span>,</div><div class="line">        <span class="attr">verbose</span> = <span class="literal">true</span>,</div><div class="line">       	<span class="attr">perms</span> = <span class="literal">true</span>,</div><div class="line">	<span class="attr">password_file</span> = <span class="string">"/etc/rsync.password"</span></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>0x04 加载自定义配置文件,启动lsyncd<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/lsyncd/bin/lsyncd -<span class="built_in">log</span> all /usr/<span class="built_in">local</span>/lsyncd/etc/lsyncd.conf &amp;&gt;/dev/null &amp;</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"/usr/local/lsyncd/bin/lsyncd -log all /usr/local/lsyncd/etc/lsyncd.conf &amp;&gt;/dev/null &amp;"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> ps -le | grep lsyncd		先看下lsyncd进程有没有正常起来</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /bakdata/lsyncd&#123;1..58&#125;	接着,尝试在要同步的目录下批量创建文件,看能不能按指定的时间正常延迟同步</span></div></pre></td></tr></table></figure></p>
+<p>0x05 从日志中仔细观察同步过程<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># tail -f /usr/<span class="built_in">local</span>/lsyncd/<span class="built_in">var</span>/lsyncd.<span class="built_in">log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lsyncd copy.png" alt=""><br><img src="/img/lsyncd copy res.png" alt=""></p>
+<p>0x06 观察监控目录中的事件命中状态<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># cat /usr/<span class="built_in">local</span>/lsyncd/<span class="built_in">var</span>/lsyncd.<span class="built_in">status</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lsyncd status.png" alt=""><br><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,lsyncd 还支持当监控到某个指定事件时就执行什么样的命令,待自己详读官方文档后再做单独说明,由于是通过时间延迟和累计事件命中次数来触发同步,在设计上要优于inotify,更多内容,如果有兴趣大家可自行参考其官方文档,待续…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/lsyncd/">#lsyncd</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

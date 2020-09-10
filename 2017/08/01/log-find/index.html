@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="入侵取证 [ web日志分析初步 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>入侵取证 [ web日志分析初步 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/08/01/log-find/">
+                入侵取证 [ web日志分析初步 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-08-01</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/log/">log</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;既然是取证, 不妨就从一个稍微全局点的角度来理解,最先应该搞清楚的, 可能就是, 到底哪些地方会留下入侵者的痕迹 , 这次单单就以最基础的web服务 [ 暂不涉及脚本引擎,数据库及系统方面的东西 ] 基本取证流程为例, 其实很简单,入侵者一般喜欢从哪里下手,就必然会在那里留下痕迹, 可能在此之前我们还需要搞清楚客户端的http数据到底都是从什么地方过来的, 有GET 的 URL 中传来的数据 , POST 中传来的数据,从http头中获取的各类客户端数据 [ 如,cookie,user-agent,Referer,X-Forwarded-For ], 像这些很基础的东西,早该在最开始部署服务的时候就想到,不然,等到真出事的那一天,自己真正能掌握的资料就着实比较少了</p>
+<p>0x02 环境简介<br>&nbsp;&nbsp;&nbsp;&nbsp;暂以 nginx 为例,一个最基本的日志格式大概是下面这个样子,当然,这种格式可能会造成你的日志文件特别大 [ 存的东西多嘛 ], 但实际部署时还是需要你根据自己的实际的业务来,这里也仅仅只是做个参考</p>
+<p>先在指定的 server 标签中定义好cookie变量<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">server&#123;</div><div class="line"><span class="built_in">..</span>.</div><div class="line">    <span class="builtin-name">set</span> <span class="variable">$dm_cookie</span> <span class="string">""</span>;</div><div class="line">    <span class="keyword">if</span> (<span class="variable">$http_cookie</span> ~* <span class="string">"(.+)(?:;|$)"</span>) &#123;</div><div class="line">        <span class="builtin-name">set</span> <span class="variable">$dm_cookie</span> <span class="variable">$1</span>;</div><div class="line">    &#125;</div><div class="line"><span class="built_in">..</span>.</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这时再回到 nginx 主配置文件中, 引用刚刚设置的cookie变量, 这样, 头里面的那几个字段数据就都可以被记录了<br><figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">http</span> &#123;</div><div class="line">...</div><div class="line">    log_format <span class="keyword">main</span> <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span>  [<span class="variable">$time_local</span>]  '</span></div><div class="line">    <span class="string">' "<span class="variable">$request</span>" <span class="variable">$request_body</span> <span class="variable">$status</span>  <span class="variable">$body_bytes_sent</span>  '</span></div><div class="line">    <span class="string">' "<span class="variable">$http_referer</span>"  "<span class="variable">$http_user_agent</span>"  "<span class="variable">$http_x_forwarded_for</span>" "<span class="variable">$dm_cookie</span>" '</span>;</div><div class="line">...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>按照从左到右的顺序,每个字段的的作用分别是<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">-&gt;远程ip是多少</span></div><div class="line">  -<span class="ruby">-&gt;客户端是谁,什么时间访问的</span></div><div class="line">    -<span class="ruby">-&gt;请求了服务器的哪个文件,如果是post请求post的参数值是什么</span></div><div class="line">      -<span class="ruby">-&gt;服务器响应的状态码又是多少</span></div><div class="line">	-<span class="ruby">-&gt;返回给客户端的页面数据实际大小是多少</span></div><div class="line">	  -<span class="ruby">-&gt;当前请求是从哪个页面过来的</span></div><div class="line">	    -<span class="ruby">-&gt;客户端机器信息是啥</span></div><div class="line">	      -<span class="ruby">-&gt;抓取客户端真实ip</span></div><div class="line">		-<span class="ruby">-&gt;抓取cookie中的参数值</span></div></pre></td></tr></table></figure></p>
+<p>以上配置完成后, 重启nginx, 然后尝试针对性的访问, 看看我们刚设置的那几个点的数据能不能被正常记录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/nginx/sbin/nginx -t</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/nginx/sbin/nginx -s reload</span></div></pre></td></tr></table></figure></p>
+<p>0x03 web分析取证第一步,从最敏感的 异常状态码 开始<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="number">404</span>  其实,正常用户在网站页面上点击访问,碰到<span class="number">404</span>的概率并不多,如果你发现短时间出现大批量的<span class="number">404</span>,很有可能都是由于入侵者在尝试扫描各种敏感目录文件所致</div><div class="line">     像这种过于敏感的操作,现如今的waf一般都会进行拦截,短时间某个ip访问量剧增,再典型不过的攻击特征....</div><div class="line"><span class="number">403</span>  通常目标都会把一些不想让用户访问到的敏感路径,比如,网站后台,各类数据库的web入口,其他中间件的web入口,等等...</div><div class="line"><span class="number">401</span>  出现这个状态码,很有可能是用户正在尝试登录有http基础认证的页面时,账号密码错误的响应状态</div><div class="line"><span class="number">500</span>  典型的服务器端错误,通常是由于后端脚本或者数据库报错所致,比如,入侵者在尝试一些web漏洞时就很有可能会触发这样的错误,sql注入,代码执行...</div><div class="line"><span class="number">503</span>  ....</div></pre></td></tr></table></figure></p>
+<p>快速提取各种敏感状态码,当然啦,这里只是给大家简单做个参考,实际中如果日志特别大,就尽量不要同时 tee了,可能会把系统卡死<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> grep <span class="string">"[[:space:]]500[[:space:]]"</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.log | tee -a nginx_500_log.txt</span></div><div class="line"><span class="meta">#</span><span class="bash"> grep <span class="string">"[[:space:]]404[[:space:]]"</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_common_500.png" alt="&#39;&#39;"><br></p>
+<p>0x04  匹配各种常见 web攻击特征<br>&nbsp;&nbsp;&nbsp;&nbsp;匹配特征的根本目的,其实就是想知道, 入侵者到底是不是通过web进来的,如果是,是通过什么样的漏洞进来的 ,这里所有的演示纯粹只是为了简单说明问题,告诉大家实际做事的基本思路,等你自己真正用的时候,正则肯定会比我下面的这些要复杂的多的多,说实话,这里也没用啥正则…</p>
+<p>捕捉各类典型的敏感目录文件扫描特征,敏感文件主要是针对各类 web入口, svn, 网站备份文件, 数据库备份文件, 敏感配置文件, 各类探针文件, 以及其它的各类敏感密码文件泄露 , 很多入侵者其实根本就不需要什么漏洞, 直接从这里面获取目标的真实账号密码,后面的事情很有可能就直接行云流水了…<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># grep <span class="string">"[[:space:]]404[[:space:]]"</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.<span class="built_in">log</span> | awk '&#123;cnt[$<span class="number">1</span>]++;&#125;END&#123;<span class="keyword">for</span>(i <span class="keyword">in</span> cnt)&#123;<span class="built_in">printf</span>(<span class="string">"%s\t%s\n"</span>, cnt[i], i);&#125;&#125;' | <span class="built_in">sort</span> -n</div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_dirscan_404.png" alt="&#39;&#39;"><br></p>
+<p>快速捕捉各类典型web漏扫工具特征,当然,这些特征也都是很容被擦除的,不过好在一般人都不会这么干, 比如,最常用的几款漏扫 awvs,appscan,netsparker,burpsuite,webcuriser,vega,owasp zap,nikto,w3af,nessus,openvas…<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --<span class="built_in">color</span>=auto <span class="string">"AppScan|acunetix|Netsparker|WebCruiser|owasp|ZAP|vega|Nikto|nikto|w3af"</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.<span class="built_in">log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_wvs_scan.png" alt="&#39;&#39;"><br></p>
+<p>快速捕捉各类典型sql注入特征, 如 union,select,and,insert,information_schema,or,xor,like,order by,null,sleep…<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --<span class="built_in">color</span>=auto <span class="string">"union(.*)select|select(.*)from"</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.<span class="built_in">log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_sql_injection.png" alt="&#39;&#39;"><br></p>
+<p>快速捕捉各类典型的代码或者命令执行特征  eval,assert,system,passthru…<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --<span class="built_in">color</span>=auto <span class="string">"system\(.*\)|eval\(.*\)"</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.<span class="built_in">log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_evel_system_scan.png" alt="&#39;&#39;"><br></p>
+<p>抓取 后台异常的登录行为 ,可直接提取管理页面的200响应所对应的ip [ 这里可不仅限于常规网站后台,其它的各类数据库web管理入口等都可以这样干..] , 先大致定位其ip,确定是不是我们自己的ip,如果不是,可能就要留心了…尴尬,貌似又掉图了,尼玛<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --color=<span class="built_in">auto</span> <span class="string">"portal.php"</span> /usr/local/nginx/logs/access_bwapp.log | <span class="type">grep</span> <span class="string">"[[:space:]]200[[:space:]]"</span> | <span class="type">awk</span> -F <span class="string">" "</span> &#123;'print $<span class="number">1</span>'&#125; | <span class="type">sort</span> | <span class="type">uniq</span> -c</div></pre></td></tr></table></figure></p>
+<p>从请求记录中捕捉各类典型的 webshell文件命名特征 , 比如, 最常见的 spy系列,b374k,r57,c99,c100,Kacak,Zehir4,Webadmin,Webadmin,Spybypass,loveshell,hacker,hacked,shell,g.*,maer… tennc有个专门搜集webshell的仓库, 可以去那里, 把所有的 webshell 特征都提取一遍, 放到自己的正则中<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --<span class="built_in">color</span>=auto <span class="string">"r57|c99|c100|b374k|aspxspy|phpspy|aspxspy|wso"</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.<span class="built_in">log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_webshell_scan.png" alt="&#39;&#39;"><br></p>
+<p>从请求记录中捕捉各类敏感的 代码命令执行,文件操作类参数特征 ,比如, php?cmd= , php?filemanager= , php?upload=……..webshell中的参数一般也都会这么传<br><figure class="highlight maxima"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --<span class="built_in">color</span>=auto <span class="string">"php\?cmd=|php\?code=|php\?exec="</span> /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.<span class="built_in">log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_code_commond_scan.png" alt="&#39;&#39;"><br></p>
+<p>从get或者post中提取各类典型的 包含,文件读取,任意文件下载,email,xpath,ldap注入…等漏洞参数特征 ,一般这样的url中通常都会带有路径分隔符,如,./ ../../  …..<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --color=auto "php<span class="symbol">\?</span>file=|php<span class="symbol">\?</span>page=|php<span class="symbol">\?</span>include=|<span class="symbol">\.</span><span class="symbol">\/</span>|php?<span class="symbol">\.</span><span class="symbol">\.</span><span class="symbol">\/</span>" /usr/local/nginx/logs/access_bwapp.log</div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_file.png" alt="&#39;&#39;"><br></p>
+<p>从get或者post中提取典型的 xss漏洞参数特征 ,既然是xss,直接想办法过滤 js代码 就好了<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># egrep -i --color=auto "<span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined">(.*)</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span>|alert\(.*\)" /usr/local/nginx/logs/access_bwapp.log</div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_xss.png" alt="&#39;&#39;"><br></p>
+<p>快速锁定 请求相对比较频繁的那些ip , 找到ip对应的记录看看它们都到底在干啥, 然后再针对性的提取分析<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># awk '&#123;<span class="keyword">print</span> <span class="variable">$1&#125;</span>' /usr/<span class="keyword">local</span>/nginx/logs/access_bwapp.<span class="keyword">log</span> | <span class="keyword">sort</span> -<span class="keyword">n</span> |uniq -c | <span class="keyword">sort</span> -rn | head -<span class="keyword">n</span> 100</div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_counts_ip.png" alt="&#39;&#39;"><br></p>
+<p>搜集各类典型的 webshell管理工具 发起的各类敏感 http数据特征,具体针对性的正则,可能需要你自己,抓包好好看下里面的各种请求参数,如,菜刀,Altman,weevely…比较简单,就懒得抓了,大家如果有兴趣,可以自行尝试,实在有问题,也可以直接找我交流</p>
+<p>利用系统现有工具,手工先简单查杀下网站目录下的各种 webshell特征 ,  egrep,find,sed,awk,sort,findstr…一句话快速定位网站目录中的简易webshell,当然,这个能达到的效果非常有限,不过,如果你想快速的找到一些比较烂的webshell还是可以的<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> find /usr/<span class="built_in">local</span>/nginx/html/ -<span class="built_in">type</span> f | xargs egrep <span class="string">"eval|system"</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/nginx_webshell.png" alt="&#39;&#39;"><br></p>
+<p>针对各类开源程序或者框架0day,可以想办法直接捕捉相应的 exp参数特征 ,具体的exp得具体对待了,大家可以把曾经曝过的所有0day,花点儿时间好好搜集一下,然后再针对性的提取一下exp核心参数特征, 然后再集成到自己的正则里就好了, 比如, wp,joomla,drupal,phpbb,discuz,strus2,tp…..这里就不再演示了,如果你直接用的就是开源程序 [ 肯定不是用的很烂的那种,假如是wp,drupal这种级别的 ], 这一条往往就直接能帮你锁定入侵者,因为像这种程序一般都是直接拿曾经的一些0day打的,当然啦,除了其它的各种泄露之外,如果你都拿到了后台管理员的账号密码了,还需要什么exp呢</p>
+<p>最后,再上各种专业 webshell 查杀工具仔细扫描网站目录,比如,各种鱼,各种狗,以及各种云 dog….</p>
+<p>0x05 在实际分析web日志过程中的经常会出现的一些窘境<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">也许你看我这个貌似挺简单的,但实际生产环境下就并非如此了,你要考虑到的东西也许会比较的多</div><div class="line">不过万变不离其宗,基本思路有了,剩下的只是实践,针对性改进,和经验的问题</div><div class="line">经验老道的入侵者,可能对日志处理的也比较到位,很难捕捉到什么有用的东西</div><div class="line">比如,最典型的,替换伪造,以此混淆试听,直接把某个时间段内的日志整个干掉,甚至,直接干扰破坏系统正常的日志记录服务,这无疑也会给取证带来不小的困难</div><div class="line">入侵者一般都会挂vpn或者利用tor来频繁切换ip节点,很难溯源到入侵者的真实ip,大部分要依靠拿到的现有的一些入侵者信息再配合社工一起利用</div><div class="line">基于各类形式编码后的请求很容易被现有的正则遗漏掉</div><div class="line">各类免杀webshell,单纯的依靠静态查杀特征很难被捕捉到</div><div class="line">比如,各种利用包含,回调,编码,数组循环进行字符拼接...所构造的webshell,waf就很难捕捉到</div><div class="line">对于那种直接插到正常代码中或者直接驻留在内存中的webshell,查杀可能就更困难了</div><div class="line">虽然有的杀软可以帮我们干这事儿[比如,nod32],但那个毕竟也很有限</div><div class="line">单个日志文件太大,普通的文本编辑器编辑起来可能有点儿费劲,不过这个也不算什么问题,毕竟<span class="number">10</span>G下的vi虽然有些吃力,但凑活用……</div><div class="line">关于实时网站目录入侵监控方案,现在也有一些,不过,跟自己的想法多多少少还是有些出入</div><div class="line">这里所说的实时网站入侵监控,依然会从http这一层走,目前自己也还正在不断积累学习中,待后期沉淀成干货后,再仔细分享给大家....</div><div class="line">可能有人会问,这种东西为什么不写脚本呢,嘿嘿……脚本是很方便,但并不是什么都可以用脚本干,毕竟有目的的取证并非流水线,很多时候还是需要人为分析</div><div class="line">我们的最终目的可能还是像更精准的溯源到入侵者,并非为了写工具而写工具</div><div class="line">当然,如果这种东西能再配合着大数据一起无疑是非常好的,不过,这可能需要一个很成熟的平台,需要有一定的数据积攒才行</div><div class="line">今天就只提了最简单的web服务,关于其它服务和系统层取证,后续还会有一个完整的系列来说...待续ing,嘿嘿...</div></pre></td></tr></table></figure></p>
+<p>大家如果有兴趣,也可以去关注 <font size="3" color="red"><a href="https://zhuanlan.zhihu.com/c_133332109" target="_blank" rel="external">我的知乎专栏 </a></font>‘攻防之路’  ,以后有新文章,也都会同步往那里发,谢谢</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/log/">#log</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

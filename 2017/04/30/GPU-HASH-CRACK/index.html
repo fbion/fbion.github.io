@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="高速GPU hash破解工作站部署备忘"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>高速GPU hash破解工作站部署备忘 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/04/30/GPU-HASH-CRACK/">
+                高速GPU hash破解工作站部署备忘
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-30</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/hash-crack/">hash crack</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 首先,购买并组装好所有硬件,插上网线,加电开始测试,仔细观察机器硬件是否都工作正常,确认没问题后,再继续后面的步骤,本次自己用于测试的所有硬件具体型号如下,一套下来三万五左右,说实话这个配置作为GPU破解来讲并不算高 [属于偏下等],如果你不缺钱,完全可以买更好的 ^_^<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">supermicro超微<span class="number">7048</span>GR-TR准系统 双路塔式工作站<span class="number">4</span> GPU运算服务器		|一台</div><div class="line">Intel/英特尔 XEON至强 E5<span class="number">-2620</span> V3 <span class="number">15</span>M <span class="number">2.4</span>G <span class="number">6</span>核<span class="number">12</span>线			|<span class="number">2</span>颗</div><div class="line">金士顿 <span class="number">16</span>G DDR4 REG ECC <span class="number">2133</span> 服务器内存条					|<span class="number">2</span>根</div><div class="line">三星(SAMSUNG) <span class="number">850</span> PRO <span class="number">512</span>G SATA3 固态硬盘				|<span class="number">2</span>块</div><div class="line">NVIDIA技嘉GTX1070 Founders Edition <span class="number">8</span>G					|<span class="number">4</span>张 <span class="number">32</span>G GPU</div></pre></td></tr></table></figure></p>
+<p>0x02 下载安装 ubuntu-14.04.5-desktop-amd64,这里为了方便,可以直接将其做成系统启动U盘进行安装,镜像下载地址如下<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="regexp">//</span>releases.ubuntu.com<span class="regexp">/14.04/u</span>buntu-<span class="number">14.04</span>.<span class="number">5</span>-desktop-amd64.iso</div></pre></td></tr></table></figure></p>
+<p>系统安装完以后还需要进行一些必要的准备工作,首先,全面更新系统<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> apt-get update &amp;&amp; apt-get upgrade -y </span></div><div class="line"><span class="meta">#</span><span class="bash"> shutdown -r now	像这样的大规模更新完成后,务必立即重启系统</span></div><div class="line"><span class="meta">#</span><span class="bash"> apt-get install linux-headers-`uname -r` -y	为了防止下面编译过程中出错,这里我就提前把对应的内核头文件都装上了</span></div><div class="line"><span class="meta">#</span><span class="bash"> shutdown -r now</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>上面重启没问题后,再安装一些必要的工具,主要是opencl头文件和opencl相关的工具集…<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># apt-<span class="meta">get</span> install <span class="keyword">build-essential </span>lsb-core clinfo ocl-icd-opencl-dev opencl-headers ocl-icd-libopencl1 gcc git -y</div></pre></td></tr></table></figure></p>
+<p>0x03 下载编译安装 Intel OpenCL 驱动,具体地址如下<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="regexp">//</span>registrationcenter-download.intel.com<span class="regexp">/akdlm/i</span>rc_nas<span class="regexp">/9019/</span>opencl_runtime_16.<span class="number">1</span>_x64_ubuntu_5.<span class="number">2.0</span>.<span class="number">10002</span>.tgz</div></pre></td></tr></table></figure></p>
+<p>具体的安装过程就非常简单了,基本全程一键傻瓜化<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tar xf opencl_runtime_16.1_x64_ubuntu_5.2.0.10002.tgz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> opencl_runtime_16.1_x64_ubuntu_5.2.0.10002/</span></div><div class="line"><span class="meta">#</span><span class="bash"> bash install.sh</span></div><div class="line"><span class="meta">#</span><span class="bash"> shutdown -r now 	还是那句话,务必在装完以后立马重启机器</span></div><div class="line"><span class="meta">#</span><span class="bash"> clinfo		重启后看看系统有没有真正识别opencl套件,如果没识别,请先把问题解决了再往下继续,否则都是徒劳</span></div></pre></td></tr></table></figure></p>
+<p>0x04 接着,准备安装英伟达显卡驱动</p>
+<p>重启以后,记得先不要登录到图形界面中,直接按Ctrl + Alt + F1 进入字符终端模式,进到内核模块目录,通过配置文件的方式,禁用nouveau驱动,操作如下<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /etc/modprobe.d/</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch blacklist-nouveau.conf</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi blacklist-nouveau.conf</span></div><div class="line">  blacklist nouveau</div><div class="line">  options nouveau modeset=0</div><div class="line"><span class="meta">#</span><span class="bash"> update-initramfs -u</span></div><div class="line"><span class="meta">#</span><span class="bash"> shutdown -r now 	修改完配置以后立马重启机器</span></div></pre></td></tr></table></figure></p>
+<p>0x05 下载安装英伟达显卡驱动,在安装过程中会有很多交互,可根据实际需求进行选择</p>
+<p>同上,先不要登录到图形界面,按 Ctrl + Alt + F1 进到字符终端模式,并停掉相关的图形服务<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/lightdm stop 	lightdm是一个Linux桌面显示管理器,在安装显卡驱动过程中需要把相关的图形服务全部停掉,安装完以后再起起来</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod +x NVIDIA-Linux-x86_64-375.20.run </span></div><div class="line"><span class="meta">#</span><span class="bash"> bash NVIDIA-Linux-x86_64-375.20.run --no-opengl-files</span></div><div class="line"><span class="meta">#</span><span class="bash"> modprobe nvidia</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/lightdm start</span></div><div class="line"><span class="meta">#</span><span class="bash"> shutdown -r now  	此时重启后就可以回到图形界面了</span></div></pre></td></tr></table></figure></p>
+<p>0x06 下载编译安装最新版的 hashcat,具体的编译安装方法在压缩包的 BUILD.md 文件中[不过这个似乎还有些问题]已有说明,可先用下面的方法来装<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> git <span class="built_in">clone</span> https://github.com/hashcat/hashcat.git</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> hashcat/</span></div><div class="line"><span class="meta">#</span><span class="bash"> git submodule update --init --recursive	为了防止下载缺少文件,请执行该语句</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> shutdown -r now 	务必在装完以后立马重启机器</span></div></pre></td></tr></table></figure></p>
+<p>0x07 运行 hashcat 测试破解速度,调整GPU参数<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> hashcat -b</span></div></pre></td></tr></table></figure></p>
+<p>0x08 准备好各种散列hash,进行实际的hash破解测试,看看常用加密算法的实际破解速度如何,其实像md5,ntlm,mysql这种基础加密,实际中的爆破速度在这个配置下还是非常快的,实在不好意思,忘了截图了,尴尬 :(</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/hash-crack/">#hash crack</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

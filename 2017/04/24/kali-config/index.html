@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="kali 实战渗透环境配置指南"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>kali 实战渗透环境配置指南 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/04/24/kali-config/">
+                kali 实战渗透环境配置指南
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/kali-config/">kali config</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 最近刚好看到kali有更新,想想自己用的系统似乎很久也没更新过了,这里就顺手记录一些关于部署渗透系统的注意事项,留给有需要的朋友做些简单参考</p>
+<p>首先,到kali的官网去下载最新版的kali iso镜像或者虚拟机文件<code>个人还是更建议直接用它官方提供的虚拟机</code>,这里我就直接用它已经配好的虚拟机来做演示说明,也建议大家直接用它官方提供好的虚拟机,不用官方iso镜像是有原因的,以后大家就会明白的,只是不想在部署系统上浪费太多时间<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>/<span class="regexp">/images.offensive-security.com/virtual</span>-images/Kali-Linux-<span class="number">2017.1</span>-vm-amd64.<span class="number">7</span>z</div><div class="line"><span class="symbol">https:</span>/<span class="regexp">/images.offensive-security.com/virtual</span>-images/Kali-Linux-<span class="number">2017.1</span>-vm-i686.<span class="number">7</span>z</div></pre></td></tr></table></figure></p>
+<p>0x02 虚拟机下载好以后,解压该虚拟机文件,然后到VMware中选择并打开该虚拟机,root的默认密码是toor,进入系统后,编辑source.list文件,修改为官方提供的apt源,强烈建议这里只保留官网提供的apt源即可,尽量不要用任何第三方源,如果被挂马,概不负责,^_^ 务必谨记<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/apt/sources.list</span></div><div class="line">  deb <span class="symbol">http:</span>/<span class="regexp">/http.kali.org/kali</span> kali-rolling main non-free contrib</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 下面是常用的一些vpn客户端,因为等会要全部连vpn操作,所以,需要事先装下,个人习惯如此,你大可不必像我这样,只是有些工具不连vpn可能更新不了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get update 先刷下缓存,要不然可能会提示找不到某些软件包</span></div><div class="line"><span class="comment"># apt-get install network-manager-openvpn-gnome \</span></div><div class="line">network-manager-pptp network-manager-pptp-gnome \</div><div class="line">network-manager-strongswan network-manager-vpnc \</div><div class="line">network-manager-vpnc-gnome -y</div></pre></td></tr></table></figure></p>
+<p>0x04 配置并连接pptp<br><img src="/img/vpn_configses.png" alt="vpn"></p>
+<p>0x05 vpn连上没什么问题以后,再次刷新软件包缓存,注意这里单单只是刷新一下,千万不要大规模更新哦<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get update</span></div></pre></td></tr></table></figure></p>
+<p>0x06 安装内核头文件,因为在编译一些工具时经常要用到该头文件,如果你跟我一样,也直接用的是kali提供好的vmware虚拟机,默认头文件就是已经装好了的,因为在装vmtools时要用到这个头文件<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install linux-headers-`uname -r` -y</span></div><div class="line"><span class="comment"># apt-get install vim -y</span></div></pre></td></tr></table></figure></p>
+<p>0x07 删除所有的登陆提示,关于系统的简单优化,还有很多,这里就不一一说了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># &gt; /etc/issue</span></div><div class="line"><span class="comment"># &gt; /etc/issue.net</span></div><div class="line"><span class="comment"># &gt; /etc/motd</span></div></pre></td></tr></table></figure></p>
+<p>0x08 修复wireshark启动报错,这是自己用过的<code>最好的</code>渗透工具,没有之一<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/share/wireshark/init.lua</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/wireshark_lua.png" alt="vi"><br>0x09 配置符合自己操作习惯的一些环境变量,这儿只是给大家做些简单参考,大家按照自己实际的习惯来即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi ~/.bashrc</span></div><div class="line">  <span class="keyword">alias</span> ll=<span class="string">'ls -l'</span></div><div class="line">  <span class="keyword">alias</span> la=<span class="string">'ls -A'</span></div><div class="line">  <span class="keyword">alias</span> l=<span class="string">'ls -CF'</span></div><div class="line">  <span class="keyword">alias</span> vi=<span class="string">'vim'</span></div><div class="line">  <span class="keyword">alias</span> pg=<span class="string">'ping www.gogle.com -c 3'</span></div><div class="line">  <span class="keyword">alias</span> vinet=<span class="string">'vi /etc/network/interfaces'</span></div><div class="line">  <span class="keyword">alias</span> grep=<span class="string">'grep --color=auto'</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># source ~/.bashrc  编辑完以后,顺手重启下环境变量</span></div></pre></td></tr></table></figure>
+<p>0x10 再来简单配置下vi,也是个人最喜欢的编辑器之一,下面的选项最多只能保证vi刚刚可以正常使用,但更多具体的配置选项还要按大家自己实际的编辑习惯来,说到底只是个编辑器,怎么顺手怎么来,不用太过纠结<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi ~/.vimrc</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div></pre></td><td class="code"><pre><div class="line">syntax on           <span class="string">" 语法高亮</span></div><div class="line">autocmd InsertLeave * se nocul  " 用浅色高亮当前行</div><div class="line">autocmd InsertEnter * se cul    <span class="string">" 用浅色高亮当前行</span></div><div class="line">set ruler           " 显示标尺</div><div class="line">set showcmd         <span class="string">" 输入的命令显示出来，看的清楚些</span></div><div class="line">"自动保存</div><div class="line">set autowrite</div><div class="line">set ruler                   <span class="string">" 打开状态栏标尺</span></div><div class="line">set cursorline              " 突出显示当前行</div><div class="line">set magic                   <span class="string">" 设置魔术</span></div><div class="line">set guioptions-=T           " 隐藏工具栏</div><div class="line">set guioptions-=m           <span class="string">" 隐藏菜单栏</span></div><div class="line">" 不要使用vi的键盘模式，而是vim自己的</div><div class="line">set nocompatible</div><div class="line"><span class="string">" 去掉输入错误的提示声音</span></div><div class="line">set noeb</div><div class="line">" 在处理未保存或只读文件的时候，弹出确认</div><div class="line">set confirm</div><div class="line"><span class="string">" 自动缩进</span></div><div class="line">set autoindent</div><div class="line">set cindent</div><div class="line">" Tab键的宽度</div><div class="line">set tabstop=<span class="number">4</span></div><div class="line"><span class="string">" 统一缩进为4</span></div><div class="line">set softtabstop=4</div><div class="line">set shiftwidth=4</div><div class="line">" 不要用空格代替制表符</div><div class="line">set noexpandtab</div><div class="line"><span class="string">" 在行和段开始处使用制表符</span></div><div class="line">set smarttab</div><div class="line">" 显示行号</div><div class="line">set number</div><div class="line"><span class="string">" 历史记录数</span></div><div class="line">set history=1000</div><div class="line">"禁止生成临时文件</div><div class="line">set nobackup</div><div class="line">set noswapfile</div><div class="line"><span class="string">"搜索忽略大小写</span></div><div class="line">set ignorecase</div><div class="line">"搜索逐字符高亮</div><div class="line">set hlsearch</div><div class="line">set incsearch</div></pre></td></tr></table></figure>
+<p>vi 配置完以后的编辑效果,如下:<br><img src="/img/vi_config.png" alt="vi"></p>
+<p>0x11 开启系统的路由转发功能,很多工具运行时需要开启此功能,比如,各类嗅探工具,所以这儿就直接提前把它打开<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/sysctl.conf</span></div><div class="line">  net.ipv4.ip_forward=<span class="number">1</span></div></pre></td></tr></table></figure></p>
+<p>0x12 现在该配置下浏览器了,把浏览器上的各种图标能隐藏起来的都隐藏起来吧<code>乱七八糟的图标占地方</code>,越简洁越好,反正我们要看的是主体内容,平时用不到的一些功能尽量把它都收起来,省的占页面,浏览历史设置为,<code>从来不记住</code>,burpsuite的默认代理也提前设置好,另外再安装一些常用的插件,仍然只是随便给几个参考,大家平时喜欢用什么装什么即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">hackbar</div><div class="line">firebug</div><div class="line">downthemall</div><div class="line">noscript</div><div class="line">tamper data</div><div class="line">live http headers</div><div class="line">nodirect</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p><img src="/img/firoxo_plugins.png" alt="firefox"></p>
+<p>0x13 再来粗略配置下shell终端<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">修改成自己喜欢的终端字体字号,方便自己看就行</div><div class="line">让终端以真正的shell程序来运行</div><div class="line">选择自己喜欢的配色方案</div><div class="line">添加所有中文简体字符集防止终端中文乱码</div></pre></td></tr></table></figure></p>
+<p>0x14 解压rockyou字典,有时候可能会用到,反正自己很少用,默认字典质量确实比较烂<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cd /usr/share/wordlists/</span></div><div class="line"><span class="comment"># gunzip rockyou.txt.gz</span></div></pre></td></tr></table></figure></p>
+<p>0x15 把系统默认的java环境配置为java jdk,这里库所在的目录要注意下,我用的是32位的系统所以是i386,如果你是64位的系统可能就是amd64,非常不建议使用系统默认的Openjdk<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar xf jdk-7u45-linux-i586.tar.gz</span></div><div class="line"><span class="comment"># mv jdk1.7.0_45/ /opt/</span></div><div class="line"><span class="comment"># cd /opt/jdk1.7.0_45/</span></div><div class="line"><span class="comment"># update-alternatives --install /usr/bin/java java /opt/jdk1.7.0_45/bin/java 1</span></div><div class="line"><span class="comment"># update-alternatives --install /usr/bin/javac javac /opt/jdk1.7.0_45/bin/javac 1</span></div><div class="line"><span class="comment"># update-alternatives --install /usr/lib/mozilla/plugins/libjavaplugin.so mozilla-javaplugin.so /opt/jdk1.7.0_45/jre/lib/i386/libnpjp2.so 1</span></div><div class="line"><span class="comment"># update-alternatives --set java /opt/jdk1.7.0_45/bin/java</span></div><div class="line"><span class="comment"># update-alternatives --set javac /opt/jdk1.7.0_45/bin/javac</span></div><div class="line"><span class="comment"># update-alternatives --set mozilla-javaplugin.so /opt/jdk1.7.0_45/jre/lib/i386/libnpjp2.so</span></div><div class="line"><span class="comment"># java -version</span></div><div class="line"><span class="comment"># javac</span></div></pre></td></tr></table></figure></p>
+<p>0x16 安装各种压缩解压工具<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install unrar unace rar unrar p7zip zip unzip p7zip-full p7zip-rar file-roller -y</span></div></pre></td></tr></table></figure></p>
+<p>0x17 安装tor服务<code>最好不要让它自启动</code>和remmina远程桌面工具<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install tor -y</span></div><div class="line"><span class="comment"># apt-get install remmina -y</span></div></pre></td></tr></table></figure></p>
+<p>0x18 检查各种预装的服务,启动运行是否都正常,所有的服务默认都是不会自启动的,也不建议让它自启动,永远谨记,<code>最少的服务,最大的安全</code><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># /etc/init.d/apache2 start</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># /etc/init.d/mysql start</span></div><div class="line"><span class="comment"># mysql -uroot -p   我们发现最新版的kali,已经把MySQL换成了MariaDB,其实对于使用者来说几乎没有任何区别,因为我们根本不必关心底层架构</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># /etc/init.d/postgresql start</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># /etc/init.d/ssh start</span></div><div class="line">   PermitRootLogin yes 允许root可以远程登录,最好顺便把ssh的默认端口也改下,root密码,我就不说什么了,大家都懂,务必严格遵守密码复杂性要求</div><div class="line"><span class="comment"># /etc/init.d/ssh restart</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># netstat -tulnp  最后,看下各种服务端口都起来没</span></div></pre></td></tr></table></figure>
+<p>0x19 简单配置proxychains,注释掉原来默认的那个sock4代理,新增下面的代理,至于要代理的端口,你自己随意,只要不跟系统现有端口冲突即可,内网渗透可能经常用到,所以我在这里还是直接先把它配好,另外注意,类型选择 <code>random_chain</code> 随机选择代理<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/proxychains.conf</span></div><div class="line">  random_chain</div><div class="line">  socks5 <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">0</span> <span class="number">1000</span></div></pre></td></tr></table></figure></p>
+<p>0x20 检查各种工具启动运行时是否正常<br>msf:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># msfconsole</span></div><div class="line">armitage</div><div class="line"><span class="comment"># msfdb init 如果启动报错,先执行此初始化语句</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/armitage.png" alt="msf"><br></p>
+<p>beef:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cd /usr/share/beef-xss/</span></div><div class="line"><span class="comment"># vi config.yaml</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">credentials:</span></div><div class="line">   <span class="symbol">user:</span>   <span class="string">"klion"</span></div><div class="line">   <span class="symbol">passwd:</span> <span class="string">"admin!@#45"</span></div><div class="line"><span class="symbol">metasploit:</span></div><div class="line">   <span class="symbol">enable:</span> <span class="literal">true</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cd extensions/metasploit/</span></div><div class="line"><span class="comment"># vi config.yaml  修改回连地址</span></div><div class="line"><span class="comment"># cd ../../</span></div><div class="line">msf &gt; load msgrpc ServerHost=<span class="number">192.168</span>.<span class="number">3.5</span> User=msf Pass=abc123</div><div class="line"><span class="comment"># ./beef -x</span></div></pre></td></tr></table></figure>
+<p><img src="/img/beef_test.png" alt="beef"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># responder</span></div><div class="line"><span class="comment"># commix -h</span></div><div class="line"><span class="comment"># wpscan --update</span></div><div class="line"><span class="comment"># hydra -h</span></div><div class="line"><span class="comment"># medusa -h</span></div><div class="line"><span class="comment"># weevely -h</span></div><div class="line"><span class="comment"># sqlmap --version</span></div><div class="line"><span class="comment"># tcpdump -h</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">burpsuite:</span></div></pre></td></tr></table></figure>
+<p>maltego:<br><img src="/img/maltegose.png" alt="maltego"><br><br>其它更多的工具,这里就不一一测了,大家可以捡一些自己常用的测……<br></p>
+<p>0x21 安装一些额外工具</p>
+<p>安装配置nessus,去官网下载最新版的nessus deb包,然后解压安装该包,安装过程中如果没什么问题就可以启动nessus服务了,如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dpkg -i Nessus-6.10.5-debian6_i386.deb</span></div><div class="line"><span class="comment"># /etc/init.d/nessusd start</span></div></pre></td></tr></table></figure></p>
+<p>而后访问 <a href="https://127.0.0.1:8834" target="_blank" rel="external">https://127.0.0.1:8834</a> 它会进行一些简单的初始化操作,如,创建登录用户,输入激活码,最后下载更新数据,跳出登录界面,进入nessus控制台,注意浏览器在此时不要使用使用代理,否则会更新出错,如果更新出错,可再使用下面的命令手动更新:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># /opt/nessus/sbin/nessuscli update</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ness_test.png" alt="nessus"><br></p>
+<p>安装配置openvas:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install openvas   安装openvas,此期间的过程非常的漫长,务必要保持网络畅通,耐心等待</span></div><div class="line"><span class="comment"># openvas-setup    	    自动配置下载各种插件   </span></div><div class="line"><span class="comment"># openvas-check-setup       检查安装是否成功,看到所有的检测项ok,最后提示'it seems *** ok',即表示安装成功</span></div><div class="line"><span class="comment"># openvasmd --user admin --new-password admin123 创建登陆账号和密码</span></div><div class="line"><span class="comment"># openvas-feed-update       更新插件</span></div><div class="line"><span class="comment"># openvas-start   	    启动openvas服务</span></div><div class="line"><span class="comment"># openvas-stop	            关闭openvas服务,注意,启动关闭时可能都会比较慢,正常,因为要加载很多插件</span></div><div class="line">访问<span class="symbol">:https</span><span class="symbol">://</span><span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span><span class="symbol">:</span><span class="number">9392</span> 用刚刚创建的用户登陆openvas控制台即可</div></pre></td></tr></table></figure></p>
+<p><img src="/img/oepnvas_test.png" alt="vpn"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /lib/systemd/system/greenbone-security-assistant.service  编辑该配置文件,把里面的--listen=127.0.0.1 改成0.0.0.0 默认只允许本地登陆,改成任意地址登陆</span></div><div class="line"><span class="comment"># systemctl daemon-reload </span></div><div class="line"><span class="comment"># openvas-start</span></div></pre></td></tr></table></figure>
+<p>顺手再装几个外部工具,都是我自己会用到的一些,如果你觉得不适合自己,就忽略掉吧<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install zmap masscan mitmf bettercap</span></div></pre></td></tr></table></figure></p>
+<p>0x22 稍微清理一下系统,就差不多可以收工了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># history -cw</span></div><div class="line"><span class="comment"># apt-get autoclean</span></div></pre></td></tr></table></figure></p>
+<p>0x23 关闭虚拟机,点击虚拟机设置,点击<code>清理磁盘</code><br><img src="/img/pen_vmare_test.png" alt="vm"></p>
+<p>将硬盘设置为 <code>独立</code>-&gt; <code>非永久</code>,一定要记得,重要数据提前备份好,莫怪我没提醒,一旦关机,砸电脑也于事无补,已经不想再说被伤过多少次了,希望大家千万别再踏我踏过的坑,有些代价实在承受不起<br><img src="/img/stat_zanshi.png" alt="vm"><br><br></p>
+<p>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;至此,一个相对符合我们自己操作习惯的<code>干净</code>的渗透系统就基本部署完成了,至于后面还有很多各种各样的工具脚本,当我们用到时,再单独装就可以了,强烈建议不要一开始就把系统搞的特别臃肿,用什么开什么就好了,不用的时候全部关掉,尽可能的节省系统资源做更多的事情,大家可能注意到,我从始至终都没有执行过<code>apt-get upgrdae</code> 来更新系统,当然,这并不是因为我下的就是最新版的[没错,通常这时候更新也是最少的,这也正是我为什么选择在这个时候部署系统的主要原因],其实,对于渗透来讲,我们并不一定什么都必须要是最新的,相反,我们要的更多可能是实用和稳定,如果连这两点最基本的条件都不能保证,尤其对于一个渗透系统来讲,那就太可悲了,因为实际渗透中,我们可能并没有太多时间会花在解决系统自身的问题上,另外,还是那句话,强烈不建议隔一段时间就大规模更新系统,这样做的后果很可能会破坏掉系统原有的工具架构,尤其是一些依赖库版本的问题,最后可能导致的结果往往就是各种工具在运行时总是出现这样或那样的异常甚至不停报错,系统在第一次全部部署完成后,后续尽量就不要再进行大规模的更新,只要不是爆了很严重的,比如那种可以直接远程get到你的系统root的shell的0day,都不必太过担心,最后,因为我们部署该系统的初衷也并不是想把它作为我们的日常系统来用,所以,关于其他的一些娱乐办公方面的东西,这里不就说了,也强烈不建议把那些乱七八糟的东西都搞到系统里,很显然,这样做是非常不明智的,我们的最终目的,只是为了方便拿它来渗透,而不是装逼炫酷,所以,完全没必要把大把的时间都浪费在折腾系统上,真的不值当,只能告诉大家,东西装太多不好,是真的不好,尤其是我们很少用到的东西,除了会加重系统的负载,几乎是毫无用处,最后,再嘱咐大家一句,严禁安装flash[这个溢出王],要不然,哪一天被挂马,就尴尬了,总之一句话,用于实际渗渗透的系统尽量保持精简高效,实用和稳定即可,更具体情况还要根据大家自身的实际情况来考量,这里统统仅仅只是作为参考,当然,如果大家真的有非常熟练的<code>LFS</code>能力,完全可以自己去尝试从0构建一个专属的渗透发行版,这也是我一直想做的,不过,像我这种搓逼,也就只能用centos最小化或者在ubuntu[主要是看着舒服]上简单定制下了……总之,祝大家好运吧！<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/kali/">#kali</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

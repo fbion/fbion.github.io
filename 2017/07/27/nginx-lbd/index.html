@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="基于 nginx 的七层负载均衡实现初步"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>基于 nginx 的七层负载均衡实现初步 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/07/27/nginx-lbd/">
+                基于 nginx 的七层负载均衡实现初步
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-27</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/lbd/">lbd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 此次演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">NginxHttp</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.49</span> 	作为负载均衡器,测试域名为 `<span class="selector-tag">lb</span><span class="selector-class">.org</span>`,生产环境中,最好自己新建个虚拟<span class="selector-tag">ip</span>来做负载均衡,方便后续迁徙</div><div class="line"><span class="selector-tag">OldLamp</span>   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.45</span> 	后端真实处理请求的<span class="selector-tag">web</span>服务器 <span class="selector-tag">httpd-2</span><span class="selector-class">.2</span><span class="selector-class">.34</span></div><div class="line"><span class="selector-tag">OldLnmp</span>	  <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span> 	后端真实处理请求的<span class="selector-tag">web</span>服务器 <span class="selector-tag">nginx-1</span><span class="selector-class">.12</span><span class="selector-class">.2</span></div><div class="line"><span class="selector-tag">NewLnmp</span>	  <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.43</span>	作为访问客户端,测试各种负载均衡算法是否工作</div></pre></td></tr></table></figure></p>
+<p>先改下当前nginx负载均衡器的host解析,即<code>NginxHttp</code>机器,因为等会儿要直接用机器名去访问后端的web节点<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># vi /etc/hosts</div><div class="line">  <span class="number">192.168</span><span class="number">.3</span><span class="number">.42</span>	test.bwapp.org bwapp.org</div><div class="line">  <span class="number">192.168</span><span class="number">.3</span><span class="number">.45</span>	bwapp.cc www.bwapp.cc</div></pre></td></tr></table></figure></p>
+<p>再来改下<code>Newlnmp机器</code>的host解析,添加如下内容,因为等会儿要用它来进行测试访问<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># vi /etc/hosts</div><div class="line">  <span class="number">192.168</span><span class="number">.3</span><span class="number">.49</span> lb.org</div></pre></td></tr></table></figure></p>
+<p>0x02 以下是一些常用的负载均衡调度算法<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">rr   	 [ 正常轮询 ] 即按照事先给定的后端节点顺序挨个轮询,适合性能相近,业务相同的场景</div><div class="line">wrr  	 [ 权重轮询 ] 即按照事先设置好的后端节点轮询比例,进行轮询,适合机器性能差距较大,业务相同的场景</div><div class="line">ip_hash  [<span class="built_in"> ip </span>hash ] 也就是说只要客户端ip不变,在一段时间内就只访问固定的后端节点,`常用于会话保持`,如session,cookie,不过这样保持,负载就不均衡了</div><div class="line">fair	 [ 动态算法 ] 属于第三方算法,即根据节点的响应时间来分配请求,响应快的节点优先分配</div><div class="line">url_hash [ 节点取模 ] 也属于第三方节点,根据url来分配后端节点,命中率比较低,不过非常适合做web缓存</div><div class="line">一致性 hash <span class="built_in">..</span>.</div></pre></td></tr></table></figure></p>
+<p>0x03 在 nginx 中可用来实现负载均衡的主要模块<br><figure class="highlight axapta"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">upstream   模块 定义好后端节点及所使用调度算法,大致工作过程是这样的,它会先读取upstream中的配置,然后通过<span class="keyword">server</span>标签中的proxy_pass来进行实际的调用</div><div class="line">http_proxy 模块	主要负责实际的转发行为</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x04 先在用来做负载均衡的机器上安装好 nginx 1.12.2<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install pcre pcre-devel openssl openssl-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget http://nginx.org/download/nginx-1.12.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf nginx-1.12.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> nginx-1.12.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --prefix=/usr/<span class="built_in">local</span>/nginx-1.12.2 --user=nginx --group=nginx \</span></div><div class="line">--with-http_ssl_module \</div><div class="line">--with-http_stub_status_module \</div><div class="line">--with-http_gzip_static_module \</div><div class="line">--with-mail_ssl_module</div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/nginx-1.12.2/ /usr/<span class="built_in">local</span>/nginx</span></div></pre></td></tr></table></figure></p>
+<p>0x05 关于上述两个模块的简单使用样例<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">upstream</span>  模块,主要用来定义后端的真实web服务器节点和要使用的调度算法,配置详情如下</div></pre></td></tr></table></figure></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">upstream backend &#123; 		   # 先定义好后端web节点</div><div class="line">   <span class="built_in"> server </span>192.168.3.45  <span class="attribute">weight</span>=3; # 选择权重轮询方式,默认不指定会按正常逐个节点轮询</div><div class="line">   <span class="built_in"> server </span>192.168.3.42 ;</div><div class="line"></div><div class="line">   <span class="built_in"> server </span>backup1.example.com:8080   backup;	# 当上面的节点都挂掉时才会启用这个,相当于自带的高可用</div><div class="line">   <span class="built_in"> server </span>backup2.example.com:8080   backup;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http_proxy 模块,主要负责请求转发,但转发的方式有很多种,不过用nginx做反向代理通常会使用 `proxy_pass`</div></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="section">server</span> &#123; <span class="comment"># 此时再到指定的server标签段中去引用刚刚的定义,即可实现简单的负载均衡效果</span></div><div class="line">    <span class="attribute">location</span> / &#123;</div><div class="line">        <span class="attribute">proxy_pass</span> http://backend;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>0x06 接下来,开始真正在nginx上配置负载均衡及反向代理<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /usr/<span class="built_in">local</span>/nginx/conf/extra/</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/nginx/conf/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv nginx.conf nginx.conf.bak</span></div><div class="line"><span class="meta">#</span><span class="bash"> egrep -v <span class="string">"^$|#"</span> nginx.conf.bak &gt; nginx.conf</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf</span></div></pre></td></tr></table></figure></p>
+<p>先在<code>nginx.conf</code> 文件中定义好如下配置,这里先以正常轮询为例进行演示<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/nginx/conf/nginx.conf</span></div><div class="line"></div><div class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</div><div class="line"><span class="section">events</span> &#123;</div><div class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</div><div class="line">&#125;</div><div class="line"><span class="section">http</span> &#123;</div><div class="line">    <span class="attribute">include</span>       mime.types;</div><div class="line">    <span class="attribute">default_type</span>  application/octet-stream;</div><div class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</div><div class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</div><div class="line"></div><div class="line">    <span class="attribute">log_format</span> main <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span>  [<span class="variable">$time_local</span>]  '</span> </div><div class="line">    <span class="string">' "<span class="variable">$request</span>"  <span class="variable">$status</span>  <span class="variable">$body_bytes_sent</span>  '</span></div><div class="line">    <span class="string">' "<span class="variable">$http_referer</span>"  "<span class="variable">$http_user_agent</span>"  "<span class="variable">$http_x_forwarded_for</span>" '</span>;</div><div class="line"></div><div class="line">    <span class="attribute">include</span> extra/lb.conf;</div><div class="line">    <span class="attribute">upstream</span> server_pools&#123; <span class="comment"># 设置后端web节点,可同时规定好要使用的轮询算法</span></div><div class="line">	<span class="attribute">server</span> test.bwapp.org:<span class="number">80</span>;</div><div class="line">	<span class="attribute">server</span> www.bwapp.cc:<span class="number">80</span>;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>然后再到 <code>lb.conf</code> 文件中去定义好要进行负载均衡的域名,即<code>[server标签段]</code>,引用上面nginx.conf文件中upstream定义好的后端web节点<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi /usr/<span class="built_in">local</span>/nginx/conf/extra/lb.conf</span></div><div class="line"></div><div class="line">server&#123;</div><div class="line">   	listen 80;</div><div class="line">	server_name  lb.org;</div><div class="line">	location / &#123;</div><div class="line"><span class="meta">		#</span><span class="bash"> 下面的语句就表示把请求转发到指定的后端web节点上 </span></div><div class="line">		proxy_pass http://server_pools;</div><div class="line">		</div><div class="line"><span class="meta">		#</span><span class="bash"> 在往后端抛的时候务必要带上主机头,因为后端的web节点是根据这个主机头来确定,是哪个虚拟机主机</span></div><div class="line">		proxy_set_header Host  $host; </div><div class="line">		</div><div class="line"><span class="meta">		#</span><span class="bash"> 另外,记得要把原始客户端ip也带上,不然后端web节点日志中的就只能记录到负载均衡器的ip,而没有客户端的真实ip	</span></div><div class="line">		proxy_set_header X-Forwarded-For $remote_addr;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>0x07 nginx 负载均衡基本工作流程简述<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">当客户端访问 `lb.org` 域名时请求会最先到达负载均衡器,负载均衡器就会去读取自己server标签段中的配置</div><div class="line">到location里面一看,原来这是一个要往后端web节点抛的请求</div><div class="line">而后,nginx通过 `server_pools` 在自己的主配置文件找到了事先定义好的后端web节点</div><div class="line">最后,按照事先设置好的轮询算法,把请求带上主机头和客户端原始ip一起抛给后端准备好的web服务器</div></pre></td></tr></table></figure></p>
+<p>0x08 所配置完成之后,我们回到NewLnmp机器上进行轮询测试,看访问是否正常<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/nginx/sbin/nginx -t</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/nginx/sbin/nginx</span></div></pre></td></tr></table></figure></p>
+<p>在你没指定负载均衡算法的情况下,默认是按照事先定义好的后端web节点顺序逐个轮询的,如下<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="keyword">for</span> i <span class="keyword">in</span> `seq 10`; <span class="keyword">do</span> curl lb.org;sleep 1 ;<span class="keyword">done</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/normal ofr.png" alt=""></p>
+<p>接下来,我们让它权重轮询看看,定义方法很简单,只需要把前面http标签段的内容修改为下面这个样子即可<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">http &#123;</div><div class="line">    <span class="built_in">..</span>.</div><div class="line">    upstream server_pools&#123;</div><div class="line"><span class="built_in">	server </span>test.bwapp.org:80 <span class="attribute">weight</span>=3; # 设置权重比例</div><div class="line"><span class="built_in">	server </span>www.bwapp.cc:80;</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">..</span>.</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/weight for.png" alt=""></p>
+<p>最后,再去看看基于ip hash的轮询算法是个什么样子<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">http &#123;</div><div class="line">    <span class="built_in">..</span>.</div><div class="line">    upstream server_pools&#123;</div><div class="line">	ip_hash; # 基于ip hash的轮询算法</div><div class="line"><span class="built_in">	server </span>test.bwapp.org:80;</div><div class="line"><span class="built_in">	server </span>www.bwapp.cc:80;</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">..</span>.</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ip hash for.png" alt=""></p>
+<p>0x09 最后,再回到OldLamp和OldLnmp 机器上看看日志有没有被正确记录到<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tail -f /usr/<span class="built_in">local</span>/httpd/logs/bwapp-access_20171204.log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lamp log.png" alt=""></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tail -f /usr/<span class="built_in">local</span>/nginx/logs/access_bwapp.log</span></div></pre></td></tr></table></figure>
+<p><img src="/img/lnmp log.png" alt=""></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;这里提到的只是一部分,更详细具体的用法,请直接参考nginx官方文档,另外,nginx负载均衡较适合用于日pv 2000W以下的站点</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/lbd/">#lbd</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

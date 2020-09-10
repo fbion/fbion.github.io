@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="windows 溢出提权小记"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>windows 溢出提权小记 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/04/22/win-0day-privilege/">
+                windows 溢出提权小记
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/exp/">exp</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;平时用的相对比较多,就顺手自己记录了一份,不大完整,关键是大家能用上就好,都是一些已知的windows 0day exp,关于各个漏洞的详情,请自行查阅微软安全公告,链接如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>/<span class="regexp">/technet.microsoft.com/zh</span>-cn/library/security/dn639106.aspx</div></pre></td></tr></table></figure></p>
+<p>0x02 具体exp利用如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">RPCSS服务没有正确地隔离NetworkService或LocalService帐号下运行的进程,导致本地攻击者可以利用令牌劫持的方式获得权限提升</div><div class="line">漏洞代号: MS09-<span class="number">012</span></div><div class="line">补丁编号: KB952004</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 针对<span class="number">03</span>以下系统,菜刀可用</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p><img src="/img/churrasco.jpg" alt=""><br><img src="/img/pr.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">WebDAV extension <span class="keyword">for</span> IIS处理HTTP请求的方式中存在一个特权提升漏洞,攻击者可能通过创建特制的匿名 HTTP 请求以访问通常需要身份验证的位置来利用此漏洞</div><div class="line">漏洞代号: MS09-<span class="number">020</span></div><div class="line">补丁编号: KB970483</div><div class="line">exp 用途: IIS <span class="number">5</span>.x ,<span class="number">6</span>.x 本地提权 </div><div class="line">适应平台: 只针对 iis5.x <span class="number">6</span>.x,菜刀可用</div></pre></td></tr></table></figure>
+<p><img src="/img/IIS 5 6.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">常规内核级漏洞</div><div class="line">漏洞代号: MS1<span class="number">0</span>-<span class="number">015</span></div><div class="line">补丁编号: KB977165</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: <span class="number">03</span> <span class="number">32</span>位系统本地测试成功,08 <span class="number">64</span>位上并未成功(<span class="number">32</span>的应该可以),在msf中已经直接提供该exp</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">win32k.sys  内核级漏洞</div><div class="line">漏洞代号: MS1<span class="number">0</span>-<span class="number">04</span>8</div><div class="line">补丁编号: KB2160329</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: <span class="number">03</span>(<span class="number">32</span>),08(<span class="number">64</span>)本地测试成功,菜刀中执行还有点儿问题,需要调下exp</div></pre></td></tr></table></figure>
+<p><img src="/img/ms10 048 x86_1.jpg" alt=""><br><img src="/img/ms10 048 x86_2.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">辅助功能驱动程序中的漏洞导致的提权</div><div class="line">漏洞代号: MS11-<span class="number">046</span></div><div class="line">补丁编号: KB2503665</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: <span class="number">03</span>(<span class="number">32</span>)菜刀可用,08以后可能不太好使,应该是exp兼容性的原因</div></pre></td></tr></table></figure>
+<p><img src="/img/ms 11 046.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">辅助功能驱动程序中的漏洞导致的提权</div><div class="line">漏洞代号: MS11-08<span class="number">0</span></div><div class="line">补丁编号: KB2592799</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: <span class="number">03</span>本地测试成功,08以后的系统貌似也不太好使</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Microsoft Windows用户态调度机制特权提升漏洞</div><div class="line">漏洞代号:  MS12-<span class="number">042</span></div><div class="line">补丁编号: KB2707511</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 08 r2 <span class="number">64</span>位本地测试成功,只适合win7 <span class="keyword">or</span> <span class="number">2008</span>,有可能会蓝屏,exp不太稳定</div></pre></td></tr></table></figure>
+<p><img src="/img/ms12 042.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Microsoft Windows DirectX图形内核本地权限提升漏洞</div><div class="line">漏洞代号: MS13-<span class="number">046</span></div><div class="line">补丁编号: KB2829361</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 适合win <span class="number">7</span> <span class="number">8</span> <span class="number">2008</span> <span class="number">2008</span>R2,本地未测试</div><div class="line">用法<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">win32k.sys内存对象处理本地信息泄漏漏洞</div><div class="line">漏洞代号: MS13-<span class="number">053</span></div><div class="line">补丁编号: KB2850851</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: <span class="number">03</span> r2 <span class="number">32</span>位本地测试成功,不太稳定,<span class="number">64</span>位系统全部未成功</div></pre></td></tr></table></figure>
+<p><img src="/img/ms13 053.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Win32k.sys CVE-<span class="number">2014</span>-<span class="number">4113</span>特权提升漏洞</div><div class="line">漏洞代号: MS14-<span class="number">05</span>8</div><div class="line">补丁编号: KB3000061</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 08 以后的系统基本都可以,exp写的很不错,成功率非常高</div></pre></td></tr></table></figure>
+<p><img src="/img/ms 14 058.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">域内提权好帮手</div><div class="line">漏洞代号: MS14-<span class="number">06</span>8</div><div class="line">补丁编号: KB301178<span class="number">0</span></div><div class="line">exp 用途: 域内提权</div><div class="line">适应平台: 暂时只找到py版</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">内核提权</div><div class="line">漏洞代号: MS15-<span class="number">010</span></div><div class="line">补丁编号: KB303622<span class="number">0</span></div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 本地未测成功,可能需要某些库支持</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Windows内核模式驱动CVE-<span class="number">2015</span>-<span class="number">1680</span>信息泄露漏洞</div><div class="line">漏洞代号: MS15-<span class="number">051</span></div><div class="line">补丁编号: KB3045171</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 08 以后的系统基本都可以,成功率较高,菜刀直接可用</div></pre></td></tr></table></figure>
+<p><img src="/img/ms 15 051.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ATM 字体驱动程序中的漏洞可能允许特权提升</div><div class="line">漏洞代号: MS15-<span class="number">077</span></div><div class="line">补丁编号: KB3077657</div><div class="line">exp 用途: 字体提权</div><div class="line">适应平台: 可能该exp <span class="number">32</span>位系统好使,<span class="number">64</span>位均未成功</div></pre></td></tr></table></figure>
+<p><img src="/img/ms 15 077.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Windows某些版本内核模式驱动程序win32k.sys的进程初始化实现中存在安全漏洞</div><div class="line">漏洞代号: MS15-097</div><div class="line">补丁编号: KB3079904</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 可能是exp自身的问题,测试均未成功,缺少库</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">微软Media播放器命令执行漏洞</div><div class="line">漏洞代号: MS15-<span class="number">100</span></div><div class="line">补丁编号: KB3087918</div><div class="line">exp 用途: 适合钓鱼,msf中已有此exp</div><div class="line">适应平台<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">漏洞代号: MS16-<span class="number">014</span></div><div class="line">补丁编号: KB3134228</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 实际测试只在<span class="number">2008</span>(<span class="number">64</span>)的系统上成功,其它系统直接蓝屏</div></pre></td></tr></table></figure>
+<p><img src="/img/ms16 014.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">wedav漏洞</div><div class="line">漏洞代号: MS16-<span class="number">016</span></div><div class="line">补丁编号: KB3143141</div><div class="line">exp 用途: 本地提权</div><div class="line">适应平台: 本地win7(<span class="number">32</span>)并未成功</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">漏洞代号: MS16-<span class="number">032</span></div><div class="line">补丁编号: KB312428<span class="number">0</span></div><div class="line">exp 用途: powershell本地提权</div><div class="line">适应平台: 08 r2以后的系统成功率较高,可能是powershell自身版本的问题,有exe版的,大家自己去找吧</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell -nop -<span class="built_in">exec</span> bypass -c <span class="string">"&amp; &#123;Import-Module 'c:\Invoke-MS16-032.ps1';Invoke-MS16-032 -Application cmd.exe -commandline '/c net user HELPS$ amin!@#45 /add'&#125;"</span></span></div></pre></td></tr></table></figure>
+<p><img src="/img/ms16 032 _1.jpg" alt=""><br><img src="/img/ms16 032 _2.jpg" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">漏洞代号: MS16-<span class="number">135</span></div><div class="line">补丁编号: KB314178<span class="number">0</span></div><div class="line">exp 用途: 利用.NET提权</div><div class="line">适应平台: 08 R2本地测试成功,exp写的还不错</div><div class="line">用法: 有调好的powershell版的,实战中大家直接用ps版的会更好些,exe的执行比较繁琐,实战中利用非常有限</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell -nop -<span class="built_in">exec</span> bypass -c <span class="string">"&amp; &#123;Import-Module 'c:\Invoke-MS16-135.ps1';Invoke-MS16-135 -Application cmd.exe -commandline '/c net user HELPS amin!@#45 /add'&#125;"</span></span></div></pre></td></tr></table></figure>
+<p><img src="/img/ms16-135.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">smb远程执行</div><div class="line">漏洞代号: MS17-<span class="number">010</span></div><div class="line">补丁编号: KB4013389</div><div class="line">exp 用途: 远程注入dll</div><div class="line">用法: 这也可能是nsa工具包里最好用的一个,想必大家早都已经很熟练了,这里就不啰嗦了</div></pre></td></tr></table></figure>
+<p><br><br>快速检测目标系统未打漏洞补丁,注意,这里一定要先进到一个能读写的目录中去执行,要不然,没法创建临时文件:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># systeminfo&gt;temp.txt&amp;(for %i in (KB952004 KB970483 KB977165 KB2160329 KB2503665 KB2592799 KB2707511 KB2829361 KB2850851 KB3000061 KB3011780 KB3036220 KB3045171 KB3077657 KB3079904 KB3134228 KB3143141 KB3124280 KB3141780 KB4013389) do <span class="doctag">@type</span> temp.txt|<span class="doctag">@find</span> /i  "%i"|| <span class="doctag">@echo</span> %i Not Installed!)&amp;del /f /q /a temp.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/systeminfo_pacet.png" alt=""><br><br><br></p>
+<p>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;时间仓促,没有写完,后续会再抽空补上,其实,溢出提权,表面来讲没什么太多好说的,嘿嘿……原谅我不会逆向,所以才说不出来,实际提的过程中,最大的困难可能还是在免杀和调exp上,不同的系统exp在执行时经常会出现各种各样的问题,尤其是在64位机器上……如果这两点能搞定,拿着别人的exp,用用还是蛮轻松的,比如ms17-010……是吧,大家都懂的,嘿嘿,不好意思又跑题了,祝大家好运吧<br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/exp/">#exp</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

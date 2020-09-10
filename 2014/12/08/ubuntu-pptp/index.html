@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="web渗透第一步之信息搜集[ubuntu 14.04LTS 快速安装配置pptp]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>web渗透第一步之信息搜集[ubuntu 14.04LTS 快速安装配置pptp] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/08/ubuntu-pptp/">
+                web渗透第一步之信息搜集[ubuntu 14.04LTS 快速安装配置pptp]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-08</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/vpn-config/">vpn config</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 一点安装配置前的准备工作:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">先最小化安装好ubuntu server <span class="number">14.04</span> LTS,除了ssh,尽量不要再勾选其它的系统服务,顺手做些简单的系统安全优化,尽量保证跳板系统的纯净</div></pre></td></tr></table></figure></p>
+<p>0x02 关于vpn的具体用途,在前面已有详细说明,此处不再赘述,下面只会专门说明如何在linux(暂以ubuntu14.04为例)中快速搭建配置pptp<br>1)首先,到Ubuntu中安装好pptp服务端<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install pptpd -y</span></div><div class="line"><span class="comment"># apt-get update</span></div><div class="line"><span class="comment"># echo $?</span></div></pre></td></tr></table></figure></p>
+<p>2)服务端安装完成后,我们就可以开始配置pptpd了,先看下本机ip[<code>实际中应该是你自己vps的公网ip</code>],因为等会儿要把这个写到pptp主配置文件中<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ifconfig -a</span></div></pre></td></tr></table></figure></p>
+<p>3)编辑pptpd 主配置文件,设置好本机ip和vpn 的内网iP地址池(分配vpn的内网ip要用)<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/pptpd.conf</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">localip <span class="number">192.168</span>.<span class="number">3.185</span>        本机ip,实际用的vps,那这里就写vps的公网ip</div><div class="line">remoteip <span class="number">172.16</span>.<span class="number">110.1</span>-<span class="number">20</span>     设置vpn的内网ip地址池</div></pre></td></tr></table></figure>
+<p>4)编辑pptpd的dns配置文件,设置好用于解析的dns服务器ip,推荐用谷歌的8.8.8.8<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/ppp/pptpd-options</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ms-dns <span class="number">8.8</span>.<span class="number">8.8</span></div><div class="line">ms-dns <span class="number">114.114</span>.<span class="number">114.114</span></div></pre></td></tr></table></figure>
+<p>5) 添加系统用户,没错,在linux中pptp也直接用的是系统用户,作为我们的vpn登录账户[不过,大多数可能都是nologin的]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># useradd xlion -s /usr/sbin/nologin</span></div><div class="line"><span class="comment"># passwd  xlion</span></div></pre></td></tr></table></figure></p>
+<p>6) 把该账号密码添加到对应的pptp配置文件中,格式: username  pptpd password *,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/ppp/chap-secrets</span></div><div class="line">xlion  pptpd admin *</div></pre></td></tr></table></figure></p>
+<p>7) 重启pptpd服务,先看下服务到底有没有起来,不用急着连<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># /etc/init.d/pptpd restart</span></div><div class="line"><span class="comment"># netstat -tulnp | grep "1723"</span></div></pre></td></tr></table></figure></p>
+<p>8) 编辑sysctl.conf 文件,开启系统的路由转发功能,如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/sysctl.conf  </span></div><div class="line">net.ipv4.ip_forward=<span class="number">1</span> 将ip_forward 值改为 <span class="number">1</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># sysctl -p  重新读取sysctl配置</span></div></pre></td></tr></table></figure>
+<p>9) 如果你已经安装并且开启了iptables,可以顺手把下面的规则加进去,否则,你可能会发现,vpn确实能正常连上,但死活上不了外网,其实原因很简单,你需要在vpn的这个内网段上做下nat,具体如下,这里的ip段是vpn的内网ip段,网卡接口是外网卡接口,意思就是在这个网卡上启用nat<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install iptables</span></div><div class="line"><span class="comment"># iptables -t nat -A POSTROUTING -s 172.16.110.0/24 -o  eth0 -j MASQUERADE</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">设置下mtu,正常情况下<span class="number">1200</span>即可,防止包过大,可以不用设置</div><div class="line"><span class="comment"># iptables -A FORWARD -s 172.16.110.0/24 -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1200  </span></div><div class="line"><span class="comment"># iptables-save &gt; /etc/iptables-rules   </span></div><div class="line"><span class="comment"># /etc/init.d/pptpd restart</span></div></pre></td></tr></table></figure>
+<p>10) 让pptpd 服务随系统自启动<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># update-rc.d pptpd enable</span></div></pre></td></tr></table></figure></p>
+<p>11) 开始配置客户端,进行连接测试,有时候,你可能会遇到这样的情况,虽然pptp客户端是连接成功了,但无法正常上网,ping的结果显示超时,绝大多数原因都是防火墙在搞鬼,你可以利用下面的命令直接把防火墙关掉,或者允许1723端口能正常进出应该就没问题了,至此,在ubuntu 14.04 LTS中搭建配置pptpd基本就算完成了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ufw status</span></div><div class="line"><span class="comment"># ufw disable  		停止防火墙并删除自启动</span></div><div class="line"><span class="comment"># ufw allow 1723    	允许外部的1723端口访问</span></div><div class="line"><span class="comment"># ufw delete allow 1723	禁止外部访问本机的1723端口</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/pptp server ubuntu.png" alt=""><br><img src="/img/ubuntu pptpd res.png" alt=""><br><img src="/img/ubuntu pptpd res ping .png" alt=""><br><img src="/img/ubuntu pptpd tracert.png" alt=""><br></p>
+<p>12) 是不是觉得手敲命令太枯燥了呢,把它写成shell脚本吧,其实非常简单,稍微把命令堆砌调整一下即可,稍后会把自己的脚本都提供给大家,可根据自己的实际需求再稍微改下<br><br></p>
+<p>一些小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;通观全文并没什么实际的技术含量,安装配置和win下基本也没有太大差别,只不过一个是靠图形界面,另一个是靠改配置文件来完成的,完全是看个人习惯,可能我自己比较习惯linux,所以更喜欢在linux中配置pptp,如果你觉得windows比较方便,那你就直接在windows上配置就好了,前提是要严格遵循前面所提到的一些关于系统的各种安全策略配置,不同的系统平台策略设置可能不太一样,后面会有专门的篇幅来讲解linux系统的安全部署,这里只要暂时能满足把服务先跑起来能用上即可,关于安全部署方面的东西,后面再详细说,因为你vpn宿主系统的安全也会直接关系到你自己的安全,大家可能在这上面还要多花点儿心思才是,也不早了,睡觉,安……！</p>
+<p><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/pptp/">#pptp</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

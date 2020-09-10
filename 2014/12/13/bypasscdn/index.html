@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="web渗透第一步之信息搜集 [ 透过cdn找目标真实ip ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>web渗透第一步之信息搜集 [ 透过cdn找目标真实ip ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/13/bypasscdn/">
+                web渗透第一步之信息搜集 [ 透过cdn找目标真实ip ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-13</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/bypasscdn/">bypasscdn</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 在了解cdn之前,有必要先来科普下什么是 ‘负载均衡’ 以及’正/反向’ 代理,既然选择了做渗透,这些最基本的基础不熟悉肯定是不行的</p>
+<p>正向代理 [ ForwardProxy ]:<br>&nbsp;&nbsp;&nbsp;&nbsp;大家默认所说的代理其实都是指正向代理,不管是正向还是反向,理解数据的流向很重要,要理解这种比较抽象的东西最好的方式就是画图,比如下图就是一个正向代理的简易工作流程图,要表达的意思,已经很清晰了,就是说当客户端要去请求远程server上的资源时,并非直接通过本地路由网关到达远程server,而是先经过代理服务器,由代理服务器去帮我们请求,之后远程服务器会把请求的结果返回给代理服务器再由代理服务器返回给客户端,这么一个过程就叫正向代理,其实你还可以理解的更简单粗暴一点,它有点儿类似我们常说的 ‘翻墙’,正常情况我自己是不能直接上谷歌的,但我找了一个能上谷歌的代理,然后我们请求谷歌的时候可以让代理服务器去帮我们请求,最后,再通过代理服务器把响应的数据返回到我本地,就这么一个过程,包括我们常用的vpn其实也有点儿类似的功能(当然,这里只是粗略的类似,但vpn本质[隧道]上是什么,在前面已经有说明),不过现在正向代理可能用的比较少了,以前用代理服务器只是为了提高访问速度[因为缓存的原因],可以节省带宽,也可以在代理服务器上做些访问控制……</p>
+<a id="more"></a>
+<p>反向代理 [ reverseproxy ]:<br>&nbsp;&nbsp;&nbsp;&nbsp;至于反向代理,就更容易理解了,数据流向完全相反,还是看这张图,来自客户端的请求会首先到达代理服务器而非真实的server,至于客户端的请求最终会被送到哪个后端服务器上去处理,客户端是完全看不到的,这也在一定程度上隐藏了后端的真实server<br><img src="/img/0qpxZ.png" alt="&quot;&quot;"></p>
+<p>负载均衡 [ Loadbalancing ]:<br>&nbsp;&nbsp;&nbsp;&nbsp;负载均衡主要用在高并发的场景中,也就是代理服务器可能有很多台,有可能是个代理服务器集群,来自四面八方的请求会被代理服务器分发到后端各个服务器上去处理,至于具体要被分发到后端哪一台服务器上去处理,则由其内部的负载均衡算法决定,比如典型的 nginx七层负载均衡,以及各种硬件负载均衡器,比如像 f5 这种东西,等等……<br><img src="/img/load-balancing.png" alt="&quot;&quot;"><br></p>
+<p>透明代理:<br>&nbsp;&nbsp;&nbsp;&nbsp;很显然,透明的意思就是你感受不到代理服务器的存在,但流量却又真正被代理服务器所左右,也就是说,我们并不需要知道代理服务器,比如,我可以用这种方式来限制你访问某些资源等等……它跟正向代理非常的像,其实也属于正向代理的一种,只不过正向代理能看见,但这个看不到</p>
+<p>匿名代理:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">高度匿名代理</div><div class="line">这样的服务器会把你的数据包原封不动的来转发,就好像自己的一样,这样对目标站来讲,根本就不会以为是代理服务器在访问它而不是你</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">普通匿名代理</div><div class="line">相对于高度匿名代理来讲,这样的服务器会被目标站认出来是代理服务器,从而很有可能还是会追踪到你的真实IP</div></pre></td></tr></table></figure>
+<p>0x02 既然说到这里,就顺带插一嘴,关于木马的正向,反向连接:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">正向连接(bind),是我主动去连接别人机器上的某个端口,很显然,这样极易被对方防火墙拦掉</div><div class="line">反向连接(reverse),是让别人机器上的某个端口上的流量主动连到我机器上的某个端口上,起码暂时对各类应用层防火墙的穿透效果还是蛮不错的</div></pre></td></tr></table></figure></p>
+<p>0x03 接着我们就来简要说明下,在实际渗透过程中,关于绕过cdn找真实ip的问题,不过在此之前,我们首先要稍微了解下cdn是什么:<br>&nbsp;&nbsp;&nbsp;&nbsp;cdn即内容分发网络,主要是为了解决传输距离和不同运营商节点处所带来的网络速度性能低下的问题,说白点儿就是一组在不同运营商之间的对接节点上的一组高速缓存服务器,把用户经常要访问的一些静态数据资源,例如:静态的html,css,js图片等文件,直接缓存到节点服务器上,当用户再次请求的时候,直接分发到在离用户最近的节点服务器上响应给用户,注意,这里直接是就近响应给用户,而并非现从远程web服务器上取数据然后再响应给用户,远程web服务器也只是当用户有实际数据交互的时才会现从远程服务器上响应,这样可以大大提高网站的响应速度以及用户体验,但这却给渗透带了一些问题,比如:目标购买了cdn服务,我们直接ping目标的域名,最先到达的并非真正的目标web服务器,而只是离我们最近的一台目标节点的cdn服务器,这也就导致我们没法直接得到目标真实的ip段范围,表面看来,这样确实好像能有效的抵御一部分入侵和ddos行为,但……真的就能那啥吗……很显然,安全本身就是一个非常全面一体的概念,只是一个或者几个节点的安全,不算真正的安全,可能现在大多数企业都会大量的心思花在web上,首先,可以确认的是,一般把web安全做好,基本就能防住一大半的主动入侵,这是事实,但另一部分呢,web往往只是作为我们的其中一个边界入口,但绝不是唯一的入口,好吧,又TM跑题了,实在抱歉,还是说我们今天的重点吧,如何透过CDN节点找到目标的真实ip段范围</p>
+<p>0x04 在了解了cdn的基本作用之后,我们来具体看看如何bypass掉它,首先,怎么判断目标到底是否使用了CDN,观察下面的实例:<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">可以先简单<span class="built_in">ping</span>下目标主域,观察域名的解析情况,一般情况下,从这里就大概可以看到目标是否用了cdn,比如,下面这些实例很显然就用了cdn</div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ping</span> <span class="selector-tag">www</span><span class="selector-class">.zhenai</span><span class="selector-class">.com</span></div></pre></td></tr></table></figure>
+<p><img src="/img/zhenai.png" alt="&quot;&quot;"></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ping</span> <span class="selector-tag">www</span><span class="selector-class">.baihe</span><span class="selector-class">.com</span></div></pre></td></tr></table></figure>
+<p><img src="/img/baihe.png" alt="&quot;&quot;"></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ping</span> <span class="selector-tag">www</span><span class="selector-class">.eastmoney</span><span class="selector-class">.com</span></div></pre></td></tr></table></figure>
+<p><img src="/img/eastmoney.png" alt="&quot;&quot;"></p>
+<p>0x05 在确认目标确实用了cdn以后,就可以开始进入今天的重点了,如何透过cdn找目标真实ip,下面都是一些比较常规的方法,不一定每种都可行,但我知道,不尝试一定不可行<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">搞清楚目标网站业务,看看目标网站上有没有提供用户注册的功能,关键我们的目的主要是要它发过来的那个激活邮件,因为在这个邮件头中有发送此邮件的邮件服务器域名<span class="built_in">ip</span>,看看是不是目标自己的邮件服务器(务必要注意,必须是目标自己的邮件服务器,因为我们最终要找的是目标的真实<span class="built_in">ip</span>段,如果是利用第三方或者其它公共邮件服务器发的都不是我们想要的),如果是,ping下它的这个邮件服务器的域名,也许就能看到目标真实<span class="built_in">ip</span>了</div><div class="line">再看看目标网站上有没有订阅功能,把目标订阅到自己的邮箱,和上面验证邮件的用途一样,看下发来的订阅邮件中的邮件头,观察发送此邮件的服务器域名是不是我们想要的</div><div class="line">盲打目标网站的各种探针类文件,如:phpinfo里面的_SERVER[<span class="string">"SERVER_ADDR"</span>]也包含的有服务器端的真实<span class="built_in">ip</span>,当然,除了phpinfo之外,还有很多其它类似的探针文件,这个可以尝试直接拿工具跑</div><div class="line">在目标规模很大的情况下,通过爆破目标子域分析下各个子域的<span class="built_in">ip</span>解析情况,也是可以判断出目标的真实<span class="built_in">ip</span>段的</div><div class="line">前面提过一个查域名的<span class="built_in">ip</span>历史纪录的老站,www.netcraft.com,通过观察域名的<span class="built_in">ip</span>历史记录也是可以大致分析出目标的真实<span class="built_in">ip</span>段</div><div class="line">用个境外的不知名的dns服务器<span class="built_in">ip</span>来解析目标域名的各种记录mx,ns,a,因为在境外用cdn的情况还是比较少的</div><div class="line">如果目标网站有自己的app,不妨再抓下它app的请求,看看能不能这里面找到目标的真实<span class="built_in">ip</span>,至于工具,fiddler和<span class="keyword">burpsuite都可以</span></div><div class="line">跟抓app方式差不多,如果目标还有自己的什么软件产品,不妨去下个装下,尝试跟下它的各流量,兴许也能看到目标的真实<span class="built_in">ip</span></div><div class="line">通过各种漏洞或者其它方式想办法让目标反向连接我们,比如弹个shell,被动和目标数据库建立连接等等……然后再在本地netstat-ano就有了</div><div class="line">关于其它更多的小技巧,待续……</div></pre></td></tr></table></figure></p>
+<p>0x06 找到目标真实ip以后,又该怎么验证结果的可靠性呢,如果是web,最简单的方法,可直接尝试用ip访问,看看响应的页面是不是和直接访问域名返回的一样,或者在目标段比较大的情况下[比如一个C段都是他的],还可以借助类似masscan的工具批扫下对应ip段中所有开了80,443,8080端口的ip,然后逐个尝试ip访问,观察响应结果是否为目标站点</p>
+<p>0x07 至于,确定目标真实ip以后的用途,前面已经多次说明过,此处不再赘述</p>
+<p>0x08 最后,再提供一个传说可以直接bypass CloudflareCDN的接口,暂时还有效,不过,能有效到什么时候就不好说了,至于其内部具体怎么实现,暂未知:<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span><span class="comment">//www.crimeflare.com/cfs.html</span></div></pre></td></tr></table></figure></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于如何透过cdn找目标真实ip范围,大概就先说到这里,大家也看到了,其实这个东西并没有任何技术含量,都是平时的一些想法和经验积累,关键在于,你能不能想到哪里会存的有真实ip,才是最重要的,当然,这里说到的可能只是冰山一角,其实,自己博客的初衷并非想教会大家多少技巧,更多的是希望能通过自己的一点想法扩展出大家无限的思路,然后再相互交流融合,这也是本人一直所期望的</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/信息搜集/">#信息搜集</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

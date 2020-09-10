@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="klion&#39;s blog"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa fa fa-tags" aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+        
+            <section class="main">
+                
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/img/shodan hacking.html">
+                Untitled
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-06-24</span>
+            
+            
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <hr>
+<p>title: 熟练利用shodan hacking 辅助我们快速渗透 [ 通常针对大中型目标 ]<br>date: 2014-12-15 10:09:10<br>tags: shodan hacking<br>categories: “shodan hacking”</p>
+<h2 id="author-klion"><a href="#author-klion" class="headerlink" title="author: klion"></a>author: klion</h2><p><br></p>
+<h5 id="shodan-入门-在入侵一些网络设备的时候还是非常好使的-俗称”工控设备渗透”"><a href="#shodan-入门-在入侵一些网络设备的时候还是非常好使的-俗称”工控设备渗透”" class="headerlink" title="shodan 入门[在入侵一些网络设备的时候还是非常好使的,俗称”工控设备渗透”]:"></a>shodan 入门[在入侵一些网络设备的时候还是非常好使的,俗称”工控设备渗透”]:</h5><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">不像谷歌,bing那样只是单单是基于web爬行,shodan则是基于全网旗标搜索,我们主要可以用它来撞撞各种网络设备的默认密码默认只能看到<span class="number">50</span>个结果,可能需要付点费才能看到的更多,同样它提供查询api,非常方便写脚本]</div></pre></td></tr></table></figure>
+<h5 id="官方站点-注册个账号是必须的"><a href="#官方站点-注册个账号是必须的" class="headerlink" title="官方站点[注册个账号是必须的]:"></a>官方站点[注册个账号是必须的]:</h5><p><a href="https://www.shodan.io/" target="_blank" rel="external">https://www.shodan.io/</a>  </p>
+<h5 id="shodan-内置的几个简单过滤器"><a href="#shodan-内置的几个简单过滤器" class="headerlink" title="shodan         内置的几个简单过滤器:"></a>shodan         内置的几个简单过滤器:</h5><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">city:</span>   	城市,貌似只支持英文</div><div class="line"><span class="symbol">country:</span>  	国别,比如<span class="symbol">:cn</span>,us,jp,tw,br,ph,vn,hk</div><div class="line"><span class="symbol">hostname:</span> 	主机名[域名如果是子域还需要在前面加个.]</div><div class="line"><span class="symbol">net:</span>      	网络地址范围,可以是单个ip或者cidr格式</div><div class="line">os :   		操作系统 centOS,win32,red hat,suse 等等</div><div class="line"><span class="symbol">port:</span>  		根据端口,HTTP (<span class="number">80</span>),FTP (<span class="number">21</span>),SSH (<span class="number">22</span>),SNMP (<span class="number">161</span>),SIP (<span class="number">5060</span>)等等</div><div class="line"><span class="symbol">product:</span>  	具体的产品名称</div></pre></td></tr></table></figure>
+<h5 id="下面是一些简单的搜索实例"><a href="#下面是一些简单的搜索实例" class="headerlink" title="下面是一些简单的搜索实例:"></a>下面是一些简单的搜索实例:</h5><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">搜集某个城市的特定设备标识[自己可以实现多收集一些常见的软件和设备标识]:</div><div class="line">Microsoft-IIS/<span class="number">5.0</span> <span class="symbol">city:</span><span class="string">"TOKYO"</span>   可以逐个尝试是否能put</div><div class="line">Microsoft-IIS/<span class="number">6.0</span> <span class="symbol">city:</span><span class="string">"Seoul"</span></div><div class="line">Microsoft-IIS/<span class="number">7.5</span> <span class="symbol">city:</span><span class="string">"Hong Kong"</span></div><div class="line">apache <span class="symbol">city:</span><span class="string">"Nagoya"</span></div><div class="line">Apache/<span class="number">2.2</span>.<span class="number">27</span> <span class="symbol">city:</span><span class="string">"Nagoya"</span></div><div class="line">Tomcat <span class="symbol">city:</span><span class="string">"Seoul"</span></div><div class="line">cisco <span class="symbol">city:</span><span class="string">"Osaka"</span></div><div class="line">tplink <span class="symbol">city:</span><span class="string">"nanjing"</span></div></pre></td></tr></table></figure>
+<p><img src="/img/shodan webserver.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">搜索特定版本操作系统及特定端口:</div><div class="line"><span class="symbol">os:</span><span class="string">"linux"</span> <span class="symbol">net:</span><span class="string">"72.34.62.0/24"</span></div><div class="line"><span class="symbol">os:</span><span class="string">"windows"</span> <span class="symbol">net:</span><span class="string">"195.40.91.0/24"</span></div><div class="line">Apache <span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"8080"</span>  <span class="symbol">product:</span><span class="string">"Apache Tomcat/Coyote JSP engine"</span></div><div class="line">Apache <span class="symbol">city:</span><span class="string">"Seoul"</span> <span class="symbol">port:</span><span class="string">"8080"</span></div><div class="line"><span class="symbol">hostname:</span><span class="string">".polyu.edu.hk"</span> <span class="symbol">os:</span><span class="string">"windows"</span></div></pre></td></tr></table></figure>
+<p><img src="/img/shodan apache.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">搜索指定国家地域的特定类型软件(还是那句话,多搜集一些软件标识):</div><div class="line"><span class="symbol">product:</span><span class="string">"tomcat"</span>  <span class="symbol">net:</span><span class="string">"158.132.18.0/24"</span></div><div class="line"><span class="symbol">product:</span><span class="string">"apache"</span>  <span class="symbol">net:</span><span class="string">"158.132.18.0/24"</span></div><div class="line"><span class="symbol">product:</span><span class="string">"iis"</span>     <span class="symbol">net:</span><span class="string">"158.132.18.0/24"</span></div><div class="line"><span class="symbol">port:</span><span class="string">"8080"</span> jboss <span class="symbol">country:</span>CN</div></pre></td></tr></table></figure>
+<p><img src="/img/shodan webserver iis.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">扫描指定网段的所有数据库服务器:</div><div class="line"><span class="symbol">product:</span><span class="string">"Mysql"</span>  <span class="symbol">net:</span><span class="string">"140.117.13.0/24"</span> <span class="symbol">port:</span><span class="string">"3306"</span></div><div class="line"><span class="symbol">port:</span><span class="string">"1433"</span> <span class="symbol">net:</span><span class="string">"78.131.197.0/24"</span></div><div class="line"><span class="symbol">port:</span><span class="string">"5432"</span> <span class="symbol">net:</span><span class="string">"77.55.149.0/24"</span></div><div class="line"><span class="symbol">port:</span><span class="string">"1521"</span> <span class="symbol">net:</span><span class="string">"78.143.192.0/12"</span></div><div class="line"><span class="symbol">port:</span><span class="string">"1521"</span> <span class="symbol">city:</span><span class="string">"Osaka"</span></div></pre></td></tr></table></figure>
+<p><img src="/img/shodan webserver mssql.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">搜索远程管理终端:</div><div class="line"><span class="symbol">os:</span><span class="string">"windows"</span> <span class="symbol">port:</span><span class="string">"3389"</span> <span class="symbol">net:</span><span class="string">"107.160.1.0/24"</span></div><div class="line"><span class="symbol">os:</span><span class="string">"linux"</span> <span class="symbol">port:</span><span class="string">"22"</span> <span class="symbol">net:</span><span class="string">"107.160.1.0/24"</span></div><div class="line"><span class="symbol">os:</span><span class="string">"linux"</span> <span class="symbol">port:</span><span class="string">"23"</span> <span class="symbol">net:</span><span class="string">"107.160.1.0/24"</span></div><div class="line"><span class="symbol">os:</span><span class="string">"linux"</span> <span class="symbol">port:</span><span class="string">"23"</span> <span class="symbol">net:</span><span class="string">"87.124.0.0/15"</span></div></pre></td></tr></table></figure>
+<p><img src="/img/shodan webserver 3389.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">搜路由<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">搜索<span class="symbol">ftp:</span></div><div class="line"><span class="symbol">port:</span><span class="string">"21"</span> <span class="symbol">net:</span><span class="string">"107.160.1.0/24"</span></div><div class="line"><span class="symbol">port:</span><span class="string">"69"</span> <span class="symbol">net:</span><span class="string">"218.242.16.0/24"</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">在某个城市中搜索指定的端口,操作系统及设备:</div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"69"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"3389"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"22"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"23"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"3306"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"110"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">os:</span><span class="string">"windows"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">product:</span><span class="string">"cisco"</span></div><div class="line"><span class="symbol">city:</span><span class="string">"Hong Kong"</span> <span class="symbol">port:</span><span class="string">"8080"</span></div></pre></td></tr></table></figure>
+<p><img src="/img/shodan webserver hong kong 3389.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">按照国家进行搜索指定的设备,端口,服务器:</div><div class="line"><span class="symbol">port:</span><span class="string">"23"</span> <span class="symbol">country:</span>CN</div><div class="line"><span class="symbol">port:</span><span class="string">"1433"</span> <span class="symbol">country:</span>CN</div><div class="line"><span class="symbol">port:</span><span class="string">"3389"</span> <span class="symbol">country:</span>CN</div><div class="line">tplink <span class="symbol">country:</span>CN</div><div class="line">huawei <span class="symbol">country:</span>CN</div><div class="line">netcam  <span class="symbol">country:</span>CN</div><div class="line"><span class="symbol">country:</span>CN <span class="symbol">net:</span><span class="string">"115.225.113.0/24"</span> <span class="symbol">port:</span><span class="string">"22"</span></div><div class="line"><span class="symbol">country:</span>CN router</div><div class="line">admin login  <span class="symbol">country:</span>HK</div><div class="line">hacked by <span class="symbol">country:</span>HK</div></pre></td></tr></table></figure>
+<p><img src="/img/shodan webserver netcam.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">搜缺省密码:</div><div class="line"><span class="string">"default password"</span> <span class="symbol">city:</span><span class="string">"Hong Kong"</span></div><div class="line"><span class="symbol">country:</span>CN <span class="string">"default password"</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">搜exp[其实,就是把exploit上的东西扒下来]:</div><div class="line"><span class="symbol">https:</span>/<span class="regexp">/exploits.shodan.io/welcome</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">搜索各类漏洞摄像头:</div><div class="line">netcam <span class="symbol">net:</span><span class="string">"187.189.82.0/24"</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">批量搜集一些开源程序,尝试0day批量利用<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">针对某个端口,批量搜集感染了某种数据标志的木马<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">批量搜集一些经典漏洞,比如<span class="symbol">:iis</span> put,心脏滴血,bash远程执行,等等……<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<h5 id="下面是一些常见的默认用户名密码-可以撞撞运气"><a href="#下面是一些常见的默认用户名密码-可以撞撞运气" class="headerlink" title="下面是一些常见的默认用户名密码,可以撞撞运气:"></a>下面是一些常见的默认用户名密码,可以撞撞运气:</h5><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">ACTi:</span> admin/<span class="number">123456</span> <span class="keyword">or</span> Admin/<span class="number">123456</span></div><div class="line">Axis (traditional): root/pass,</div><div class="line">Axis (new): requires password creation during first login</div><div class="line"><span class="symbol">Cisco:</span> No default password, requires creation during first login</div><div class="line"><span class="symbol">Grandstream:</span> admin/admin</div><div class="line"><span class="symbol">IQinVision:</span> root/system</div><div class="line"><span class="symbol">Mobotix:</span> admin/meinsm</div><div class="line"><span class="symbol">Panasonic:</span> admin/<span class="number">12345</span></div><div class="line">Samsung <span class="symbol">Electronics:</span> root/root <span class="keyword">or</span> admin/<span class="number">4321</span></div><div class="line">Samsung Techwin (old): admin/<span class="number">1111111</span></div><div class="line">Samsung Techwin (new): admin/<span class="number">4321</span></div><div class="line"><span class="symbol">Sony:</span> admin/admin</div><div class="line"><span class="symbol">TRENDnet:</span> admin/admin</div><div class="line"><span class="symbol">Toshiba:</span> root/ikwd</div><div class="line"><span class="symbol">Vivotek:</span> root/&lt;blank&gt;</div><div class="line"><span class="symbol">WebcamXP:</span> admin/ &lt;blank&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">shodan 差不多就这些了,建议大家如果真的想用好可以付点费写脚本,国内利用此api实现的工具还是蛮多的,这里就一一细说了,总之来讲,批量抓鸡效果还是非常不错的,从上面我们也看到利用的核心还是各种特征质量,因为它直接决定了你的命中率</div></pre></td></tr></table></figure>
+<h5 id="另外-再介绍两个小工具站-使用非常简单-纯图形化的-这里就不细说了"><a href="#另外-再介绍两个小工具站-使用非常简单-纯图形化的-这里就不细说了" class="headerlink" title="另外,再介绍两个小工具站,使用非常简单,纯图形化的,这里就不细说了:"></a>另外,再介绍两个小工具站,使用非常简单,纯图形化的,这里就不细说了:</h5><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>/<span class="regexp">/www.punkspider.org/</span>   在线web漏洞扫描</div><div class="line"><span class="symbol">http:</span>/<span class="regexp">/ics.zoomeye.org/</span>       基于shodan实现</div></pre></td></tr></table></figure>
+<h5 id="最后再提下bing-目前已经费掉了-很多人的C段旁站工具想必都是基于此api写的-下面是常见使用方法"><a href="#最后再提下bing-目前已经费掉了-很多人的C段旁站工具想必都是基于此api写的-下面是常见使用方法" class="headerlink" title="最后再提下bing(目前已经费掉了,很多人的C段旁站工具想必都是基于此api写的),下面是常见使用方法:"></a>最后再提下bing(目前已经费掉了,很多人的C段旁站工具想必都是基于此api写的),下面是常见使用方法:</h5><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">ip:</span>ip地址    就会把这个ip所对应的所有域名都列出来</div></pre></td></tr></table></figure>
+<h5 id="基于此api的各种C段旁站工具编写原理"><a href="#基于此api的各种C段旁站工具编写原理" class="headerlink" title="基于此api的各种C段旁站工具编写原理:"></a>基于此api的各种C段旁站工具编写原理:</h5><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">编写其实也很简单,就是把bing搜索的结果截取一下,然后输出的好看一点,不过,你需要事先去bing申请一下搜索用的api,去微软的开发者中心申请一个即可,如果旁站能想通,那么C段也只不过是把<span class="number">254</span>台机器的在线的ip轮训一遍而已</div></pre></td></tr></table></figure>
+<h5 id="一点小结"><a href="#一点小结" class="headerlink" title="一点小结:"></a>一点小结:</h5><p>&nbsp;&nbsp;&nbsp;&nbsp;关于google和shodan的用法,大概就介绍到这里了,使用都比较简单,基本就是几个过滤器来回的组装,随意的根据自己的实际需求拼装特征,说道底,还是看大家的想象力和对现有信息特征的敏感度,大家也看到了,如果完全手工的话,确实挺累的,为什么不写成自动化的脚本来帮我们完成呢,当然,这类的工具也有很多现成的,不过并不是按照咱们的想法来的,所以,最好自己动手……不过在写脚本之前,自己首先要能熟练使用才是,这样写出来的工具杀伤力才能更大些,当然,关于这类web搜索引擎所能产生的渗透效果的强弱,主要是还是看搜索引擎对目标收录的多少,如果目标站点建立的时间比较长,而且各大搜索引擎的收录量也比较好的话,这时候你利用谷歌固然成效显著,但如果一个站点刚建立不久,谷歌收录量也非常少,这时谷歌对你来讲也许就只是个摆设,这里说到的内容可能还只是各个搜索引擎利用的冰山一角,更多更强大的功能,还要靠大家一起来慢慢挖掘,对了,最后再说明一点,用这些搜索引擎的时候,最好全程挂上vpn,推荐美国的,原因大家应该都明白,自家人对自家人的限制几乎是最少的,不要问我为什么不介绍百度没办法,太不堪(原因大家都懂……)</p>
+<h5 id="一点心得"><a href="#一点心得" class="headerlink" title="一点心得:"></a>一点心得:</h5><p>&nbsp;&nbsp;&nbsp;&nbsp;一般我们在搜索引擎上搜集目标信息的时候,首先,应该直奔一些比较高危的漏洞特征,比如能快速getshell的,比如,默认账号密码,进去以后就只可以直接传shell的,此外,如果目标有支持jsp脚本的机器,我们首先就应该从jsp开始入手,因为jsp程序的权限一般都非常高,几乎是服务器的管理员权限,所以我们平时在搜集信息过程中,也尽量先找一些最好能直取权限的信息,孰轻孰重,自己心里一定要有分寸,这样可以避免我们做太多的无用功,当然,如果你手上有个开源的web程序未公开的0day,然后配合类似的搜索引擎利用,那结果可想而知,反正我们利用各种搜索引擎的最终目的无非就是想尽快找个目标边界先进去……<br><br></p>
+
+    </div>
+
+    
+
+    
+
+    <!-- Comments -->
+    
+
+</div>
+            </section>
+        
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

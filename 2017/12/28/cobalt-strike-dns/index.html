@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="对 Cobalt Strike DNS隧道的理解与实战"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>对 Cobalt Strike DNS隧道的理解与实战 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/12/28/cobalt-strike-dns/">
+                对 Cobalt Strike DNS隧道的理解与实战
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-12-28</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/DNS隧道/">DNS隧道</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 开始之前,有必要先稍微理解下基于<code>dns beacon的大致通信过程</code>,其实,非常非常简单,前提是你对dns的解析过程早已经烂透于心,不熟悉的朋友可以先去参考前段时间写的 <a href="https://klionsec.github.io/2017/12/11/Dns-tips/">[DNS 深度理解 一] </a>,把基础打扎实了,再回过头来理解这些东西自然就易如反掌了<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">&gt; beacon shell会向指定的域名发起正常的dns查询</span></div><div class="line">  -<span class="ruby">&gt; 中间依然是经过一些列的常规dns迭代及递归查询,大致过程就是,一直从根开始找,直到找到我们自己的ns服务器,最后再定位到团队服务器ip,仅此而已</span></div><div class="line">    -<span class="ruby">&gt; 也就是说,第一次通信可能会慢点,后续就会稍微快些,不过说实话,dns再快也快不到哪里去,毕竟,我们要的是足够的隐蔽,而不一味追求速度,不然容易露点</span></div></pre></td></tr></table></figure></p>
+<p>0x02 废话说完,我们就开始来尝试在实战中应用,首先,你要先买台<code>vps</code>,亚马逊或者<code>vultr</code>都挺不错的,自己也一直在用,之后装好系统,推荐用<code>ubuntu</code>,此处演示用的是<code>ubuntu 16.04.2</code>,具体的系统安装方法直接一路点点点就好了,全程傻瓜化,大概等个六七分钟,待系统初始化完成就可以用ssh连上去了<br><a id="more"></a><br><img src="/img/vps demo.png" alt=""></p>
+<p>0x03 成功连到vps上以后,接着就开始配置jdk,关于对jdk版本的选择需要稍微注意下,<code>jdk版本和cobalt strike版本务必要保持兼容</code>,因为演示的用的是<code>cobalt strike 3.8</code>,所以此处就用的<code>jdk1.8</code>,如下,则是jdk在Ubuntu中的具体配置过程<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">wget <span class="symbol">http:</span>/<span class="regexp">/enos.itcollege.ee/</span>~jpoial/allalaadimised/jdk8/jdk-<span class="number">8</span>u152-linux-x64.tar.gz</div><div class="line">tar xf jdk-<span class="number">8</span>u152-linux-x64.tar.gz</div><div class="line">mv jdk1.<span class="number">8.0_152</span>/ <span class="regexp">/usr/local</span><span class="regexp">/</span></div><div class="line">ln -s /usr<span class="regexp">/local/jdk</span>1.<span class="number">8.0_152</span>/ <span class="regexp">/usr/local</span><span class="regexp">/jdk</span></div><div class="line"># vi /etc<span class="regexp">/profile</span></div><div class="line">  export JAVA_HOME=/usr<span class="regexp">/local/jdk</span><span class="regexp">/ </span></div><div class="line">  export PATH=$JAVA_HOME/bin:$JAVA_HOME/jre/<span class="symbol">bin:</span>$PATH </div><div class="line">  export CLASSPATH=.$<span class="symbol">CLASSPATH:</span>$JAVA_HOME/<span class="class"><span class="keyword">lib</span>:$<span class="title">JAVA_HOME</span>/<span class="title">jre</span>/<span class="title">lib</span>:$<span class="title">JAVA_HOME</span>/<span class="title">lib</span>/<span class="title">tools</span>.<span class="title">jar</span></span></div><div class="line"><span class="comment"># source /etc/profile</span></div><div class="line"><span class="comment"># java -version</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/vps demo jdk.png" alt=""></p>
+<p>0x04 搞定vps,再紧接着就要去准备域名了,推荐直奔 <code>godaddy</code>,别问我为什么,以后你就会明白的,注册域名时切记千万不要用真实的个人信息,别用太扎眼的字符,如,<code>hack,sec,fuck,rootkit,backdoor 之类</code>,不然,别人一眼就看出来了,可以选择注册一些非常常规的,如 <code>shop,book,之类……</code>相对还容易蒙混过关,域名搞定以后,就可以来配置解析了,如下,<code>首先,你要创建一条A记录,A记录务必要指向我们自己团队服务器的ip,而后再创建几条ns记录,此处创建了三个ns记录,实际中还可以更多些,然后再把所有ns记录的A记录指向刚刚创建的A记录,也就是说,让解析可以准确的找到我们的团队服务器位置</code>,此处是整个过程最核心的一步,务必要好好理解</p>
+<p><img src="/img/DNS tunnel.png" alt=""></p>
+<p>0x05 域名解析配置完成后,我们可以拿 <code>dig +trace 域名</code>先来简单跟踪下域名解析过程,看看我们的ns最后是不是被解析到了之前指定的A记录上,如果解析不到,也就意味着你的payload回连时很可能就定位不到团队服务器,后果就是无法正常上线,此处务必成功,再往后继续,否则都是徒劳</p>
+<p><img src="/img/DNS beacon ns dig.png" alt=""></p>
+<p>0x06 一切准备就绪,在本地用cobalt strike客户端连到我们的团队服务器上,创建监听器和payload,注意,这里的<code>payload要选择beacon_dns,host要用A记录的域名,端口随意</code>,最好用一些穿透性比较强的端口</p>
+<p><img src="/img/DNS tunnel payload.png" alt=""></p>
+<p>此处是用于解析上述A记录的ns服务器域名,把我们之前创建的那三个ns域名全部加进去,用逗号隔开即可</p>
+<p><img src="/img/DNS tunnel payload ns.png" alt=""></p>
+<p>最后,再基于此<code>listener</code>创建payload,丢到目标机器上执行,稍微等一下,即可看到目标成功上线后的效果,如下</p>
+<p><img src="/img/DNS tunnel payload exe res online.png" alt=""></p>
+<p>此时,再回到目标机器上看看都发生了什么,首先,是目标机器不停发送针对我们域名的dns请求,因为它最终要定位到团队服务器把封装在里面的数据传给它</p>
+<p><img src="/img/DNS tunnel payload wirehsark.png" alt=""></p>
+<p>再来看看目标机器的进程端口,我们发现只有进程,似乎没端口,<code>其实并不是没端口,而是在睡眠,我们暂时看不见而已</code></p>
+<p><img src="/img/DNS tunnel payload exe res.png" alt=""></p>
+<p><br><br>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;俗称 <code>域名上线</code>,只不过底层用的是dns协议,而非http,https,或者udp…使用dns的好处,想必就不用再多说了,大家应该早都熟透了,域名相对于ip有更强的隐蔽性,而且它相对比较固定,只要没被发现,解析到的ip是可以随便换的,也就是说,不用担心你的权限再因为这样的原因掉了,这样也给了我们更多的灵活性,另外,cobalt strike也非常轻量,在目标机器上几乎是感觉不到的,在你自己团队没有很强的RAT能力时,Cobalt Strike将会是个非常不错的替代品,因为一些原因,没法说的很详细,大家如果有问题,可以随时在公众号中私信交流 ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/DNS隧道/">#DNS隧道</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

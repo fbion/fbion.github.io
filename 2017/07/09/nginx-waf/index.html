@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="利用 nginx_lua 定制高效灵活的专属WAF"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>利用 nginx_lua 定制高效灵活的专属WAF - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/07/09/nginx-waf/">
+                利用 nginx_lua 定制高效灵活的专属WAF
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-09</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 什么是Lua<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">关于Lua,就不用多说了吧,想必朋友们应该也都非常熟悉了,众多脚本语言中的一种,不过相对于其它脚本来说,性能要略高一点</div><div class="line">在nginx中也提供了一个nginx_lua的模块,主要是为了方便用户,可以灵活的通过lua来扩展nginx功能,比如lu<span class="built_in">a_waf</span></div><div class="line">有兴趣可自行深入了解,这里就不细说了,我们今天的重点主要还是想利用它来快速部署一个简易版的Waf</div></pre></td></tr></table></figure></p>
+<p>0x02 这里,我还是拿之前已经编译好的lnmp环境来演示,因为等会儿要重新编译nginx,所以就直接把之前nginx的整个安装目录干掉,因为是源码编译安装的,所以也不会有啥残留[源码编译安装的好处],记得在干掉之前先把nginx服务停掉,配置文件[nginx.conf]也备份一下,方便等会儿再直接拿过来用<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">php5</span><span class="selector-class">.5</span><span class="selector-class">.38</span> + <span class="selector-tag">mysql-5</span><span class="selector-class">.5</span><span class="selector-class">.32</span> + <span class="selector-tag">nginx-1</span><span class="selector-class">.12</span><span class="selector-class">.1</span> + <span class="selector-tag">centOS6</span><span class="selector-class">.8_x64</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> pkill nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep <span class="string">"80"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf /root/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/nginx/conf/extra/bwapp.conf /root/</span></div></pre></td></tr></table></figure>
+<a id="more"></a>
+<p>0x03 准备好所需的所有源码包,注意,这里的nginx尽量先不要用太高的版本,高版本自身还有些问题,在实际编译时错误的解决也比较周折,暂不推荐用<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">LuaJIT-2</span><span class="selector-class">.0</span><span class="selector-class">.5</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span>				</div><div class="line"><span class="selector-tag">lua-nginx-module-0</span><span class="selector-class">.9</span><span class="selector-class">.13</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">ngx_devel_kit-0</span><span class="selector-class">.2</span><span class="selector-class">.19</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">nginx-1</span><span class="selector-class">.8</span><span class="selector-class">.1</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div></pre></td></tr></table></figure></p>
+<p>0x04 编译安装 LuaJIT ,lua脚本的解释器,因为这里是64位系统,防止等会儿找不到库,所以就提前把它链到32位的库中<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tar xf LuaJIT-2.0.5.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> LuaJIT-2.0.5</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/lib/libluajit-5.1.so.2 /lib64/libluajit-5.1.so.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"LUAJIT_LIB=/usr/local/lib"</span> &gt;&gt; /etc/profile</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"LUAJIT_INC=/usr/local/include/luajit-2.0/"</span> &gt;&gt; /etc/profile</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">source</span> /etc/profile</span></div></pre></td></tr></table></figure></p>
+<p>0x05 重新编译安装nginx,其实,我自己这里的依赖库本身是不用再装的,因为之前装nginx时已经都装过了,如果你是第一次全新安装nginx,可能还是要装一下<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://nginx.org/download/nginx-1.8.1.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install pcre pcre-devel openssl openssl-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf ../lua-nginx-module-0.9.16.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf ../ngx_devel_kit-0.2.19.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf nginx-1.8.1.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> nginx-1.8.1</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --prefix=/usr/<span class="built_in">local</span>/nginx-1.8.1 --user=nginx --group=nginx --with-http_ssl_module --with-http_stub_status_module --with-http_gzip_static_module --with-file-aio --with-http_dav_module --add-module=./lua-nginx-module-0.9.16 --add-module=./ngx_devel_kit-0.2.19/</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/nginx-1.8.1/ /usr/<span class="built_in">local</span>/nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/nginx/conf/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv nginx.conf nginx.conf.bak &amp;&amp; egrep -v <span class="string">"^$|#"</span> nginx.conf.bak &gt;&gt; nginx.conf</span></div></pre></td></tr></table></figure></p>
+<p>0x06 重新配置nginx,在nginx中配置文件中加入以下语句,之后重启nginx,主要是为了测试lua是否可用<br><figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/nginx/conf/nginx.conf</span></div><div class="line"></div><div class="line"><span class="keyword">http</span> &#123;</div><div class="line">    .....</div><div class="line">    log_format <span class="keyword">main</span> <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span>  [<span class="variable">$time_local</span>]  '</span></div><div class="line">    <span class="string">' "<span class="variable">$request</span>" <span class="variable">$request_body</span> <span class="variable">$status</span>  <span class="variable">$body_bytes_sent</span>  '</span></div><div class="line">    <span class="string">' "<span class="variable">$http_referer</span>"  "<span class="variable">$http_user_agent</span>"  "<span class="variable">$http_x_forwarded_for</span>" '</span>;</div><div class="line">	</div><div class="line">    server &#123;</div><div class="line">    ....</div><div class="line">        location /lua &#123;</div><div class="line">            default_type <span class="string">'text/plain'</span>;</div><div class="line">            content_by_lua <span class="string">'ngx.say("Lua say Hello to you!")'</span>;</div><div class="line">        &#125;</div><div class="line">    ....</div><div class="line">    &#125;</div><div class="line">    .....</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment"># /usr/local/nginx-1.8.1/sbin/nginx -t</span></div><div class="line"><span class="comment"># /usr/local/nginx-1.8.1/sbin/nginx</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lua_info.png" alt=""><br></p>
+<p>0x07 在nginx主配置文件中加载lua_waf,具体配置如下<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> git <span class="built_in">clone</span> https://github.com/loveshell/ngx_lua_waf.git</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp -r ngx_lua_waf/ /usr/<span class="built_in">local</span>/nginx/conf/waf</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/nginx/conf/</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi nginx.conf</span></div><div class="line"></div><div class="line"><span class="keyword">http</span> &#123;</div><div class="line">	....</div><div class="line">    lua_package_path <span class="string">"/usr/local/nginx/conf/waf/?.lua"</span>;</div><div class="line">    lua_shared_dict limit <span class="number">10</span>m;</div><div class="line">    init_by_lua_file  /usr/local/nginx/conf/waf/init.lua;</div><div class="line">    access_by_lua_file /usr/local/nginx/conf/waf/waf.lua;</div><div class="line">	....</div><div class="line">	</div><div class="line">	log_format <span class="keyword">main</span> <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span>  [<span class="variable">$time_local</span>]  '</span></div><div class="line">    <span class="string">' "<span class="variable">$request</span>" <span class="variable">$request_body</span> <span class="variable">$status</span>  <span class="variable">$body_bytes_sent</span>  '</span></div><div class="line">    <span class="string">' "<span class="variable">$http_referer</span>"  "<span class="variable">$http_user_agent</span>"  "<span class="variable">$http_x_forwarded_for</span>" "<span class="variable">$dm_cookie</span>" '</span>;</div><div class="line">	</div><div class="line">	<span class="literal">include</span> extra/bwapp.conf;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>0x08 编辑waf配置,非常简单,从名字都能看出来是干啥的,非常简单<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># vi <span class="regexp">/usr/</span>local<span class="regexp">/nginx/</span>conf<span class="regexp">/waf/</span>config.lua</div></pre></td></tr></table></figure></p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">RulePath = <span class="string">"/usr/local/nginx/conf/waf/wafconf/"</span></div><div class="line">attacklog = <span class="string">"on"</span>		<span class="comment"># 开启日志记录</span></div><div class="line">logdir = <span class="string">"/usr/local/nginx/logs/hack/"</span></div><div class="line">UrlDeny=<span class="string">"on"</span>			<span class="comment"># 从url中拦截</span></div><div class="line">Redirect=<span class="string">"on"</span></div><div class="line">CookieMatch=<span class="string">"on"</span>		<span class="comment"># 从cookie中拦截</span></div><div class="line">postMatch=<span class="string">"on"</span>			<span class="comment"># 从post包中拦截</span></div><div class="line">whiteModule=<span class="string">"on"</span></div><div class="line">black_fileExt=&#123;<span class="string">"php"</span>,<span class="string">"jsp"</span>&#125;	<span class="comment"># 黑名单后缀</span></div><div class="line">ipWhitelist=&#123;<span class="string">"127.0.0.1"</span>&#125;	<span class="comment"># ip白名单</span></div><div class="line">ipBlocklist=&#123;<span class="string">"1.0.0.1"</span>&#125;		<span class="comment"># ip黑名单</span></div><div class="line">CCDeny=<span class="string">"on"</span>			<span class="comment"># 开启防CC攻击</span></div><div class="line">CCrate=<span class="string">"100/60"</span></div><div class="line">html=[[</div><div class="line">&lt;center&gt;&lt;h1&gt;No sir! &lt;/h1&gt;&lt;/center&gt;</div><div class="line">]]</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /usr/<span class="built_in">local</span>/nginx/logs/hack/</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R nginx.nginx /usr/<span class="built_in">local</span>/nginx/logs/hack/	注意,这里一定要nginx可写,不然你会发现拦截不了,因为<span class="built_in">log</span>文件根本没法创建</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /usr/<span class="built_in">local</span>/nginx-1.8.1/conf/extra</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp bwapp.conf /usr/<span class="built_in">local</span>/nginx/conf/extra/</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/nginx/sbin/nginx -t</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/nginx/sbin/nginx -s reload</span></div></pre></td></tr></table></figure>
+<p>0x09 最后,再来看看最核心的地方,规则目录,这里的规则和上面的配置项功能都是一一对应的,还是那句话,这里默认的规则如果实际用当然是远远不够的,不过好在,我们可以直接往里面写正则,这样就显得简单灵活多了<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ls <span class="regexp">/usr/</span>local<span class="regexp">/nginx/</span>conf<span class="regexp">/waf/</span>wafconf</div></pre></td></tr></table></figure></p>
+<p>参数正则,确实太简陋了,不过,好在定制空间非常大,而且lua相对比较简单,花费的时间周期也比较短<br><img src="/img/lua_regx.png" alt=""><br></p>
+<p>尝试命令执行<br><img src="/img/lua_cmd.png" alt=""><br></p>
+<p>尝试php代码执行<br><img src="/img/lua_code.png" alt=""><br></p>
+<p>尝试sql注入<br><img src="/img/lua_sqli.png" alt=""><br></p>
+<p>尝试 xss<br><img src="/img/lua_xss.png" alt=""><br></p>
+<p>0x10 通过日志观察攻击行为,利用脚本绘制动态图实时显示到前端页面上<br><img src="/img/lua_log.png" alt=""><br></p>
+<p>0x11 小结:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">部署简单,灵活高效,可扩展性较强,后期会把自己加强版的正则给大家,待续....</div></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/protect-of-waf/">#protect of waf</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

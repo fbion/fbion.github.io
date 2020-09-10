@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="keepalived + nginx 初步实现高可用"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>keepalived + nginx 初步实现高可用 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/12/23/keepalived-nginx/">
+                keepalived + nginx 初步实现高可用
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-12-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/keepalived-高可用/">keepalived 高可用</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 关于 keepalived<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">早期是专为 `LVS` 设计的,主要用来监控LVS集群中各个节点状态</div><div class="line">内部基于 `VRRP协议` 实现,即`虚拟路由冗余协议`,从名字不难看出,协议本身是用于保证实现路由节点高可用的</div></pre></td></tr></table></figure></p>
+<p>0x02 所谓的 VRRP 协议<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">简单来讲,即将N台提供相同功能的路由器组成一个路由器组,在这个组里有一个master和多个<span class="keyword">backup</span></div><div class="line">一般情况下,<span class="keyword">master</span>是由选举算法产生的,另外需要注意的是,只有在 <span class="keyword">master</span> 上才有一个用于对外提供服务的虚拟ip</div><div class="line">其它的<span class="keyword">backup</span>都是没有的,当<span class="keyword">master</span>在对外提供服务时,其它的<span class="keyword">backup</span>又在干什么呢</div><div class="line">很简单,当<span class="keyword">master</span>在对外提供服务时,它同时也在不停的向所有的<span class="keyword">backup</span>发送VRRP状态信息 <span class="string">`说白点儿就是心跳包`</span></div><div class="line">告诉所有<span class="keyword">backup</span>们,说,<span class="string">'我还没累死,你们先歇着,等我挂了,你们再上'</span>,然后,所有的<span class="keyword">backup</span>就会一直在那儿闲着不停地接收这样的状态信息</div><div class="line">当某一时刻,<span class="keyword">backup</span>突然没再接到这样的状态回应时,就说明<span class="keyword">master</span>已经光荣牺牲了</div><div class="line">所有的<span class="keyword">backup</span>会再重新用选举算法,把优先级最高的<span class="keyword">backup</span>升级为<span class="keyword">master</span>继续对外提供服务,以此保证了服务的持续可用性,即所谓的高可用</div></pre></td></tr></table></figure></p>
+<p>0x03 借助 keepalived 在web上的高可用实现<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">首先,在所有需要进行高可用的web节点机器上部署好keepalived,并在节点中设置一个master,其它的则全部设为<span class="keyword">backup</span></div><div class="line">一旦<span class="keyword">backup</span>接收不到来自<span class="keyword">master</span>的心跳数据,即认为<span class="keyword">master</span>已挂掉,<span class="keyword">backup</span>随即就会接管<span class="keyword">master</span>的所有资源数据</div><div class="line">当<span class="keyword">master</span>状态恢复时,<span class="keyword">backup</span>会把所有的资源数据再移交给<span class="keyword">master</span>处理,此,即为最简单的web高可用实现</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">Lvs</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.75</span>  虚拟<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.2</span>	    对应域名: <span class="selector-tag">reverse</span><span class="selector-class">.org</span>		为<span class="selector-tag">keepalived</span> 的<span class="selector-tag">MASTER</span>节点</div><div class="line"><span class="selector-tag">NginxHttp</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.49</span>  对应域名: <span class="selector-tag">reverse</span><span class="selector-class">.org</span>	    为<span class="selector-tag">keepalived</span> 的<span class="selector-tag">BACKUP</span>节点</div><div class="line"><span class="selector-tag">OldLamp</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.45</span>  对应域名: <span class="selector-tag">www</span><span class="selector-class">.bwapp</span><span class="selector-class">.cc</span></div><div class="line"><span class="selector-tag">OldLnmp</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span>  对应域名: <span class="selector-tag">test</span><span class="selector-class">.bwapp</span><span class="selector-class">.org</span></div></pre></td></tr></table></figure></p>
+<p>0x04 务必保证 <code>Lvs 和 NginxHttp</code> 两台机器上的nginx配置是完全一致的,且nginx服务已处于成功启动状态,具体如下<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cat /usr/local/nginx/conf/nginx.conf</span></div><div class="line"></div><div class="line"><span class="attribute">worker_processes</span>  <span class="number">1</span>;</div><div class="line"><span class="section">events</span> &#123;</div><div class="line">    <span class="attribute">worker_connections</span>  <span class="number">1024</span>;</div><div class="line">&#125;</div><div class="line"><span class="section">http</span> &#123;</div><div class="line">    <span class="attribute">include</span>       mime.types;</div><div class="line">    <span class="attribute">default_type</span>  application/octet-stream;</div><div class="line">    <span class="attribute">sendfile</span>        <span class="literal">on</span>;</div><div class="line">    <span class="attribute">keepalive_timeout</span>  <span class="number">65</span>;</div><div class="line">    </div><div class="line">    <span class="attribute">upstream</span> default_pools&#123;</div><div class="line">	   <span class="attribute">server</span> test.bwapp.org:<span class="number">80</span> weight=<span class="number">2</span>;</div><div class="line">	   <span class="attribute">server</span> www.bwapp.cc:<span class="number">80</span>;</div><div class="line">    &#125;</div><div class="line">   </div><div class="line">    <span class="attribute">upstream</span> static_pools &#123;</div><div class="line">	   <span class="attribute">server</span> test.bwapp.org:<span class="number">80</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="attribute">upstream</span> dynamic_pools &#123;</div><div class="line">	   <span class="attribute">server</span> www.bwapp.cc:<span class="number">80</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="section">server</span> &#123;</div><div class="line">        <span class="attribute">listen</span>       <span class="number">80</span>;</div><div class="line">        <span class="attribute">server_name</span>  reverse.org;</div><div class="line">        <span class="attribute">location</span> / &#123;</div><div class="line">	    <span class="attribute">proxy_pass</span> http://default_pools;</div><div class="line">	    <span class="attribute">proxy_set_header</span> Host  <span class="variable">$host</span>;</div><div class="line">	    <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$remote_addr</span>;</div><div class="line">        &#125;</div><div class="line">	</div><div class="line">	<span class="attribute">location</span> /static/ &#123;</div><div class="line">	    <span class="attribute">proxy_pass</span> http://static_pools;</div><div class="line">	    <span class="attribute">proxy_set_header</span> Host  <span class="variable">$host</span>;</div><div class="line">	    <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$remote_addr</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="attribute">location</span> /dynamic/ &#123;</div><div class="line">	    <span class="attribute">proxy_pass</span> http://dynamic_pools;</div><div class="line">	    <span class="attribute">proxy_set_header</span> Host  <span class="variable">$host</span>;</div><div class="line">	    <span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$remote_addr</span>;</div><div class="line">	&#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>0x05 首先,同时在 <code>Lvs 和 NginxHttp</code> 这两台机器上安装keepalived并进行启动测试<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install openssl openssl-devel -y	在装nginx其实已经装过</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget http://www.keepalived.org/software/keepalived-1.3.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf keepalived-1.3.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> keepalived-1.3.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/src/kernels/2.6.32-642.el6.x86_64/ /usr/src/linux</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /usr/src/linux</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /root/keepalived-1.3.2/keepalived/etc/init.d/keepalived /etc/init.d/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/etc/sysconfig/keepalived /etc/sysconfig/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /etc/keepalived</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/etc/keepalived/keepalived.conf /etc/keepalived/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/sbin/keepalived /usr/sbin/</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/keepalived start</span></div><div class="line"><span class="meta">#</span><span class="bash"> ps -ef | grep keepalived	看到同时有三个keepalived进程起来,则说明安装成功</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/keepalived stop	之后再停掉keepalived,继续后面的配置</span></div></pre></td></tr></table></figure></p>
+<p>0x06 接着,再来配置<code>master节点的 keepalived.conf</code>,注意,里面只需保留如下配置,其余默认的配置可暂时先全部删掉<br><figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># man keepalived.conf	查看keepalived.conf的详细配置帮助</span></div><div class="line"><span class="comment"># cp /etc/keepalived/keepalived.conf /etc/keepalived/keepalived.conf.bak</span></div><div class="line"><span class="comment"># vi /etc/keepalived/keepalived.conf</span></div><div class="line">  <span class="keyword">global_defs</span> &#123; <span class="comment"># 全局配置</span></div><div class="line">    notification_email &#123; <span class="comment"># 报警通知联系人,该段可直接注释不用</span></div><div class="line">      klionsec@rootkit.org</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">notification_email_from</span> <span class="keyword">Alexandre</span>.Cassen@firewall.loc</div><div class="line">    smtp_server 192.168.200.1</div><div class="line">    smtp_connect_timeout 30</div><div class="line">    router_id LVS_01		<span class="comment"># 类似mysql的server id</span></div><div class="line">    vrrp_skip_check_adv_addr</div><div class="line">!   vrrp_strict			<span class="comment"># 开启表示严格执行VRRP协议规范,此模式不支持节点单播,默认是开启的,建议关闭,否则你会发现绑不上虚拟ip</span></div><div class="line">    vrrp_garp_interval 0</div><div class="line">    vrrp_gna_interval 0</div><div class="line">  &#125;</div><div class="line">  </div><div class="line">  <span class="comment"># keepalived的一个实例配置</span></div><div class="line">  vrrp_instance <span class="keyword">VI_1</span> &#123;	  <span class="comment"># 设置实例名称</span></div><div class="line">    state MASTER	  <span class="comment"># 当前实例角色,如,MASTER,BACKUP</span></div><div class="line">    interface eth<span class="number">0</span>	  <span class="comment"># 发送心跳的网卡接口</span></div><div class="line">    virtual_router_id <span class="number">51</span>  <span class="comment"># 该实例id,MASTER和BACKUP端要保持一致,否则会出现裂脑</span></div><div class="line">    <span class="literal">priority</span> <span class="number">150</span>	  <span class="comment"># 优先级设置,高的为MASTER,建议节点之间优先级步长为50</span></div><div class="line">    advert_int <span class="number">1</span>	  <span class="comment"># 心跳包发送时间间隔,默认为1秒</span></div><div class="line">    authentication &#123;	  <span class="comment"># MASTER和BACKUP通信验证</span></div><div class="line">       <span class="literal">auth_type</span> PASS	  <span class="comment"># 使用PASS方式</span></div><div class="line">       auth_pass <span class="number">1111</span>	  <span class="comment"># 默认密码为1111</span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">virtual_ipaddress</span> &#123;	  <span class="comment"># 绑定虚拟ip,相当于 `ip addr add 192.168.3.2/24 dev eth0`的效果</span></div><div class="line">       <span class="number">192.168</span>.<span class="number">3.2</span>/<span class="number">24</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line"><span class="comment"># scp /etc/keepalived/keepalived.conf root@192.168.3.49:/etc/keepalived/keepalived.conf</span></div><div class="line"><span class="comment"># /etc/init.d/keepalived start</span></div><div class="line"><span class="comment"># ip addr | grep "192.168.3.2/24"	先等一会儿,看下虚拟ip到底有没有加上</span></div></pre></td></tr></table></figure></p>
+<p>0x07 最后,配置<code>backup节点的keepalived.conf</code>,除了<code>server id,实例角色和优先级选项</code>,其余配置和master中的保持一致即可,如下<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"># vi /etc/keepalived/keepalived.conf</div><div class="line"></div><div class="line">  global_defs &#123;</div><div class="line">    notification_email &#123;</div><div class="line">		klionsec@rootkit.org</div><div class="line">   &#125;</div><div class="line">     notification_email_from Alexandre.Cassen@firewall.loc</div><div class="line">     smtp_server <span class="number">192.168</span><span class="number">.200</span><span class="number">.1</span></div><div class="line">     smtp_connect_timeout <span class="number">30</span></div><div class="line">     router_id LVS_02	  # 务必保证id的唯一性,类似mysql的server id</div><div class="line">     vrrp_skip_check_adv_addr</div><div class="line">!    vrrp_strict</div><div class="line">     vrrp_garp_interval <span class="number">0</span></div><div class="line">     vrrp_gna_interval <span class="number">0</span></div><div class="line">  &#125;</div><div class="line"></div><div class="line">  vrrp_instance VI_1 &#123;    # 两边使用同一个实例</div><div class="line">    <span class="section">state</span> BACKUP	  # 角色要改</div><div class="line">    interface eth0</div><div class="line">    virtual_router_id <span class="number">51</span></div><div class="line">    priority <span class="number">100</span>	  # 优先级要小<span class="number">50</span></div><div class="line">    advert_int <span class="number">1</span></div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass <span class="number">1111</span></div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line">        <span class="number">192.168</span><span class="number">.3</span><span class="number">.2</span>/<span class="number">24</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line"># /etc/init.d/keepalived start</div><div class="line"># ip addr | grep <span class="string">"192.168.3.2/24"</span>  这个ip只有在master挂掉的时候才会有</div></pre></td></tr></table></figure></p>
+<p>下面是自动飘ip的实际效果,此时再配合着回想VRRP协议是不是更好理解些呢</p>
+<p><img src="/img/keepalived start status.gif" alt=""></p>
+<p>下面则是模拟keepalived配合nginx 实现web高可用的效果,当MASTER机器不幸down掉时,BACKUP几乎会瞬间接管,以此来保证web服务的持续可用,具体如下</p>
+<p><img src="/img/keepalived nginx.gif" alt=""></p>
+<p>注意,keepalived默认只对<code>系统级别的宕机</code>才会主动接管,对于各类常规服务它是不会自动接管的,解决办法很简单,写个脚本,手动把它俩关联上就好了,此处的所有脚本仅做demo参考,有兴趣请自行加强,如下<br><figure class="highlight autoit"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># vi keepalived_nginx_check.sh</span></div><div class="line"><span class="meta"># chmod +x keepalived_nginx_check.sh</span></div><div class="line">  <span class="meta">#!/bin/bash</span></div><div class="line">  <span class="keyword">while</span> <span class="literal">true</span></div><div class="line">  <span class="keyword">do</span></div><div class="line">  NginxPid=`ps -C nginx --no-header |wc -l`</div><div class="line">  <span class="keyword">if</span>  [ $NginxPid -eq <span class="number">2</span> ]</div><div class="line">    <span class="keyword">then</span>	<span class="meta"># 检查worker数</span></div><div class="line">	/etc/init.d/keepalived stop &amp;&gt;/dev/<span class="literal">null</span> <span class="meta"># 如果发现worker对不上,就自动让另一台backup去接管</span></div><div class="line">  fi</div><div class="line">  <span class="built_in">sleep</span> <span class="number">1</span>	<span class="meta"># 可以时间隔短点,不然,down半天了,那边还没反应</span></div><div class="line">  done</div><div class="line"></div><div class="line"><span class="meta"># ./keepalived_nginx_check.sh &amp;</span></div><div class="line"><span class="meta"># ps -ef | grep <span class="string">"keepalived_nginx_check"</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/keepalived nginx status.gif" alt=""></p>
+<p>0x08 高可用的裂脑问题,所谓的裂脑,即只要backup收不到master发过来的状态信息就以为master挂掉了,但实际上master并没有挂,只是由于一些别的原因导致master和backup之间没法正常的通信,而backup却直接粗暴的理解成master挂掉了,随后就直接就接管资源,这也就导致了裂脑问题的发生,下面是一个检测裂脑的小脚本,原理比较简单,<code>如果我发现master能ping通,但backup本地又有虚拟ip存在,则说明已经裂脑了</code>,用法很简单,直接在backup节点上后台运行该脚本即可<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"><span class="comment"># check keepalived status</span></div><div class="line"><span class="keyword">while</span> <span class="literal">true</span></div><div class="line"><span class="keyword">do</span></div><div class="line">    addr=`ip addr | grep <span class="string">"192.168.3.2/24"</span> | wc -l`</div><div class="line">    ping -c 5 -W 3 192.168.3.75 &amp;&gt;/dev/null</div><div class="line">    <span class="keyword">if</span> [ $? -eq 0 -a  <span class="variable">$addr</span>  -eq 1 ] ;<span class="keyword">then</span></div><div class="line">        <span class="built_in">echo</span> <span class="string">"ha is brain."</span></div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="built_in">echo</span> <span class="string">"ha is ok"</span></div><div class="line">    <span class="keyword">fi</span></div><div class="line">    sleep 2</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/keepalived brain.gif" alt=""></p>
+<p>0x09 keepalived默认的日志在<code>/var/log/messages</code>文件中,不利于分析,所以,实际中最好改下keepalived的默认日志路径,方便后续排查问题,如下<br><figure class="highlight vala"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># vi /etc/sysconfig/keepalived</span></div><div class="line">  KEEPALIVED_OPTIONS=<span class="string">"-D -S 0 -d"</span></div><div class="line"><span class="meta"># vi /etc/rsyslog.conf</span></div><div class="line">  local0.*         /<span class="keyword">var</span>/log/keepalived.log</div><div class="line"><span class="meta"># /etc/init.d/rsyslog restart</span></div><div class="line"><span class="meta"># /etc/init.d/keepalived restart</span></div><div class="line"><span class="meta"># tail -f /var/log/keepalived.log</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/keepalived log.gif" alt=""></p>
+<p><br><br>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;篇幅限制,这里仅仅只做了nginx的高可用,关于和LVS的配合应用我们会再单做说明,至于其它的一些基础服务高可用部署方式基本都大同小异,工具比较简单,此处不再赘述,有空的话,大家倒是可以去深入了解下 <code>VRRP</code>  ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/keepalived-高可用/">#keepalived 高可用</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

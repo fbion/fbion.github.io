@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="DNS 深度理解 [ 一 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>DNS 深度理解 [ 一 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/12/11/Dns-tips/">
+                DNS 深度理解 [ 一 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-12-11</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/DNS-深度理解/">DNS 深度理解</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 首先,我们先来简单回顾下<code>DNS的基本解析流程</code>, 比较简单,如下<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">&gt; 以客户端浏览器访问 www.rootkit.org 域名为例,首先,它会去检查当前浏览器缓存,如果有,就直接响应,如果没有,就继续往下找</span></div><div class="line">  -<span class="ruby">&gt; 接着,操作系统会去检查自己的host文件,如果从中没找到对应关系,会再到系统dns缓存中查,如果缓存中有,就直接返回该域名所对应的ip</span></div><div class="line">    -<span class="ruby">&gt; 如果缓存中没有,则会向我们事先设置好的dns服务器 [ 一般有两个, 主 &amp; 备 ] 去请求,即所谓的<span class="string">`递归查询`</span>,dns服务器首先会到自身解析数据库中去查</span></div><div class="line">      -<span class="ruby">&gt; 如果dns服务器在自己的解析库中也没找到,它就会自动帮我们向根发送询问请求</span></div><div class="line">	-<span class="ruby">&gt; 此时,根看到要请求的是org的后缀,就会把org所在的ns服务器告诉我们的dns</span></div><div class="line">	  -<span class="ruby">&gt; 然后,我们的dns服务器就会去请求org所在的ns服务器</span></div><div class="line">	    -<span class="ruby">&gt; 当请求到达org ns服务器时,org一看域名是在rootkit这个域下的,就会把rootkit所在的ns服务器再告诉我们的dns服务器</span></div><div class="line">	       -<span class="ruby">&gt; 再然后,我们的dns服务器就会去请求rootkit这个域的ns服务器</span></div><div class="line">		 -<span class="ruby">&gt; rootkit这个域的ns服务器一看是要访问www就直接找到了www对应的A记录的ip,并把它丢给我们的dns,上面逐个询问的过程,即 <span class="string">`迭代查询`</span></span></div><div class="line">		   -<span class="ruby">&gt; 最后,我们的dns再把最终解析到的这个ip丢给我们的客户端,然后客户端就直接拿着去访问了,如下,访问google.com时的简易流程图</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p><img src="/img/dns101.jpg" alt=""><br>演示环境,此处暂以一主一从为例进行演示<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">DnsMaster<span class="built_in">	ip </span>: 192.168.3.60	主<span class="built_in"> DNS </span>服务器</div><div class="line">DnsSlave<span class="built_in">	ip </span>: 192.168.3.61	从<span class="built_in"> DNS </span>服务器</div></pre></td></tr></table></figure></p>
+<p>0x02 几种常见的 DNS 功用类型<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">主dns,主要负责实际的正反向域名解析</div><div class="line">从dns,主要从其它的主dns或者从dns中同步解析数据库,`即区域传送`,一般是通过序列号递增来判断主dns是否有更新</div><div class="line">缓存DNS服务器...</div><div class="line">转发器...</div></pre></td></tr></table></figure></p>
+<p>0x03 理解DNS区域解析流向<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">正向 : FQDN -&gt;<span class="built_in"> IP</span></div><div class="line">反向 :<span class="built_in"> IP </span>-&gt; FQDN</div><div class="line"></div><div class="line">FQDN 即 `完整合法域名`,如 `www.rootkit.org.` 最后面的`.`表示根,意思就是根下的org下的rootkit</div><div class="line">不管是正向还是反向区域都需要有一个单独的解析数据库去解析</div></pre></td></tr></table></figure></p>
+<p>0x04 认识DNS中一些常见的资源记录类型,说到底就是用它们来标记某个主机类型<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">A  	记录	FQDN -&gt; ipv4</div><div class="line">AAAA 	记录	FQDN -&gt;<span class="built_in"> ipv6</span></div><div class="line">NS 	记录	标明当前区域的NS服务器是谁</div><div class="line">MX 	记录	标明当前域内谁是邮件服务器</div><div class="line">PTR 	记录<span class="built_in">	ip </span>-&gt; FQDN</div><div class="line">SOA 	记录	一个解析库有且只有一个SOA记录,且必须为解析库的第一条记录</div><div class="line">CNAME	记录	别名</div></pre></td></tr></table></figure></p>
+<p>0x05 如何在区域配置文件中定义上述各种资源记录</p>
+<p>记录定义标准格式,如下<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">name</span> TTL值[缓存时长可省] <span class="keyword">IN</span> 记录类型 值</div></pre></td></tr></table></figure></p>
+<p>定义SOA记录,一般会配合DNS主从同步来用<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">admin.<span class="keyword">org. </span> IN SOA    ns.admin.<span class="keyword">org. </span>   admin.admin.<span class="keyword">org. </span>(</div><div class="line">			<span class="number">2017122309</span> 	   <span class="comment">; 序列号</span></div><div class="line">			<span class="number">2</span>H 		   <span class="comment">; 刷新时间</span></div><div class="line">			<span class="number">10</span>M		   <span class="comment">; 重试时长</span></div><div class="line">			<span class="number">1</span>W		   <span class="comment">; 过期时间</span></div><div class="line">			<span class="number">1</span>D		   <span class="comment">; 否定答案的TTL值</span></div><div class="line">			)</div></pre></td></tr></table></figure></p>
+<p>定义NS记录,如果连续两条紧挨着的记录相同,后面一个的name可省略,另外NS记录需要在后续有一个对应的A记录<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">admin<span class="selector-class">.org</span>.	IN 	NS	ns1<span class="selector-class">.admin</span><span class="selector-class">.org</span>.</div><div class="line">admin<span class="selector-class">.org</span>.	IN 	NS	ns2<span class="selector-class">.admin</span><span class="selector-class">.org</span>.</div></pre></td></tr></table></figure></p>
+<p>定义MX记录,注意,此记录有优先级,数字越小,优先级越高,同样,后面也需要指向一条A记录<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">admin<span class="selector-class">.org</span>.	IN 	MX	<span class="number">10</span>	mx1<span class="selector-class">.admin</span><span class="selector-class">.org</span>.</div><div class="line">admin<span class="selector-class">.org</span>.	IN 	MX	<span class="number">6</span>	mx2<span class="selector-class">.admin</span><span class="selector-class">.org</span>.</div></pre></td></tr></table></figure></p>
+<p>定义A记录,注意,对于A记录,同一个name可以对应多个不同的ip,访问时会自动实现轮询的效果<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">www</span><span class="selector-class">.admin</span><span class="selector-class">.org</span>.	  <span class="selector-tag">IN</span>	<span class="selector-tag">A</span>		<span class="selector-tag">l</span><span class="selector-class">.2</span><span class="selector-class">.3</span><span class="selector-class">.4</span></div><div class="line"><span class="selector-tag">www</span><span class="selector-class">.admin</span><span class="selector-class">.org</span>.	  <span class="selector-tag">IN</span>	<span class="selector-tag">A</span>		<span class="selector-tag">l</span><span class="selector-class">.2</span><span class="selector-class">.3</span><span class="selector-class">.4</span></div><div class="line">*<span class="selector-class">.admin</span><span class="selector-class">.org</span>.	  <span class="selector-tag">IN</span>	<span class="selector-tag">A</span>		1<span class="selector-class">.2</span><span class="selector-class">.3</span><span class="selector-class">.4</span>		泛解析,用户输入不存在的域名是全部都解析到这个<span class="selector-tag">ip</span>上</div><div class="line"><span class="selector-tag">admin</span><span class="selector-class">.org</span>.	  <span class="selector-tag">IN</span>	<span class="selector-tag">A</span>		1<span class="selector-class">.2</span><span class="selector-class">.3</span><span class="selector-class">.4</span>		另外一种泛解析写法 <span class="selector-tag">admin</span><span class="selector-class">.org</span></div></pre></td></tr></table></figure></p>
+<p>定义PTR记录,即反向区域解析,一定要注意,所有的ip地址必须反过来写,另外,都必须带上固有后缀<code>in-addr.arpa.</code><br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">4<span class="selector-class">.3</span><span class="selector-class">.2</span><span class="selector-class">.in-addr</span><span class="selector-class">.arpa</span>.	<span class="selector-tag">IN</span>	<span class="selector-tag">PTR</span>	<span class="selector-tag">www</span><span class="selector-class">.admin</span><span class="selector-class">.org</span>.</div></pre></td></tr></table></figure></p>
+<p>定义CNAME记录,意思就是当访问web.admin.org.时就直接解析到www.admin.org.<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">web<span class="selector-class">.admin</span><span class="selector-class">.org</span>.	  IN	CNAME	www<span class="selector-class">.admin</span><span class="selector-class">.org</span>.</div></pre></td></tr></table></figure></p>
+<p>0x06 关于一些常见 dns 解析测试工具的基本使用<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> dig -t 记录类型 要解析的域名 @用于解析该域名的dns服务器</span></div><div class="line"><span class="meta">#</span><span class="bash"> dig -t axfr 要解析的域名 @用于解析该域名的dns服务器	  全量区域同步,可用来测试`区域传送漏洞`</span></div><div class="line"><span class="meta">#</span><span class="bash"> dig +trace 要解析的域名  跟踪指定域名的详细解析过程</span></div><div class="line"><span class="meta">#</span><span class="bash"> nslookup	交互式查询</span></div><div class="line"><span class="meta">#</span><span class="bash"> host -t 类型 要解析的域名 用于解析的dns服务器</span></div></pre></td></tr></table></figure></p>
+<p>0x07 因为后续还要做DNS主从实时同步,所以这里就先从<code>配置正向区域解析</code>开始</p>
+<p>开始安装主DNS,bind是核心包,bind-devel是bind核心库,utils是dns测试工具包,工具包里包含了一些常用工具,如,nslookup,dig,host,另外,此处暂以yum方式进行安装,当然,你也可以自行采用源码编译的方式进行安装,不过编译安装不太好的地方就是,有很多关键目录和配置文件没法自动生成,配置起来比较繁琐<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install  <span class="built_in">bind</span>-utils <span class="built_in">bind</span> <span class="built_in">bind</span>-devel <span class="built_in">bind</span>-chroot -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa | grep <span class="built_in">bind</span></span></div></pre></td></tr></table></figure></p>
+<p>配置主DNS的主配置文件<code>named.conf</code><br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div></pre></td><td class="code"><pre><div class="line"># cat /var/named/named.ca	全球<span class="number">13</span>组根DNS服务器解析地址的存放位置</div><div class="line"># cp /etc/named.conf&#123;,.bak&#125;	先备份配置文件再编辑</div><div class="line"># &gt; /etc/named.conf		bind的主配置文件,主要提供全局配置</div><div class="line"># vi /etc/named.conf</div><div class="line"></div><div class="line"><span class="comment">// 全局配置段,注意,dns工作在tcp/53和udp/53端口上,tcp/53一般主要用来进行区域同步,而udp/53主要用来负责正常的解析请求和响应</span></div><div class="line">options &#123;</div><div class="line">	version <span class="string">"1.1.1"</span>;</div><div class="line">	<span class="section">listen</span>-on port <span class="number">53</span> &#123; <span class="number">192.168</span><span class="number">.3</span><span class="number">.60</span>;<span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>; &#125;;	<span class="comment">// 把dns端口监听在本地指定的ip上</span></div><div class="line">	directory <span class="string">"/var/named/chroot/etc/"</span>;		</div><div class="line">	pid-file <span class="string">"/var/named/chroot/var/run/named/named.pid"</span>;</div><div class="line">	allow-query &#123; any; &#125;;	<span class="comment">// 允许任意主机向我进行dns请求</span></div><div class="line">	Dump-file <span class="string">"/var/named/chroot/var/log/binddump.db"</span>;</div><div class="line">	Statistics-file <span class="string">"/var/named/chroot/var/log/named_stats"</span>;</div><div class="line">	zone-statistics yes;</div><div class="line">	memstatistics-file <span class="string">"log/mem_stats"</span>;</div><div class="line">	empty-zones-enable no;</div><div class="line">	forwarders &#123; <span class="number">114.114</span><span class="number">.114</span><span class="number">.114</span>;<span class="number">8.8</span><span class="number">.8</span><span class="number">.8</span>; &#125;;</div><div class="line"></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 设置rndc通信共享秘钥</span></div><div class="line"><span class="type">key</span> <span class="string">"rndc-key"</span> &#123; </div><div class="line">	algorithm hmac-md5;</div><div class="line">	secret <span class="string">"Eqw4hClGExUWeDkKBX/pBg=="</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">controls &#123;</div><div class="line">	inet <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span> port <span class="number">953</span></div><div class="line">	allow &#123; <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>; &#125; keys &#123; <span class="string">"rndc-key"</span>; &#125;;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// bind日志配置区段	</span></div><div class="line">logging &#123;</div><div class="line">	channel warning &#123;</div><div class="line">		file <span class="string">"/var/named/chroot/var/log/dns_warning"</span> versions <span class="number">10</span> size <span class="number">10</span>m;</div><div class="line">		severity warning;</div><div class="line">		print-category yes;</div><div class="line">		print-severity yes;</div><div class="line">		print-time yes;</div><div class="line">	&#125;;</div><div class="line"></div><div class="line">	channel general_dns &#123;</div><div class="line">		file <span class="string">"/var/named/chroot/var/log/dns_log"</span> versions <span class="number">10</span> size <span class="number">100</span>m;</div><div class="line">		severity info;</div><div class="line">		print-category yes;</div><div class="line">		print-severity yes;</div><div class="line">		print-time yes;</div><div class="line">	&#125;;</div><div class="line"></div><div class="line">	category <span class="section">default</span> &#123;</div><div class="line">		warning;</div><div class="line">	&#125;;</div><div class="line"></div><div class="line">	category queries &#123;</div><div class="line">		general_dns;</div><div class="line">	&#125;;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="comment">// 为了简化bind主配置文件,可以通过include的方式来引入区域文件</span></div><div class="line">include <span class="string">"/var/named/chroot/etc/view.conf"</span>;</div></pre></td></tr></table></figure></p>
+<p>针对rndc 的简单配置,关于rndc其实就是个bind服务管理工具,可以通过它在本地或者直接远程来方便的对bind服务进行各种管理操作,如,重载,刷新缓存,关闭…默认工作在tcp/953端口上,比较危险,所以我们一般只让它监听在本地即可<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"># vi /etc/rndc.<span class="type">key</span></div><div class="line"></div><div class="line"><span class="type">key</span> <span class="string">"rndc-key"</span> &#123;</div><div class="line">    algorithm hmac-md5;</div><div class="line">    secret <span class="string">"Eqw4hClGExUWeDkKBX/pBg=="</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"># vi /etc/rndc.conf</div><div class="line"></div><div class="line"><span class="type">key</span> <span class="string">"rndc-key"</span> &#123;</div><div class="line">	algorithm hmac-md5;</div><div class="line">	secret <span class="string">"Eqw4hClGExUWeDkKBX/pBg=="</span>;</div><div class="line">&#125;;</div><div class="line">options &#123;</div><div class="line">	<span class="section">default</span>-<span class="type">key</span> <span class="string">"rndc-key"</span>;</div><div class="line">	<span class="section">default</span>-server <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>;	<span class="comment">// 让它只监听在本地,禁止rndc远程连接,防止被利用</span></div><div class="line">	<span class="section">default</span>-port <span class="number">953</span>;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>0x08 定义正向区域文件<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"># vi /var/named/chroot/etc/view.conf</div><div class="line"></div><div class="line">view <span class="string">"MasterView"</span> &#123;</div><div class="line">	zone <span class="string">"admin.org"</span> &#123;</div><div class="line">		type    master;</div><div class="line">		file    <span class="string">"admin.org.zone"</span>;  <span class="comment">// 区域文件名,此处的文件名可以随意</span></div><div class="line">		allow-transfer &#123;	   <span class="comment">// 允许传送的主机,所谓的区域传送漏洞也就出在这里</span></div><div class="line">			<span class="number">192.168</span><span class="number">.3</span><span class="number">.61</span>;</div><div class="line">			<span class="comment">// any;		   // 如果此处设置为any,则允许任意主机来传送,这就是产生区域传送漏洞的根源</span></div><div class="line">					   <span class="comment">// 所以务必谨记,跟谁传送,就只写谁的ip</span></div><div class="line">		&#125;;</div><div class="line">		notify  yes;</div><div class="line">		also-notify &#123;</div><div class="line">			<span class="number">192.168</span><span class="number">.3</span><span class="number">.61</span>;</div><div class="line">		&#125;;</div><div class="line">	&#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>0x09 定义正向区域文件,我们再来编写正向区域解析数据库,内部主要用于存放各种记录类型和宏,如下<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"># vi /var/named/chroot/etc/admin.org.zone</div><div class="line"></div><div class="line">$TTL <span class="number">3600</span>   ; <span class="number">1</span>h</div><div class="line">@     IN SOA  ns1.admin.org. <span class="section">email</span>.admin.org (</div><div class="line">                        <span class="number">2003</span>       ; serial   <span class="comment">// 时刻谨记,每次如果是手工修改完解析库文件以后都要自增一下</span></div><div class="line">                        <span class="number">900</span>        ; refresh (<span class="number">15</span> minutes)</div><div class="line">                        <span class="number">600</span>        ; retry (<span class="number">10</span> minutes)</div><div class="line">                        <span class="number">86400</span>      ; expire (<span class="number">1</span> day)</div><div class="line">                        <span class="number">3600</span>       ; minimum (<span class="number">1</span> hour)</div><div class="line">                         )</div><div class="line">                IN      NS      ns1.admin.org.</div><div class="line">                IN      NS      ns2.admin.org.</div><div class="line">                IN      MX  <span class="number">10</span>  mx1.admin.org.</div><div class="line">                IN      MX  <span class="number">20</span>  mx2.admin.org.</div><div class="line">ns1		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.3</span></div><div class="line">ns2		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.61</span></div><div class="line">mx1		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.4</span></div><div class="line">mx2		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.5</span></div><div class="line">www		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.6</span></div><div class="line">www		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.3</span></div><div class="line">ftp		IN	CNAME	www.admin.org.</div><div class="line">*		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.110</span>	<span class="comment">//此处,即为泛解析的两种书写方式</span></div><div class="line">admin.org.	IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.120</span></div><div class="line">cacti		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.16</span></div><div class="line">zabbix		IN	A	<span class="number">192.168</span><span class="number">.3</span><span class="number">.18</span></div></pre></td></tr></table></figure></p>
+<p>0x10 配置完正向区域解析库以后,我们就可以来重载服务,测试解析了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> named-checkconf 		此命令会自动检查<span class="built_in">bind</span>主配置文件是否有语法错误</span></div><div class="line"><span class="meta">#</span><span class="bash"> named-checkzone <span class="string">"admin.org"</span> admin.org.zone	检查指定区域解析库文件是否有错误配置</span></div><div class="line"><span class="meta">#</span><span class="bash"> ps -aux | grep named		我们看到<span class="built_in">bind</span>默认是用named用户来运行的,我们改下区域解析库文件的权限</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod 640 /var/named/chroot/etc/admin.org.zone</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /var/named/chroot/etc/admin.org.zone</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown named.named /var/named/chroot/etc/admin.org.zone</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/named start	启动dns服务</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/named reload	重载dns服务</span></div><div class="line"><span class="meta">#</span><span class="bash"> rndc reload			在dns服务启动的情况下,也可使用rndc来重载区域解析库</span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig named on		加入系统自启动</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp			看下端口有没正常起来</span></div><div class="line"><span class="meta">#</span><span class="bash"> dig -t A www.admin.org @192.168.3.60</span></div><div class="line"><span class="meta">#</span><span class="bash"> dig -t A mx2.admin.org @192.168.3.60</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dns bind resolv.png" alt=""></p>
+<p>0x11 在正向区域测试解析没有任何问题之后,我们再来看如何定义反向区域,注意,反向区域的ip地址要全部反写,即 <code>变化的区域不写,不变的区域反写</code>,此区域不需要MX和A记录,只需要PTR记录即可,另外,通常都是<code>先有正向解析再有反向解析</code><br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">192.168</span>.<span class="number">3</span><span class="selector-class">.x</span> =&gt; <span class="number">3.168</span>.<span class="number">192</span><span class="selector-class">.in-addr</span><span class="selector-class">.arpa</span></div><div class="line"><span class="number">192.168</span><span class="selector-class">.x</span><span class="selector-class">.x</span> =&gt; <span class="number">168.192</span><span class="selector-class">.in-addr</span><span class="selector-class">.arpa</span></div></pre></td></tr></table></figure></p>
+<p>定义反向区域的方式很简单,先定义好反向区域文件<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"># vi /<span class="keyword">var</span>/named/chroot/etc/<span class="keyword">view</span>.<span class="keyword">conf</span></div><div class="line"></div><div class="line"><span class="keyword">view</span> <span class="string">"MasterView"</span> &#123;</div><div class="line">    zone <span class="string">"admin.org"</span> <span class="keyword">IN</span> &#123;</div><div class="line">		<span class="keyword">type</span>    master;</div><div class="line">		<span class="keyword">file</span>    <span class="string">"admin.org.zone"</span>;</div><div class="line">		allow-transfer &#123;</div><div class="line">			192.168.3.61;</div><div class="line">		&#125;;</div><div class="line">		notify  yes;</div><div class="line">		also-notify &#123;</div><div class="line">			192.168.3.61;</div><div class="line">		&#125;;</div><div class="line">    &#125;;</div><div class="line">    zone <span class="string">"3.168.192.in-addr.arpa"</span> <span class="keyword">IN</span> &#123; <span class="comment">// 一样要反写,此处就表示192.168.3.x这个网段</span></div><div class="line">		<span class="keyword">type</span>	master;</div><div class="line">		<span class="keyword">file</span>	<span class="string">"192.168.3.zone"</span>;</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>再来定义反向区域解析库<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"># vi /var/named/chroot/etc/<span class="number">192.168.3</span>.zone</div><div class="line"></div><div class="line"><span class="meta">$TTL</span> <span class="number">3600</span></div><div class="line"><span class="meta">$ORIGIN</span> <span class="number">3.168.192</span>.in-addr.arpa.</div><div class="line">@	<span class="keyword">IN</span> 	<span class="keyword">SOA</span>	ns1.admin.org.	login.admin.org. (</div><div class="line">					<span class="number">2001</span> // 时刻谨记,每次如果是手工修改完解析库文件以后都要自增一下</div><div class="line">					<span class="number">900</span></div><div class="line">					<span class="number">600</span></div><div class="line">					<span class="number">86400</span></div><div class="line">					<span class="number">3600</span></div><div class="line">					)</div><div class="line">	<span class="keyword">IN</span>	<span class="keyword">NS</span>		ns1.admin.org.</div><div class="line">	<span class="keyword">IN</span>	<span class="keyword">NS</span>		ns2.admin.org.</div><div class="line"><span class="number">6</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		www.admin.org.</div><div class="line"><span class="number">5</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		mx2.admin.org.</div><div class="line"><span class="number">4</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		mx1.admin.org.</div><div class="line"><span class="number">61</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		ns2.admin.org.	// 注意,这里必须要有一条ns记录指向我们后面的从DNS服务器</div><div class="line"><span class="number">3</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		ns1.admin.org.</div><div class="line"><span class="number">31</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		pop3.admin.org.</div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> chmod 640 192.168.3.zone</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown :named 192.168.3.zone</span></div><div class="line"><span class="meta">#</span><span class="bash"> named-checkconf</span></div><div class="line"><span class="meta">#</span><span class="bash"> named-checkzone <span class="string">"3.168.192.in-addr.arpa"</span> 192.168.3.zone	检查zone配置文件中是否有错误</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /var/named/chroot/etc/</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/named reload</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp</span></div><div class="line"><span class="meta">#</span><span class="bash"> host -t ptr 192.168.3.3 192.168.3.60</span></div><div class="line"><span class="meta">#</span><span class="bash"> dig -x 192.168.3.4 @192.168.3.60</span></div></pre></td></tr></table></figure>
+<p><img src="/img/dns reverse resolv.png" alt=""></p>
+<p>0x12 当主DNS的正反向区域解析都没任何问题之后,我们开始来配置<code>主从DNS实时同步</code><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install  <span class="built_in">bind</span>-utils <span class="built_in">bind</span> <span class="built_in">bind</span>-devel <span class="built_in">bind</span>-chroot -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa  <span class="built_in">bind</span>-utils <span class="built_in">bind</span> <span class="built_in">bind</span>-devel <span class="built_in">bind</span>-chroot</span></div></pre></td></tr></table></figure></p>
+<p>开始配置从DNS,其实,在这里跟配置主DNS并没有太大区别,还是先按上面主DNS的配置方式来一遍<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># &gt; /etc/named.conf</span></div><div class="line"><span class="comment"># vi /etc/named.conf</span></div><div class="line">options &#123;</div><div class="line">	version <span class="string">"1.1.1"</span>;</div><div class="line">	listen-on<span class="built_in"> port </span>53 &#123; 192.168.3.61; 127.0.0.1; &#125;;</div><div class="line">	directory <span class="string">"/var/named/chroot/etc/"</span>;</div><div class="line">	pid-file <span class="string">"/var/named/chroot/var/run/named/named.pid"</span>;</div><div class="line">	allow-query &#123; any; &#125;;</div><div class="line">	Dump-file <span class="string">"/var/named/chroot/var/log/binddump.db"</span>;</div><div class="line">	Statistics-file <span class="string">"/var/named/chroot/var/log/named_stats"</span>;</div><div class="line">	zone-statistics <span class="literal">yes</span>;</div><div class="line">	memstatistics-file <span class="string">"log/mem_stats"</span>;</div><div class="line">	empty-zones-<span class="builtin-name">enable</span> <span class="literal">no</span>;</div><div class="line">	forwarders &#123; 114.114.114.114;8.8.8.8; &#125;;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">key <span class="string">"rndc-key"</span> &#123;</div><div class="line">	algorithm hmac-md5;</div><div class="line"><span class="built_in">	secret </span><span class="string">"Eqw4hClGExUWeDkKBX/pBg=="</span>;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">controls &#123;</div><div class="line">	inet 127.0.0.1<span class="built_in"> port </span>953</div><div class="line">	allow &#123; 127.0.0.1; &#125; keys &#123; <span class="string">"rndc-key"</span>; &#125;;</div><div class="line">&#125;;</div><div class="line">	<span class="built_in"></span></div><div class="line">logging &#123;</div><div class="line">	channel <span class="builtin-name">warning</span> &#123;</div><div class="line">		file <span class="string">"/var/named/chroot/var/log/dns_warning"</span> versions 10 size 10m;</div><div class="line">		severity warning;</div><div class="line">		print-category <span class="literal">yes</span>;</div><div class="line">		print-severity <span class="literal">yes</span>;</div><div class="line">		print-time <span class="literal">yes</span>;</div><div class="line">	&#125;;</div><div class="line"></div><div class="line">	channel general_dns &#123;</div><div class="line">		file <span class="string">"/var/named/chroot/var/log/dns_log"</span> versions 10 size 100m;</div><div class="line">		severity info;</div><div class="line">		print-category <span class="literal">yes</span>;</div><div class="line">		print-severity <span class="literal">yes</span>;</div><div class="line">		print-time <span class="literal">yes</span>;</div><div class="line">	&#125;;</div><div class="line"></div><div class="line">	category<span class="built_in"> default </span>&#123;</div><div class="line">		warning;</div><div class="line">	&#125;;</div><div class="line"></div><div class="line">	category queries &#123;</div><div class="line">		general_dns;</div><div class="line">	&#125;;</div><div class="line">&#125;;</div><div class="line">include <span class="string">"/var/named/chroot/etc/view.conf"</span>;</div></pre></td></tr></table></figure></p>
+<p>配置rndc<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/rndc.key</span></div><div class="line"></div><div class="line">key <span class="string">"rndc-key"</span> &#123;</div><div class="line">    algorithm hmac-md5;</div><div class="line">   <span class="built_in"> secret </span><span class="string">"Eqw4hClGExUWeDkKBX/pBg=="</span>;</div><div class="line">&#125;;</div><div class="line">	</div><div class="line"></div><div class="line"></div><div class="line"><span class="comment"># vi /etc/rndc.conf</span></div><div class="line"></div><div class="line">key <span class="string">"rndc-key"</span> &#123;</div><div class="line">	algorithm hmac-md5;</div><div class="line"><span class="built_in">	secret </span><span class="string">"Eqw4hClGExUWeDkKBX/pBg=="</span>;</div><div class="line">&#125;;</div><div class="line">options &#123;</div><div class="line">	default-key <span class="string">"rndc-key"</span>;</div><div class="line">	default-server 127.0.0.1;</div><div class="line">	default-port 953;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>0x13 接着,再来配置<code>主从DNS正向区域实时同步</code>,务必要记得在主DNS的正向解析库中一定要先有一条ns记录的ip是指向从DNS服务器的,不然同步通知是无法完成的,也就是说,一旦主DNS发生改变,它会通知所有的ns服务器进行更新,这样就可以实现实时正向区域同步的效果</p>
+<p>对于从DNS的配置就非常简单了,只需要在从DNS上编辑区域文件,在里面配置好主DNS服务器的ip,设置好从DNS正向区域文件名,然后启动服务即可,如下<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"># vi /<span class="keyword">var</span>/named/chroot/etc/<span class="keyword">view</span>.<span class="keyword">conf</span></div><div class="line"><span class="keyword">view</span> <span class="string">"SlaveView"</span> &#123;</div><div class="line">    zone <span class="string">"admin.org"</span> <span class="keyword">IN</span> &#123;</div><div class="line">	<span class="keyword">type</span>    slave;	<span class="comment">// 这里的类型要选择从服务器</span></div><div class="line">	masters &#123; 192.168.3.60; &#125;;	<span class="comment">// 指定主DNS服务器ip</span></div><div class="line">	<span class="keyword">file</span> <span class="string">"slave.admin.org.zone"</span>;	<span class="comment">// 指定从DNS正向区域解析库文件名,重启服务后它会自动同步过来,不用手工编辑</span></div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>上面配置没问题以后,我们来重载服务试试<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ps -aux | grep named</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /var/ &amp;&amp; chown named.named named/	为了能让它自动创建解析库文件需要改先权限</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /var/named/chroot/etc</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/named start</span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig named on</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /var/named/chroot/etc/slave.admin.org.zone	这个文件会在从dns重载之后自动被同步过来</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp</span></div><div class="line"><span class="meta">#</span><span class="bash"> tail -f /var/<span class="built_in">log</span>/messages		其实,从日志中我们是可以清晰的看到整个同步过程的</span></div><div class="line"><span class="meta">#</span><span class="bash"> dig -t MX admin.org @192.168.3.61 	同步完成后,我们可以直接用本机来进行解析测试</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dns MASTER MX.png" alt=""></p>
+<p>正向区域实时同步搞定之后,我们再来看看如何实现<code>反向区域实时主从同步</code>,还是要先在主DNS上的反向区域解析库中定义一条指向从DNS服务器的PTR记录,如下</p>
+<p>首先,到主DNS服务器上去编辑反向区域解析库文件,添加一条指向从DNS服务器的PTR记录,具体如下<br><figure class="highlight dns"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"># vi /var/named/chroot/etc/<span class="number">192.168.3</span>.zone</div><div class="line"></div><div class="line"><span class="meta">$TTL</span> <span class="number">3600</span></div><div class="line"><span class="meta">$ORIGIN</span> <span class="number">3.168.192</span>.in-addr.arpa.</div><div class="line">@	<span class="keyword">IN</span> 	<span class="keyword">SOA</span>	ns1.admin.org.	login.admin.org. (</div><div class="line">					<span class="number">2001</span>	// 时刻谨记,每次如果是手工修改完解析库文件以后都要自增一下</div><div class="line">					<span class="number">900</span></div><div class="line">					<span class="number">600</span></div><div class="line">					<span class="number">86400</span></div><div class="line">					<span class="number">3600</span></div><div class="line">					)</div><div class="line">	<span class="keyword">IN</span>	<span class="keyword">NS</span>		ns1.admin.org.</div><div class="line">	<span class="keyword">IN</span>	<span class="keyword">NS</span>		ns2.admin.org.</div><div class="line"><span class="number">6</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		www.admin.org.</div><div class="line"><span class="number">5</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		mx2.admin.org.</div><div class="line"><span class="number">4</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		mx1.admin.org.</div><div class="line"><span class="number">61</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		ns2.admin.org.	// 先在主DNS的反向区域解析库中添加一条指向从DNS的<span class="keyword">PTR</span>记录</div><div class="line"><span class="number">3</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		ns1.admin.org.</div><div class="line"><span class="number">31</span>	<span class="keyword">IN</span>	<span class="keyword">PTR</span>		pop3.admin.org.</div></pre></td></tr></table></figure></p>
+<p>之后,再回到从DNS服务器上编辑区域配置文件,添加一个反向区域,跟正向区域同步一样,依然是指明主DNS服务器ip和从DNS反向区域解析库文件名,之后再重载服务,测试解析即可<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /var/named/chroot/etc/view.conf</span></div><div class="line"></div><div class="line">view <span class="string">"SlaveView"</span> &#123;</div><div class="line">    zone <span class="string">"admin.org"</span> <span class="keyword">IN</span> &#123;</div><div class="line">	<span class="built_in">	type </span>   slave;</div><div class="line">		masters &#123; 192.168.3.60; &#125;;</div><div class="line">		file <span class="string">"slave.admin.org.zone"</span>;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    zone <span class="string">"3.168.192.in-addr.arpa"</span> <span class="keyword">IN</span> &#123;</div><div class="line">	<span class="built_in">	type </span>slave;</div><div class="line">		masters &#123; 192.168.3.60;  &#125;;</div><div class="line">		file <span class="string">"192.168.3.zone"</span>;</div><div class="line">    &#125;;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># rndc reload</div><div class="line"># cat /var/named/chroot/etc/<span class="number">192.168</span><span class="number">.3</span>.zone	依然是在重载服务以后,该反向区域解析库文件会被自动同步过来</div><div class="line"># host -t ptr <span class="number">192.168</span><span class="number">.3</span><span class="number">.3</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.61</span></div></pre></td></tr></table></figure>
+<p><img src="/img/dns master ptr.png" alt=""></p>
+<p>0x14 关于DNS自身的安全问题<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">配置错误,修复简单</div><div class="line">各类投毒污染攻击,需要多方配合,篇幅原因后续我们再详细说</div><div class="line"><span class="built_in">bind</span>工具自身的漏洞,时常注意官方发布的各类高危补丁,尤其是可以直接被远程利用的,而后进行适时修补或更新即可</div></pre></td></tr></table></figure></p>
+<p>0x15 基于 DNS 的各类渗透技巧,其实说来,底层的原理非常简单,因为在一些脚本或者数据库中有很多那种可以直接用于发起DNS请求的函数,而我们就可以通过此来构造自己的各种攻击语句,然后再从解析log中提取执行结果<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">基于DNS <span class="keyword">log</span>的sql盲注,代码及命令执行<span class="params">...</span>后续有空接着说</div><div class="line">基于DNS隧道的各类远程,如,cobalt strike,关于这个,我们后续还会再单独抽出来详细说</div><div class="line">更多,待续<span class="params">...</span></div></pre></td></tr></table></figure></p>
+<p>下面就是个简单的区域传送效果,不过像这种古董级漏洞,现在确实已经非常罕见了,属于敏感信息泄露的一种,容易直接被人看见内部的网络结构拓扑部署,祝大家好运吧 ^_^</p>
+<p><img src="/img/dns zone vluln.png" alt=""><br><br></p>
+<p>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,像dns这种过于的基础服务,配置起来确实非常简单,不过,关键还是要能灵活应用,非常建议大家还是把绝大部分的时间都花在去深入理解dns的解析过程上,个人觉得那个才是真正的价值,因为所有的DNS高级应用场景,最底层全部都是基于这个,把最基础的东西搞通透以后,再去看各类高级应用就非常简单了,还是那句话<code>不管上层怎么变化,但万变不离其宗</code>,篇幅限制,此处仅仅也只是先带大家打个照面,更多高级应用,后续肯定还会有大量的篇幅说明,来日方长,我们待续……</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/DNS-深度理解/">#DNS 深度理解</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

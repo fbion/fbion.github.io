@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="熟练利用google hacking来辅助我们快速渗透"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>熟练利用google hacking来辅助我们快速渗透 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/14/search-hacking/">
+                熟练利用google hacking来辅助我们快速渗透
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-14</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/google-hacking/">google hacking</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 google hacking 几个基础过滤器用途简介[说在前面的话,过滤器是死的人是活的,实际用的时候把脑洞放开,尽你所能拼装,才有可能达到超预期效果]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intitle:</span>     从网页标题中搜索指定的关键字,可专门用来搜索指定版本名称的各类web程序,也可用allintitle</div><div class="line"><span class="symbol">inurl:</span> 	     从url中搜索指定的关键字,可专门用来构造各种形式的漏洞url,也可用allinurl</div><div class="line"><span class="symbol">intext:</span>      从网页中搜索指定的关键字,经常会用它来穿透到漏洞页面……也可用allintext</div><div class="line"><span class="symbol">filetype:</span>    搜索指定的文件后缀,例如<span class="symbol">:sql</span> mdb txt bak backup ini zip rar doc xls…… </div><div class="line"><span class="symbol">site:</span>        在某个特定的网站内中搜索指定的内容</div><div class="line"><span class="symbol">link:</span>        搜索和该链接有关联的链接,比如<span class="symbol">:</span>友情链接</div><div class="line">index <span class="symbol">of:</span>    找目录遍历时也许会用到</div></pre></td></tr></table></figure></p>
+<p>0x02 google hacking所支持的一些通配符(建议选择性的用,因为越精确,也意味着能搜到的结果越少,这样容易漏掉一些有价值的目标,我们最终目的还是希望能尽快找到有漏洞的站先进去再说):<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">+   强制包含某个字符进行查询</div><div class="line">-   查询的时候忽略某个字符</div><div class="line"><span class="string">""</span>  查询的时候精确匹配双引号内的字符</div><div class="line">.   匹配某单个字符进行查询</div><div class="line">*   匹配任意字符进行查询</div><div class="line"><span class="params">|   或者,多个选择,只要有一个关键字匹配上即可</span></div></pre></td></tr></table></figure></p>
+<p>0x03 找各种web入口,当然,这里所指的web入口并非仅限于各种常规网站后台[说到网站后台,一定要手工多尝试几个路径,实在猜不到,再用字典跑,节省时间]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">如一些疑似目标内网的各种web管理系统入口,web端的数据库管理入口,某些设备的web端配置入口,以及一些常见的java控制台入口等等...</div><div class="line">反正只要你觉得进去以后能上传脚本的地方全部都可以尝试,东西在你手里,可劲儿用就是了</div></pre></td></tr></table></figure></p>
+<p>搜集各版本tomcat入口[默认在8080端口上]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat 		直接这样搜结果肯定会非常多</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">inurl:</span><span class="number">8080</span>/    			我们可以带指定端口号去搜,因为有些web并非在默认端口上,这样搜的话,可以尽量防止有漏网之鱼</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>Apache Tomcat/<span class="number">5.5</span>.<span class="number">27</span> <span class="symbol">site:</span>*.hk      针对特定版本特定国家去搜,比如爆出某个版本有远程执行类的漏洞就可以利用这种方式来批量进行</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>Apache Tomcat/<span class="number">7.0</span>.<span class="number">32</span> <span class="symbol">site:</span>*.gov.br</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>Apache Tomcat/<span class="number">5.0</span>.<span class="number">12</span> <span class="symbol">site:</span>*.cn</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>Apache Tomcat/<span class="number">6.0</span>.<span class="number">24</span> <span class="symbol">site:</span>*.com</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>*.edu.*</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>*.gov.*		搜特定类型的目标站点,如,学校一般都是edu,各种民间组织一般都是org,政府机构一般都是gov……</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>*.org.*</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>Apache Tomcat/<span class="number">7.0</span> <span class="symbol">site:</span>*.org.*</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>*.jp</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>*.vn</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>*.ph</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>Apache Tomcat <span class="symbol">site:</span>*.uk</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>baidu.com	无意发现百度的某个子域,竟然是个博彩站</div><div class="line"><span class="symbol">intext:</span>$CATALINA_HOME/webapps/ROOT/ <span class="symbol">intitle:</span>apache tomcat <span class="symbol">site:</span>org.tw</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google tomcat.png" alt=""><br></p>
+<p>搜集weblogic入口:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/console/login/LoginForm.jsp  	这样范围太大,可根据上面的示例随意变形</div><div class="line"><span class="symbol">inurl:</span>/console/login/LoginForm.jsp <span class="symbol">intitle:</span>Oracle WebLogic Server</div><div class="line"><span class="symbol">inurl:</span>/console/login/ <span class="symbol">intitle:</span><span class="string">"Oracle WebLogic Server 管理控制台"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/google weblogic.png" alt=""><br></p>
+<p>搜集jboss入口:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/jmx-console/htmladaptor</div><div class="line"><span class="symbol">inurl:</span>/jmx-console/htmladaptor <span class="symbol">site:</span>*.edu.*</div><div class="line"><span class="symbol">inurl:</span>/jmx-console/htmladaptor <span class="symbol">site:</span>*.org.*</div><div class="line"><span class="symbol">inurl:</span>/jmx-console/htmladaptor <span class="symbol">site:</span>*.tw</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google jboss.png" alt=""><br></p>
+<p>搜集websphere入口:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/ibm/console/logon.jsp</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google websphere.png" alt=""><br></p>
+<p>搜集phpmyadmin入口:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/phpMyAdmin/index.php </div><div class="line"><span class="symbol">inurl:</span>/phpMyAdmin/index.php db+information_schema   	指定命中数据</div><div class="line"><span class="symbol">inurl:</span>/phpMyAdmin/index.php <span class="symbol">intext:</span>phpMyAdmin <span class="number">2.7</span>.<span class="number">0</span> 	直接针对特定版本号去搜索,更加精准</div><div class="line"><span class="symbol">inurl:</span>/phpMyAdmin/index.php <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>/phpMyAdmin/index.php <span class="symbol">site:</span>*.org</div><div class="line"><span class="symbol">inurl:</span>/phpMyAdmin/index.php <span class="symbol">site:</span>*.hk</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google phpmyadmin.png" alt=""><br></p>
+<p>批量搜集webmin入口[其实就是一个web版的linux系统管理工具,默认情况下工作在web端的10000端口上]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intitle:</span>Login to Webmin <span class="symbol">intext:</span><span class="string">"login to the Webmin server on"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/google webmin.png" alt=""><br></p>
+<p>批量搜wordpress程序[关于wp的特征比较多,大家可自行构造]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/wp-login.php  <span class="symbol">site:</span>*.hk</div><div class="line">index of /wp-content/uploads <span class="symbol">inurl:</span>/wp-login.php</div><div class="line"><span class="symbol">inurl:</span>/wp-content/themes/theagency    上传漏洞</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google wp.png" alt=""><br></p>
+<p>批量搜joomla程序:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/administrator/index.php</div><div class="line"><span class="symbol">inurl:</span>index.php?option=com_advertisementboard  找注入</div><div class="line"><span class="symbol">inurl:</span>index.php?option=com_carocci</div><div class="line"><span class="symbol">inurl:</span>index.php?option=com_product</div><div class="line"><span class="symbol">inurl:</span>/administrator/index.php <span class="symbol">site:</span>*.hk</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google joomla.png" alt=""><br></p>
+<p>批量搜drupal程序:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>CHANGELOG.txt <span class="symbol">intext:</span>drupal <span class="symbol">intext:</span><span class="string">"SA-CORE"</span> -<span class="symbol">site:</span>github.com -<span class="symbol">site:</span>drupal.org</div></pre></td></tr></table></figure></p>
+<p>批量搜discuz程序:</p>
+<p>批量搜集opencart程序:</p>
+<p>批量搜集phpbb程序:</p>
+<p>更多…</p>
+<p>当然,你也可以根据下面的一些特征去找特定的开源程序[这种命中率显然没有直接用特征目录的命中率高]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">power by wordpress                powered by discuz x3.<span class="number">2</span></div><div class="line">powered by phpcms <span class="number">2008</span>            powered by drupal <span class="number">7</span></div><div class="line">powered by dedecmsv57_gbk         powered by CubeCart <span class="number">3.0</span>.<span class="number">6</span></div><div class="line">Powered by phpBB <span class="number">2.0</span>.<span class="number">6</span>            powered by paBugs <span class="number">2.0</span> Beta <span class="number">3</span></div><div class="line"><span class="symbol">inurl:</span>wp-login.php                <span class="symbol">inurl:</span>/administrator/index.php    </div><div class="line"><span class="symbol">inurl:</span>/admina.php</div></pre></td></tr></table></figure></p>
+<p>批量搜集目标是否用了一些存在漏洞的邮件程序[不一定有,多尝试,反正是搜集,找到东西价值越高越好]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">owa:</span></div><div class="line"><span class="symbol">inurl:</span>/owa/auth/logon.aspx </div><div class="line"><span class="symbol">inurl:</span>/owa/auth/logon.aspx <span class="symbol">site:</span>*.org.*</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mirapoint(ShellShock):</div><div class="line"><span class="symbol">inurl:</span>/cgi-bin/search.cgi <span class="symbol">site:</span>*.org.*</div><div class="line"><span class="symbol">inurl:</span>/cgi-bin/madmin.cgi</div></pre></td></tr></table></figure>
+<p><img src="/img/google mirapoint.png" alt=""><br></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Zimbra(本地包含):</div><div class="line"><span class="string">inurl:</span><span class="number">7071</span><span class="regexp">/zimbraAdmin/</span></div><div class="line"><span class="string">inurl:</span><span class="regexp">/help/</span>en_US<span class="regexp">/standard/</span>version.htm</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Atmail(用于连接数据库的配置文件泄露):</div><div class="line"></div><div class="line">TurboMail(配置错误,进入任意邮箱):</div><div class="line"></div><div class="line">U-mail(注入&amp;getshell):</div><div class="line"></div><div class="line">Lotus Domino Webmail(越权访问)<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<p>批量找常规网站后台[下面的php也可以换成asp,aspx,jsp 多次尝试,因为每个国家对后台的命名习惯各有特色,所以,这里只列举了一些相对命中率比较高的,找到后台以后,记得习惯性多尝试几个弱口令,万能密码未授权之类的东西]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/manager/login.php <span class="symbol">site:</span>*.jp</div><div class="line"><span class="symbol">inurl:</span>/cms/login.php <span class="symbol">site:</span>*.jp</div><div class="line"><span class="symbol">inurl:</span>/manage/index.php <span class="symbol">site:</span>*.jp</div><div class="line"><span class="symbol">inurl:</span>/system/login.php <span class="symbol">site:</span>*.jp</div><div class="line"><span class="symbol">inurl:</span>/webadmin/login.php <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>admin_login.php <span class="symbol">intitle:</span>admin login</div><div class="line"><span class="symbol">inurl:</span>admin_login.php <span class="symbol">intitle:</span>admin page</div><div class="line"><span class="symbol">inurl:</span>/admin/login.php <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>/admin/index.php <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>/system/adminlogin.asp  <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>/manage/login.aspx  <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>/sysadm/index.php  <span class="symbol">site:</span>*.com</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google manager.png" alt=""><br></p>
+<p>找svn泄露[运气好说不定能脱到密码]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/.svn/entries </div><div class="line"><span class="symbol">inurl:</span>/.svn/entries <span class="symbol">site:</span>*.org.*</div><div class="line"><span class="symbol">inurl:</span>/.svn/entries <span class="symbol">site:</span>*.gov.br</div><div class="line"><span class="symbol">inurl:</span>/.svn/entries <span class="symbol">site:</span>*.hk</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google svn.png" alt=""><br></p>
+<p>批量找目标的后台未授权访问:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span><span class="string">"Website Design &amp; Developed By : WebSay"</span>  默认后台/admin</div><div class="line"><span class="symbol">intext:</span><span class="string">"Powered by ENS Consultants"</span>  默认后台/admin/login.php</div><div class="line"><span class="symbol">intext:</span><span class="string">"Desenvolvimento - MW Way"</span>    默认后台/admin/index.php</div><div class="line"><span class="symbol">inurl:</span>.php?id= <span class="symbol">intext:</span><span class="string">"Web realizada por Soma Estudio"</span> </div><div class="line"><span class="symbol">inurl:</span>/_mycps/login.php</div></pre></td></tr></table></figure></p>
+<p>批量找弱口令:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span><span class="string">"design by weli"</span>   默认后台: <span class="regexp">/adm/login</span>.php 除了弱口令还有注入</div><div class="line">username : linjizen@gmail.com</div><div class="line">password : lin719192</div></pre></td></tr></table></figure></p>
+<p>尽可能多的找到能够利用的各种上传点[比如:各种典型的漏洞编辑器地址,ck,kindeditor,fck,ewebeditor……]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span><span class="string">" Powered by JADBM "</span>   JADBM Cms upload shell 注册后登陆上传即可</div><div class="line"><span class="symbol">inurl:</span><span class="string">"/index.php/frontend/login/en"</span>  Estate cms upload shell 注册后登陆上传即可</div><div class="line"><span class="symbol">inurl:</span>/Content/Roxy_Fileman/   该路径下直接就是上传点</div><div class="line">index <span class="symbol">of:</span><span class="string">"filemanager/dialog.php"</span>  该脚本就是上传脚本直接上传即可</div><div class="line"><span class="symbol">intext:</span><span class="string">"Desenvolvido por Webnet Soluções Tecnológicas."</span> fck上传</div><div class="line"><span class="symbol">inurl:</span><span class="string">"subir_foto.php"</span> 上传点</div><div class="line"><span class="symbol">inrul:</span><span class="string">"/imce?dir="</span> <span class="symbol">intitle:</span><span class="string">"File Browser"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">"Powered by Vision Helpdesk 3.9.10 Stable"</span> 注册后登陆进去编辑个人配置上传</div><div class="line">index of /admin/fckeditor <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>/ewebeditor/  <span class="symbol">site:</span>*.tw</div><div class="line"><span class="symbol">inurl:</span>/admin/upload_file.php</div><div class="line"><span class="symbol">inurl:</span>/admin/upfile.php </div><div class="line"><span class="symbol">inurl:</span>/admin/upload.asp</div></pre></td></tr></table></figure></p>
+<p>找到可能存在包含和命令执行类的漏洞的一些典型参数:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>footer.inc.php?settings=</div><div class="line"><span class="symbol">inurl:</span>/pb_inc/admincenter/index.php?page=</div><div class="line"><span class="symbol">inurl:</span>/pnadmin/categories.inc.php?subpage=</div><div class="line"><span class="symbol">inurl:</span>/index.php??view=src/sistema/vistas/</div><div class="line"><span class="symbol">inurl:</span>/edit.php?em=file&amp;filename=</div><div class="line"><span class="symbol">inurl:</span>/path_to_athena/athena.php?athena_dir= 远程包含</div><div class="line"><span class="symbol">inurl:</span>/path_to_qnews/q-news.php?id=  远程包含</div><div class="line"><span class="symbol">inurl:</span>/inc/backend_settings.php?cmd=</div><div class="line"><span class="symbol">inurl:</span>login.action strus2系列执行漏洞利用</div><div class="line"><span class="symbol">inurl:</span>php?x=                 <span class="symbol">inurl:</span>php?open=</div><div class="line"><span class="symbol">inurl:</span>php?visualizar=        <span class="symbol">inurl:</span>php?pagina=</div><div class="line"><span class="symbol">inurl:</span>php?inc=               <span class="symbol">inurl:</span>php?include_file=</div><div class="line"><span class="symbol">inurl:</span>php?page=              <span class="symbol">inurl:</span>php?pg=</div><div class="line"><span class="symbol">inurl:</span>php?show=              <span class="symbol">inurl:</span>php?cat=</div><div class="line"><span class="symbol">inurl:</span>php?file=              <span class="symbol">inurl:</span>php?path_local=</div><div class="line"><span class="symbol">inurl:</span>php?filnavn=           <span class="symbol">inurl:</span>php?HCL_path=</div><div class="line"><span class="symbol">inurl:</span>php?doc=               <span class="symbol">inurl:</span>php?appdir=</div><div class="line"><span class="symbol">inurl:</span>php?phpbb_root_dir=    <span class="symbol">inurl:</span>php?phpc_root_path=</div><div class="line"><span class="symbol">inurl:</span>php?path_pre=          <span class="symbol">inurl:</span>php?nic=</div><div class="line"><span class="symbol">inurl:</span>php?sec=               <span class="symbol">inurl:</span>php?content=</div><div class="line"><span class="symbol">inurl:</span>php?link=              <span class="symbol">inurl:</span>php?filename=</div><div class="line"><span class="symbol">inurl:</span>php?dir=               <span class="symbol">inurl:</span>php?document=</div><div class="line"><span class="symbol">inurl:</span>index.php?view=        <span class="symbol">inurl:</span>*.php?locate=</div><div class="line"><span class="symbol">inurl:</span>*.php?place=           <span class="symbol">inurl:</span>*.php?layout=</div><div class="line"><span class="symbol">inurl:</span>*.php?go=              <span class="symbol">inurl:</span>*.php?catch=</div><div class="line"><span class="symbol">inurl:</span>*.php?mode=            <span class="symbol">inurl:</span>*.php?name=</div><div class="line"><span class="symbol">inurl:</span>*.php?loc=             <span class="symbol">inurl:</span>*.php?f=</div><div class="line"><span class="symbol">inurl:</span>*.php?inf=             <span class="symbol">inurl:</span>*.php?pg=</div><div class="line"><span class="symbol">inurl:</span>*.php?load=            <span class="symbol">inurl:</span>*.php?naam=</div><div class="line"><span class="symbol">allinurl:</span>php?page=           <span class="symbol">allinurl:</span>php?file= </div><div class="line"><span class="symbol">inurl:</span>php?x=                 <span class="symbol">inurl:</span>admin.php?cal_dir=</div><div class="line"><span class="symbol">inurl:</span>php?<span class="keyword">include</span>=           <span class="symbol">inurl:</span>php?nav=</div><div class="line"><span class="symbol">inurl:</span>*.php?sel=             <span class="symbol">inurl:</span>php?p=</div><div class="line"><span class="symbol">inurl:</span>php?conf=              <span class="symbol">inurl:</span>php?prefix=</div><div class="line"><span class="symbol">inurl:</span>theme.php?THEME_DIR= </div><div class="line"><span class="symbol">inurl:</span>php?lvc_include_dir=  </div><div class="line"><span class="symbol">inurl:</span>php?basepath=          <span class="symbol">inurl:</span>php?pm_path=</div><div class="line"><span class="symbol">inurl:</span>php?user_inc=          <span class="symbol">inurl:</span>php?cutepath=</div><div class="line"><span class="symbol">inurl:</span>php?fil_config=        <span class="symbol">inurl:</span>php?libpach=</div><div class="line"><span class="symbol">inurl:</span>php?pivot_path=        <span class="symbol">inurl:</span>php?rep=</div><div class="line"><span class="symbol">inurl:</span>php?conteudo=          <span class="symbol">inurl:</span>php?root=</div><div class="line"><span class="symbol">inurl:</span>php?configFile         <span class="symbol">inurl:</span>php?pageurl</div><div class="line"><span class="symbol">inurl:</span>php?inter_url          <span class="symbol">inurl:</span>php?url=</div><div class="line"><span class="symbol">inurl:</span>php?cmd=               <span class="symbol">inurl:</span>path.php?my=</div><div class="line"><span class="symbol">inurl:</span>php?xlink=             <span class="symbol">inurl:</span>php?to=</div><div class="line"><span class="symbol">inurl:</span>file.php?disp=</div></pre></td></tr></table></figure></p>
+<p>找可能存在数据库注入各种参数:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>categorysearch.php?indus=</div><div class="line"><span class="symbol">intext:</span><span class="string">"樂天台東民宿網"</span> <span class="symbol">inurl:</span>news_board.php</div></pre></td></tr></table></figure></p>
+<p>小商城类:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"View cart"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"Buy Now"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"add to cart"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"shopping"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"boutique"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"/store/"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"/shop/"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">".php?catid="</span> <span class="symbol">intext:</span><span class="string">"Toys"</span></div><div class="line"><span class="symbol">inurl:</span>details.php?BookID=</div><div class="line"><span class="symbol">inurl:</span>shop.php?<span class="keyword">do</span>=part&amp;id=</div></pre></td></tr></table></figure></p>
+<p>普通cms类:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>article.php?ID=        <span class="symbol">inurl:</span>newsDetail.php?id=</div><div class="line"><span class="symbol">inurl:</span>show.php?id=           <span class="symbol">inurl:</span>newsone.php?id=</div><div class="line"><span class="symbol">inurl:</span>news.php?id=           <span class="symbol">inurl:</span>event.php?id=</div><div class="line"><span class="symbol">inurl:</span>preview.php?id=        <span class="symbol">inurl:</span>pages.php?id=</div><div class="line"><span class="symbol">inurl:</span>main.php?id=           <span class="symbol">inurl:</span>prod_detail.php?id=</div><div class="line"><span class="symbol">inurl:</span>view.php?id=           <span class="symbol">inurl:</span>product.php?id=</div><div class="line"><span class="symbol">inurl:</span>contact.php?Id=        <span class="symbol">inurl:</span>display_item.php?id=</div><div class="line"><span class="symbol">inurl:</span>item.php?id=           <span class="symbol">inurl:</span>view_items.php?id=</div><div class="line"><span class="symbol">inurl:</span>details.asp?id=        <span class="symbol">inurl:</span>profile.asp?id=</div><div class="line"><span class="symbol">inurl:</span>content.asp?id=        <span class="symbol">inurl:</span>display_item.asp?id=</div><div class="line"><span class="symbol">inurl:</span>view_detail.asp?ID=    <span class="symbol">inurl:</span>section.php?id=</div><div class="line"><span class="symbol">inurl:</span>theme.php?id=          <span class="symbol">inurl:</span>produit.php?id=</div><div class="line"><span class="symbol">inurl:</span>chappies.php?id=       <span class="symbol">inurl:</span>readnews.php?id=</div><div class="line"><span class="symbol">inurl:</span>rub.php?idr=           <span class="symbol">inurl:</span>pop.php?id=</div><div class="line"><span class="symbol">inurl:</span>person.php?id=         <span class="symbol">inurl:</span>read.php?id=</div><div class="line"><span class="symbol">inurl:</span>reagir.php?num=        <span class="symbol">inurl:</span>staff_id=</div><div class="line"><span class="symbol">inurl:</span>gallery.php?id=        <span class="symbol">inurl:</span>humor.php?id=</div><div class="line"><span class="symbol">inurl:</span>spr.php?id=            <span class="symbol">inurl:</span>gery.php?id=</div><div class="line"><span class="symbol">inurl:</span>profile_view.php?id=</div><div class="line"><span class="symbol">inurl:</span>fellows.php?id=        <span class="symbol">inurl:</span>ray.php?id=</div><div class="line"><span class="symbol">inurl:</span>productinfo.php?id=</div><div class="line"><span class="symbol">inurl:</span>file.php?cont=         <span class="symbol">inurl:</span><span class="keyword">include</span>.php?chapter=</div><div class="line"><span class="symbol">inurl:</span>principal.php?param=</div><div class="line"><span class="symbol">inurl:</span>general.php?menue=     <span class="symbol">inurl:</span>php?pref=</div><div class="line"><span class="symbol">inurl:</span>nota.php?chapter=      <span class="symbol">inurl:</span>php?str=</div><div class="line"><span class="symbol">inurl:</span>php?corpo=             <span class="symbol">inurl:</span>press.php?*[*]*=</div></pre></td></tr></table></figure></p>
+<p>除了上面这些常规找注入的方式,你不妨还可以像下面这样,直接在网页标题中搜SQL语句,说不定也会有收获哦,web万能的谷歌:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intitle:</span>注入常用的一些sql语句,比如<span class="symbol">:</span>常用的union,substr(),select等等……</div></pre></td></tr></table></figure></p>
+<p>批量搜集万能密码(其实也属于sql注入的一种):<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span><span class="string">"wladmin/login.asp"</span>  </div><div class="line">Username : <span class="string">'='</span> <span class="string">'or'</span></div><div class="line">Password : <span class="string">'='</span> <span class="string">'or'</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span>POWERED BY Versatile Software Services       默认后台/alogin.aspx</div><div class="line">User ==&gt; <span class="string">'or'</span><span class="string">'='</span></div><div class="line">Pass ==&gt; <span class="string">'or'</span><span class="string">'='</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>/media.php?hal=login</div><div class="line"><span class="symbol">Email:</span> <span class="string">'='</span><span class="string">'or'</span>@gmail.com</div><div class="line"><span class="symbol">Pass:</span> <span class="string">'='</span><span class="string">'or'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span><span class="string">"Powered by : Best Webmasterz."</span> 默认后台/admin</div><div class="line">User : <span class="string">'='</span> <span class="string">'OR'</span></div><div class="line">Pass : <span class="string">'='</span> <span class="string">'OR'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span><span class="string">"Web Design and Maintenance by Cloud 5 Solutions"</span> 默认后台/admin/login.php</div><div class="line">User : <span class="string">'='</span> <span class="string">'OR'</span></div><div class="line">Pass : <span class="string">'='</span> <span class="string">'OR'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span><span class="string">"网站设计：火龙科技"</span> 默认后台/maintain/login.php</div><div class="line">Username : <span class="string">'='</span> <span class="string">'or'</span></div><div class="line">Password : <span class="string">'='</span> <span class="string">'or'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intext:</span><span class="string">"Powered by Moodyworld"</span> 默认后台/admin/</div><div class="line">Username : <span class="string">'='</span> <span class="string">'or'</span></div><div class="line">Password : <span class="string">'='</span> <span class="string">'or'</span></div></pre></td></tr></table></figure>
+<p>找遗留的各种数据库报错,物理路径,数据库版本,服务器探针类文件等等……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">site:</span>*.tw  <span class="symbol">inurl:</span>/phpinfo.php</div><div class="line"><span class="symbol">filetype:</span>log <span class="string">"PHP Parse error"</span><span class="params">| "PHP Warning"</span></div><div class="line">site:*.tw  "id=" &amp; intext:"Warning: mysql_fetch_array()</div><div class="line">site:*.jp  "id=" &amp; intext:"Warning: getimagesize()</div><div class="line">site:*.br  "id=" &amp; intext:"Warning: array_merge()</div><div class="line">site:*.tw  "id=" &amp; intext:"Warning: mysql_fetch_assoc()</div><div class="line">site:*.tw  "id=" &amp; intext:"Warning: mysql_result()</div><div class="line">site:*.jp  "id=" &amp; intext:"Warning: pg_exec()</div><div class="line">site:*.tw  "id=" &amp; intext:"Warning: <span class="keyword">require</span>()</div><div class="line">inurl:/robots.txt site:*.*</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google mysql error.png" alt=""><br></p>
+<p>搜集各种账号密码,比如,数据库密码,ftp,vpn,htpasswd,telnet等等……:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">可能会遗留的密码文件:</div><div class="line"></div><div class="line"><span class="symbol">inurl:</span>passlist.txt</div><div class="line"><span class="symbol">inurl:</span>password.txt</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">重要配置文件泄露:</div><div class="line"></div><div class="line"><span class="symbol">inurl:</span>/application/configs/  配置文件名为/application/configs/application.ini</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">htpasswd:</span></div><div class="line"></div><div class="line">htpasswd.bak <span class="symbol">filetype:</span>htpasswd</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">vpn(cisco)[捅内网,非常有用]:</div><div class="line"></div><div class="line"><span class="symbol">filetype:</span>pcf  <span class="string">"GroupPwd"</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cisco在线密码解密网站:</div><div class="line"><span class="symbol">https:</span>/<span class="regexp">/www.unix-ag.uni-kl.de/</span>~massar/bin/cisco-decode</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">ftp 账号密码:</div><div class="line"></div><div class="line"><span class="string">"index of/"</span> <span class="string">"ws_ftp.ini"</span> <span class="string">"parent directory"</span></div><div class="line"><span class="string">"your password is"</span> <span class="symbol">filetype:</span>log</div><div class="line"><span class="symbol">filetype:</span>ini <span class="symbol">inurl:</span><span class="string">"serv-u.ini"</span></div><div class="line"><span class="symbol">filetype:</span>ini <span class="symbol">inurl:</span>flashFXP.ini</div><div class="line"><span class="symbol">filetype:</span>ini ServUDaemon</div><div class="line"><span class="symbol">filetype:</span>ini wcx_ftp</div><div class="line"><span class="symbol">filetype:</span>ini ws_ftp pwd</div><div class="line"><span class="symbol">ext:</span>inc <span class="string">"pwd="</span> <span class="string">"UID="</span></div><div class="line">auth_user_file.txt</div></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">例如:</div><div class="line"></div><div class="line">http://www.cryptoman.com/ftp/</div><div class="line">http://www.cryptoman.com/ftp/WS_FTP.ini</div></pre></td></tr></table></figure>
+<p>其他密码:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">default password list	直接在谷歌中搜各类缺省用户名密码</div><div class="line">admin account info<span class="string">" filetype:log</span></div></pre></td></tr></table></figure></p>
+<p>找目录遍历[上传点,数据库文件下载,phpmyadmin,网站后台及各种网站备份,源代码泄露等,同样也可以用这种方式慢慢找]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">site:</span>*.hk index of /admin</div><div class="line"><span class="symbol">site:</span>*.hk index of /upfiles</div><div class="line"><span class="symbol">site:</span>*.hk index of /fckeditor/editor/</div><div class="line"><span class="symbol">site:</span>*.tw index of /admin/uploadfile</div><div class="line"><span class="symbol">site:</span>*.tw index of /admin/file</div><div class="line"><span class="symbol">site:</span>*.tw index of /system/file</div><div class="line"><span class="symbol">site:</span>*.tw index of /phpmyadmin</div><div class="line"><span class="symbol">site:</span>*.tw index of /web/backup/</div><div class="line"><span class="symbol">inurl:</span>/phpmyadmin/index.php <span class="symbol">site:</span>*.tw</div></pre></td></tr></table></figure></p>
+<p>搜同行们的各种工具脚本:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">绝大部分人在用别人东西的时候,基本是很少看里面代码的[即使开源],更不要说去除特征及后门,没办法现状如此,大家都很懒,既是如此,就不免要把自己的成果也被迫的共享给别人一份,所以养成良好的读代码习惯,是非常有必要的</div></pre></td></tr></table></figure></p>
+<p>搜同行的脱裤脚本:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">intitle:</span>登录 - Adminer    这里只是随便举个例子,你可以自己平时多搜集一些境内外常用的脱裤脚本的标题,文件名什么的,慢慢尝试,root空密码也很正常</div></pre></td></tr></table></figure></p>
+<p>同样,你也可以用上面这种方式来找下别人的aspx嗅探脚本,例如:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">websniff</div></pre></td></tr></table></figure></p>
+<p>找别人遗留的各种webshell,平时注意多搜集一些镜内外常用的大马特征,这里只是随便举几个例子,你可以随意组装自己的:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">inurl:</span>b374k.php <span class="symbol">filetype:</span>php</div><div class="line"><span class="symbol">inurl:</span>c99.php</div><div class="line"><span class="symbol">inurl:</span>c10<span class="number">0</span>.php Generation <span class="symbol">time:</span></div><div class="line"><span class="symbol">inurl:</span>itsecteam_shell.php</div><div class="line"><span class="symbol">intext:</span>x230<span class="number">0</span> Locus7Shell v. <span class="number">1.0</span>a beta Modded by</div><div class="line"><span class="symbol">intext:</span>c99shell <span class="symbol">inurl:</span>c99.php</div><div class="line">powered by Captain Crunch Security Team</div><div class="line"><span class="string">"inurl:c99.php"</span> + <span class="string">"intext:safe"</span></div><div class="line"><span class="symbol">intitle:</span>r57shell</div><div class="line"><span class="symbol">intitle:</span>c99shell +uname</div><div class="line"><span class="symbol">inurl:</span>c99.php uid=<span class="number">0</span>(root)</div><div class="line"><span class="symbol">intitle:</span>c99shell+<span class="symbol">filetype:</span>php</div><div class="line"><span class="symbol">intitle:</span>ly0kha shell</div><div class="line"><span class="symbol">inurl:</span>.php <span class="string">"cURL: ON MySQL: ON MSSQL: OFF"</span></div><div class="line"><span class="string">"Shell"</span> filetypehp <span class="symbol">intext:</span><span class="string">"uname -a:"</span> <span class="string">"EDT 2010"</span></div><div class="line"><span class="symbol">intitle:</span><span class="string">"intitle:r57shell"</span></div><div class="line"><span class="symbol">inurl:</span><span class="string">"c99.php"</span> &amp; <span class="symbol">intext:</span>Encoder Tools Proc. </div><div class="line"><span class="symbol">inurl:</span><span class="string">"c100.php"</span> &amp; <span class="symbol">intext:</span>Encoder Tools Proc. </div><div class="line"><span class="symbol">intitle:</span><span class="string">"Shell"</span> <span class="symbol">inurl:</span><span class="string">".php"</span> &amp; <span class="symbol">intext:</span>Encoder Tools Proc.</div></pre></td></tr></table></figure></p>
+<p><img src="/img/google webshell.png" alt=""><br></p>
+<p>还有更多其他的工具特征,就留给大家自己去整理了,有时候站在别人的肩膀上上进去,感觉也挺好的…<br><br></p>
+<p>找到目标的owa和vpn入口[内网入口]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">owa入口:</div><div class="line">  <span class="symbol">inurl:</span>/owa/auth/logon <span class="symbol">intitle:</span>outlook</div><div class="line">  <span class="symbol">inurl:</span>/owa/auth/logon <span class="symbol">intext:</span>outlook</div><div class="line">   </div><div class="line">vpn入口:</div><div class="line">  <span class="symbol">inurl:</span>/sslvpn <span class="symbol">site:</span>hk</div></pre></td></tr></table></figure></p>
+<p>找些好下手的目标子域:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">site:</span>polyu.edu.hk <span class="symbol">inurl:</span>asp?pid=</div><div class="line"><span class="symbol">site:</span>polyu.edu.hk <span class="symbol">inurl:</span>aspx?id=</div><div class="line"><span class="symbol">site:</span>polyu.edu.hk <span class="symbol">inurl:</span>php?id=</div><div class="line"><span class="symbol">site:</span>polyu.edu.hk <span class="symbol">inurl:</span>jsp?id=</div><div class="line"><span class="symbol">site:</span>polyu.edu.hk <span class="symbol">inurl:</span><span class="keyword">do</span>?id=</div><div class="line"><span class="symbol">site:</span>polyu.edu.hk <span class="symbol">inurl:</span>cgi?id=</div></pre></td></tr></table></figure></p>
+<p>找目标的数据库备份及其它各类敏感文件目录[后缀一般为 sql,mdb,txt……],像数据库和网站备份这种东西,还是建议直接用工具跑比较好,前提是字典务必要精心制作:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">filetype:</span>sql <span class="symbol">inurl:</span>backup <span class="symbol">inurl:</span>wp-content</div><div class="line"><span class="symbol">inurl:</span>/eWebEditor/db/ <span class="symbol">site:</span>*.com</div></pre></td></tr></table></figure></p>
+<p>从目标网站上搜集目标邮箱,说实话,目标自己网站上的邮箱价值一般都不是特别大:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">site:</span>*.gov.tw *@gov.tw</div></pre></td></tr></table></figure></p>
+<p>关于google hacking的东西基本就到此为止了,最后再推荐一个不错的google dorks站点,方便大家练习:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">https://cxsecurity.com/exploit/  非常推荐</div><div class="line">https://www.exploit-db.com/google-hacking-database/ 并不推荐,exp不错,但这方面比较废</div></pre></td></tr></table></figure></p>
+<p>关于谷歌的一些好玩的小玩具,无聊的时候可以自己玩玩,方法很简单,直接在谷歌里面搜下面的关键字就行了(说实话比百度人性多了):<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">do</span> a barrel roll</div><div class="line">Askew </div><div class="line">zerg rush</div><div class="line">google sphere</div><div class="line">atari breakout 图片碰碰球</div><div class="line">google gravity 碎片</div><div class="line">google sky</div><div class="line">blink html 抖动</div></pre></td></tr></table></figure></p>
+<p>想必说到这里,你也已经大概能感受到google到底是有多强大了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">错误配置,敏感文件目录,各种信息泄露(源码泄露,重要配置文件泄露,密码泄露等),批量漏洞利用,最强大的社工库资源等等……你在web上所能利用到的一切,无死角尝试就可以了</div></pre></td></tr></table></figure></p>
+<p>其它的一些小恶作剧,也不小了,不要瞎弄,做错了事始终是要承担责任的:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">搜集个人身份证信息</div><div class="line"><span class="symbol">filetype:</span>xls 身份证 <span class="symbol">site:</span>cn</div><div class="line"></div><div class="line">搜集被盗QQ号什么的</div><div class="line">搜集别人还在有效期的信用卡,不过千万不要干坏事儿哦,不然后果你懂的……</div><div class="line"></div><div class="line">另外,还有图片识别,位置识别,谷歌为我提供了很多很强大的功能,有必要的话可以去深入学习下如何使用谷歌的这些api</div></pre></td></tr></table></figure></p>
+<p><br><br>关于robots.txt文件的作用:<br>&nbsp;&nbsp;&nbsp;&nbsp;此文件一般位于网站根目录下,规定了搜索引擎不能爬行的一些目录,一般都是一些敏感目录,比如:后台,数据库连接配置文件,安装目录等等……一般我们在试了几个常用的后台目录都不行的情况,习惯性的就会直接去访问下目标的robots.txt文件,很可能这文件里面就存的有后台路径,但,那只是有可能,不尝试,连可能都没有<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/信息搜集/">#信息搜集</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

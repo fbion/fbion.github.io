@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="快速破解各种散列hash [ hashcat入门篇 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>快速破解各种散列hash [ hashcat入门篇 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/04/26/use-hashcat-crack-hash/">
+                快速破解各种散列hash [ hashcat入门篇 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-26</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/hashcat/">hashcat</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br></p>
+<p>0x00 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;最近恰巧刚搞到一批hash,所以就寻思着,要不顺手小结一点关于hash破解的东西吧,反正经常要用,就当留备忘了,顺便也分享给大家,主要还是希望大家都能在实际渗透中能尽快上手用,既是这样,就肯定不会涉及太深,比如,其内部的破解算法具体是如何实现的等…,我们都不会去深入剖析,毕竟,并不是为了去写此类工具,如果真的有兴趣,可自行去读源码<code>[ 起码自己暂时还没那能力 ]</code>,经常渗透的朋友可能都非常清楚,由于各种各样的途径,我们经常会搞到各种各样的散列<code>[ hash ]</code>,比如,各类web管理用户的密码hash,各类系统用户的密码hash,各种第三方服务器工具配置文件中的hash,各类办公套件文件启动密码的加密hash,等…今天,我们就来简要说明一下关于各类hash破解工具的使用,以备不时之需…其实,明眼人都很清楚,hash破解本质是没啥实际技术含量的<code>[ 前提你自己不写此类工具 ]</code>,还是那句话,主要目的还是希望大家能尽快上手,既然是好东西就要想办法把它应用到实际干活儿中,不然,意义何在呢…废话少说,咱们开始介绍今天的第一款hash破解工具,<code>hashcat</code>想必该工具早已家喻户晓<code>[ 关于hash破解的东西,后续我会做成一个单独的系列 ]</code>,希望大家能持续关注,你们的支持,会是自己努力创作的源泉,嘿嘿…</p>
+<a id="more"></a>
+<p>0x01 先介绍几个相对比较好用的在线hash破解站,其实,诸如此类的站点非常多,不过大多都不太靠谱,后期遇到好的我会再贴上来</p>
+<p>算是国内比较知名的在线hash破解站,虽然目前支持的散列类型还比较少,不过就成功率来讲,还行吧,在你自己没有特别好的显卡,GPU矩阵或者性能强劲的CPU的时候,它无疑是个很好的替代品,实在没查到,起码还可以在后台帮你跑五天,先不管能不能跑出来,总归是个希望<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">cmd5</span><span class="selector-class">.com</span></div></pre></td></tr></table></figure></p>
+<p>如果cmd5实在跑不出来,不妨再尝试它,也是个比较老的在线hash破解站了,估计朋友们也都比较熟悉,这里就不啰嗦了<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">www<span class="selector-class">.objectif-securite</span><span class="selector-class">.ch</span></div></pre></td></tr></table></figure></p>
+<p>另外,在淘宝上也有很多提供这种hash爆破服务的卖家,实在不行还可以尝试直接丢给他们跑,一般跑出来才会让你付钱,其实说白点儿,他们可能也是在后台拿GPU矩阵跑的,需要注意的是,找个靠谱点儿的店就好了,某宝骗子多,形形色色,有些东西总让人防不胜防<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">淘宝</div></pre></td></tr></table></figure></p>
+<p>最后,在kali中也自带了一个在线的hash破解脚本<code>findmyhash</code>,其实,脚本做的事情非常low,就是轮询着把你提供的hash丢到各个hash破解站上去查询,如果查到了就把对应的结果明文发回来,实在不行,还可以丢到谷歌上跑跑,仅此而已,可能唯一要注意的是先把kali挂上vpn,不然,有些站点可能访问不了,说实话,基本就是个废<code>除了最普通的md5,别的就算了吧</code>,实在没办法,碰碰运气还是可以的<br><figure class="highlight llvm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># findmyhash md<span class="number">5</span> -h ff<span class="number">9830</span><span class="keyword">c</span><span class="number">42660</span><span class="keyword">c</span><span class="number">1</span>dd<span class="number">1942844</span>f<span class="number">8069</span>b<span class="number">74</span>a</div></pre></td></tr></table></figure></p>
+<p><img src="/img/findmyhash.png" alt=""><br></p>
+<p>0x02 识别hash类型</p>
+<p>如果你实在搞不清楚某条hash的具体散列类型,不妨先用下面的脚本[kali自带]大致识别下,可能不太准,不过粗略的看一眼还是可以的,另外,谷歌上也有很多在线的hash类型识别站,可自行去尝试,这里就不一一列举了<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">hash</span>-identifier</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hash-identifier.png" alt=""><br></p>
+<p>0x03 使用hashcat前的一点点准备工作    </p>
+<p>务必保证已经事先装好对应的显卡驱动<code>看官网这情况,最新版的hashcat除了增加了一些新的散列类型之外,貌似也已经不再区分AMD和英伟达显卡了,如果你用的是旧版本的hashcat,请根据自己实际的显卡类型来选择对应版本的hashcat</code>,之后再到其官方站点把hashcat down下来,注意,直接解压即可运行,无需再额外装任何东西,用什么系统就运行对应系统的可执行程序即可<code>实际破解中,更推荐用linux,可能就是装驱动稍微有点儿麻烦,不过还好啦,如果实在搞不定,在win下跑也是一样的</code>,本来想用显卡给大家演示的,没办法,家里的电脑,集成显卡<code>没钱,无奈</code>,大家谅解哈,所以,下面就直接全部用kali自带的hashcat来演示了,不同类型的hashcat,单就用法来讲,其实也没啥太大区别,实际使用中建议还是自己买块好点儿的显卡跑,如果真有条件<code>很显然,本人是个穷逼</code>GPU矩阵也是可以考虑的<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">https:<span class="regexp">//</span>hashcat.net<span class="regexp">/files/</span>hashcat-<span class="number">3.6</span>.<span class="number">0.7</span>z</div></pre></td></tr></table></figure></p>
+<p>0x04 关于hashcat的一些常用选项</p>
+<p>如果在kali中提示要升级到新版本[kali2.x可能会出现这样的情况],请把系统时间修改到2010年之前即可,这里就只说几个最常用的选项,关于其它的各种小选项,因为自己实际中用的比较少,如果大家万一用到,扫一眼帮助即可,篇幅原因这里就只捡最核心的说了<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">a  指定要使用的破解模式</span></div><div class="line">-<span class="ruby">m  指定要破解的hash类型所对应的id[下面有一份完整的hash id对照表],几乎现在市面上常用的一些散列类型它都支持,而且每个版本更新都会增加一些新的算法</span></div><div class="line">-<span class="ruby">o  指定破解成功后的hash及所对应的明文密码的存放位置,可以用它把破解成功的hash写到指定的文件中</span></div><div class="line">-<span class="ruby">-force	忽略破解过程中的警告信息,跑单条hash可能需要加上此选项</span></div><div class="line">-<span class="ruby">-show	显示已经破解的hash及该hash所对应的明文</span></div><div class="line">-<span class="ruby">-increment	 启用增量破解模式,你可以利用此模式让hashcat在指定的密码长度范围内执行破解过程,其实,并不建议这么用,因为破解时间可能会比较长</span></div><div class="line">-<span class="ruby">-increment-min  密码最小长度,后面直接等于一个整数即可,配置increment模式一起使用</span></div><div class="line">-<span class="ruby">-increment-max  密码最大长度,同上</span></div><div class="line">-<span class="ruby">-outfile-format 指定破解结果的输出格式id,一般自己常用<span class="number">3</span></span></div><div class="line">-<span class="ruby">-username 	 忽略hash文件中的指定的用户名,在破解win和linux系统用户密码hash可能会用到</span></div><div class="line">-<span class="ruby">-remove 	 删除已被破解成功的hash</span></div><div class="line">-<span class="ruby">r		 使用自定义破解规则,这个后期抽空再说吧,比较的复杂,不是一两句话能说完的</span></div></pre></td></tr></table></figure></p>
+<p>0x05 hashcat 不同破解模式下的具体工作细节:</p>
+<p>最简单的纯粹基于字典的爆破模式,后面可以连续跟上多个字典文件,破解的成功与否最终还是取决于字典质量,在几乎同等的破解时间里,是我我肯定不会先选它的,简单跑一些弱口令什么的,还是可以的,话说回来,如果只是跑些弱口令,大可不用hashcat,未免有些大材小用了,不是吗<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">0 </span>| Straight</div></pre></td></tr></table></figure></p>
+<p>一种相对智能高效的爆破模式,它的意思是这样的,如果你事先已经明确知道密码中可能包含哪些字符串,你可以把那些字符串事先写到文件中,每行对应一个字符串,然后hashcat会自动根据你所提供的这些字符串,尝试所有可能的组合进行猜解<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">1 </span>| Combination</div></pre></td></tr></table></figure></p>
+<p>基于纯掩码的爆破方式,如果你有需求要大批量爆破hash,可能会用到,后面我们会用绝大部分的篇幅来说它,这里需要稍微注意下,你给定的掩码是多少位它就只破解多少位,比如,你给的是7位的掩码,它就只跑7位这么长,它可能并不是你想象的那样,<code>是从1位一直跑到第7位</code>这样自动轮询,如果你想让它自动变长跑,启用increment模式指定密码的最小和最大长度即可,之前理解的有点儿错,也是看官方的wiki才知道的,汗…<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">3 </span>| Brute-force</div></pre></td></tr></table></figure></p>
+<p>基于字典和掩码配合的爆破模式,它的破解过程其实也比较简单,就是每次从前面的字典中取出一个字符串然后和后面掩码的所有组合进行拼接,直到撞到对应的明文<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">6 </span>| Hybrid Wordlist + Mask</div></pre></td></tr></table></figure></p>
+<p>基于掩码和字典配合的爆破模式,跟6的过程正好相反,只不过这次它是从前面进行拼接<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">7 </span>| Hybrid Mask + Wordlist</div></pre></td></tr></table></figure></p>
+<p>0x06  hashcat 不同的掩码所表示的具体字符及掩码字符集规则使用样例:</p>
+<p>掩码是个非常灵活的东西,你可以把它放到任何你想放的位置上,甚至,你愿意的话,也可以把自己想跑的一些掩码规则都事先放到一个文件中,然后以.hcmask命名,加载就可以让hashcat自动跑了,这样用起来比较方便,省的后期经常需要人为干预,后续会为大家简单演示下<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">l <span class="string">| abcdefghijklmnopqrstuvwxyz			纯小写字母</span></div><div class="line">u <span class="string">| ABCDEFGHIJKLMNOPQRSTUVWXYZ			纯大写字母</span></div><div class="line">d <span class="string">| 0123456789					纯数字</span></div><div class="line">h <span class="string">| 0123456789abcdef				常见小写子目录和数字</span></div><div class="line">H <span class="string">| 0123456789ABCDEF				常见大写字母和数字</span></div><div class="line">s <span class="string">|  !"</span><span class="meta">#$%&amp;'()*+,-./:;&lt;=&gt;?@[\]^_`&#123;|&#125;~		特殊字符</span></div><div class="line">a <span class="string">| ?l?u?d?s					以上所有字符</span></div><div class="line">b <span class="string">| 0x00 - 0xff					可能是用来匹配像空格这种密码的</span></div></pre></td></tr></table></figure></p>
+<p>比如,下面的例子:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">?l?l?l?l?l?l?d?d?d?d  表示<span class="number">6</span>位小写子目录<span class="number">4</span>位数字组成的密码,注意这里的位置全部都是一一对应的</div><div class="line">de?l?d?s56pos 表示由de加一位小写字母加一位数字加一位特殊字符后面跟上<span class="number">56</span>pos组成的密码</div></pre></td></tr></table></figure></p>
+<p>当然,你也可以自定义字符集规则,注意,可以连续指定多个不同的规则集<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby"><span class="number">1</span>, --custom-charset1   <span class="params">| CS   |</span> User-<span class="keyword">defined</span> charset <span class="string">?1</span>   <span class="params">| -1 ?l?d?u</span></span></div><div class="line">-<span class="ruby"><span class="params">2, --custom-charset2   |</span> CS   <span class="params">| User-<span class="keyword">defined</span> charset ?2   |</span> -<span class="number">2</span> <span class="string">?l</span>?d?s</span></div><div class="line">-<span class="ruby"><span class="number">3</span>, --custom-charset3   <span class="params">| CS   |</span> User-<span class="keyword">defined</span> charset <span class="string">?3</span>   <span class="params">|</span></span></div><div class="line">-<span class="ruby"><span class="params">4, --custom-charset4   |</span> CS   <span class="params">| User-<span class="keyword">defined</span> charset ?4</span></span></div></pre></td></tr></table></figure></p>
+<p>比如,下面的例子:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="number">-1</span> ?l?s	?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span> 	表示五位由特殊字符和小写字母组成的密码</div><div class="line"><span class="number">-1</span> ?d?l	<span class="number">-2</span> ?d?l?u <span class="number">-3</span> ?l?u ?<span class="number">1</span>?<span class="number">2</span>?<span class="number">3</span>	表示密码的第一位可能是小写字母或者数字,第二位可能是大小写字母或者数字,第三位可能是大或小写字母</div></pre></td></tr></table></figure></p>
+<p>0x07 不同破解模式下的具体应用场景,用的时候需要稍微注意下语句格式(暂以破解最普通的md5 hash为例)    </p>
+<p>基于纯字典的爆破模式 <code>Straight</code>:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> hashcat --force -a 0 -m 0 hash.txt /home/weak_wordlist/pass/weakpass.txt -o res.txt</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat res.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/wordlist.png" alt=""><br></p>
+<p>稍微智能一些的字典爆破模式,需要事先把密码中有可能包含到的单词都放到字典中 <code>Combination</code>:</p>
+<p>比如,我有两个这样的字典,字典包含如下的字符串,而我的实际密码是<code>adminpass [ 字典文件可同时有很多个,不过那也意味你的组合也会特别多,速度就会慢 ]</code>,实际破解就可以像下面就这样写<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">cat</span> <span class="selector-tag">dic1</span><span class="selector-class">.txt</span> <span class="selector-tag">dic2</span><span class="selector-class">.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/combination_dic.png" alt=""><br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">hashcat</span> <span class="selector-tag">--force</span> <span class="selector-tag">-a</span> 1 <span class="selector-tag">-m</span> 0 <span class="selector-tag">hash</span><span class="selector-class">.txt</span> <span class="selector-tag">dic1</span><span class="selector-class">.txt</span> <span class="selector-tag">dic2</span><span class="selector-class">.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/combination_res.png" alt=""><br></p>
+<p>基于纯掩码的爆破模式,其实就是尝试逐个位破解,一般人的密码设置习惯大都是基于大小写字母数字这种形式的,如果hash实在比较多,可以尝试从指定的位数开始一位位的将大小写特殊字符轮询这跑,可以节省一些时间 [Brute-force]:</p>
+<p>破解九位纯小写字母组成的密码hash,可以看到在我双CPU双核的虚拟机中破解这种只是两三分钟的事情<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 0 hash.txt ?l?l?l?l?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/brute-force-9l.png" alt=""><br></p>
+<p>前三位小写字母,后四位数字<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 0 hash.txt ?l?l?l?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/brute-force-3l4d.png" alt=""><br></p>
+<p>10位纯数字,其实大家都很清楚,底层对数字的处理速度是最快的<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 0 hash.txt ?d?d?d?d?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/brute-force-10d.png" alt=""><br></p>
+<p>7位小写字母加数字的随机组合<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat --force -a <span class="number">3</span> -m <span class="number">0</span> hash.txt <span class="number">-1</span> ?l?d ?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/brute-force-71.png" alt=""><br></p>
+<p>除了上面这种常规的掩码写法,你也可以这样,比如,你明确的知道密码的某一位或者几位上可能是什么字符,你也可以这样写掩码,假设密码明文为<code>loveshare</code>,你实际破解的掩码就可以这样写,它只会去破解有掩码的位,速度自然就非常快了<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 0 hash.txt ?l?lve?l?la?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/brute-force-loveshare.png" alt=""><br></p>
+<p>基于字典和掩码配合的爆破模式,把可能存在的字符串事先写到字典中,然后hashcat在破解的时候会把后面所有的掩码组合跟前面的字典每行中的字符串进行拼接,直到猜解出明文,下面也是一样,只不过下面是把掩码放在了前面字典放在了后面<code>Hybrid Wordlist + Mask</code>,其实,它想表达的意思非常简单,如<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">dic1.txt 中的内容是这样的</div><div class="line">admin</div><div class="line">root</div><div class="line">....</div></pre></td></tr></table></figure></p>
+<p>实际的明文密码是这样的<br><figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">admi<span class="symbol">npass123</span></div></pre></td></tr></table></figure></p>
+<p>那你实际破解的掩码,就可以这样写<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat --force -m <span class="number">0</span> hash.txt -a <span class="number">6</span> dic1.txt <span class="number">-1</span> ?l ?l?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?d?d?d</div></pre></td></tr></table></figure></p>
+<p><img src="/img/hybrid wordlist + mask.png" alt=""><br></p>
+<p>其实,它实际的拼接过程就相当于下面这样,直到最后就会撞到adminpass123<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">admin?l?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?d?d?d</div><div class="line">pass?l?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?d?d?d</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>下面是多字典实例<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat --force -m <span class="number">0</span> hash.txt -a <span class="number">6</span> dic1.txt dic2.txt <span class="number">-1</span> ?l ?l?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?d?d?d</div></pre></td></tr></table></figure></p>
+<p><img src="/img/hybrid wordlist + mask+muludic.png" alt=""><br></p>
+<p>基于掩码和字典配合的爆破模式 [Hybrid Mask + Wordlist]:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat --force -m <span class="number">0</span> hash.txt <span class="number">-1</span> ?l?d ?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span> -a <span class="number">7</span> dic1.txt dic2.txt</div></pre></td></tr></table></figure></p>
+<p><img src="/img/hybrid mask + wordlist.png" alt=""><br></p>
+<p>基于increment的自动变长模式,下面的意思就表示自动破解4到8位由小写子目录和数字组成的密码hash:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat --force -a <span class="number">3</span> -m <span class="number">0</span> hash.txt --increment --increment-min=<span class="number">4</span> --increment-max=<span class="number">8</span> <span class="number">-1</span> ?l?d</div></pre></td></tr></table></figure></p>
+<p><img src="/img/increment.png" alt=""><br></p>
+<p>0x08 下面是一些我们可能会经常碰到的散列掩码爆破实例,自己机器性能不是太好,为了节省时间,所以实际设置的密码都非常简单,大多是9位以内的小写字母加数字</p>
+<p>破解最普通的md5 hash [可能也是大家用的最多的散列,本身并非加密算法,大多是用来做hash校验用的,除了常规网站后台管理密码,另外,很多常见服务器端工具的默认加密都是基于此类型,如,filezilla,等等…],下面表示破解8位由小写字母数字组成的密码:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat --force -a <span class="number">3</span> -m <span class="number">0</span> hash.txt <span class="number">-1</span> ?l?d	?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span>?<span class="number">1</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/md5.png" alt=""><br></p>
+<p>破解 sha系列 hash <code>[绝大多数linux发行版的默认用户密码加密类型都是基于sha系列的变种]</code>:</p>
+<p>纯sha1,五位小写字母:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 100 hash.txt ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sha1.png" alt=""><br></p>
+<p>纯sha224,五位小写字母:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 1300 hash.txt ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sha224.png" alt=""><br></p>
+<p>纯sha256,五位小写字母:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 1400 hash.txt ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sha256.png" alt=""><br></p>
+<p>纯sha384,五位小写字母:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 10800 hash.txt ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sha384.png" alt=""><br></p>
+<p>纯sha512,五位小写字母[速度稍慢]:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 1700 hash.txt ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sha512.png" alt=""><br></p>
+<p>破解 linux 系统用户密码hash[可能稍微有些慢,相比之下用john<code>这也是一款比较好用的hash破解工具,后续我们还会单独说</code>跑,效果可能会更好一些]:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -a 3 -m 1800 hash.txt ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux.png" alt=""><br></p>
+<p>破解 win 2008 系统用户的 ntlm hash <code>[实际破解中只需要破解ntlm部分的值即可,lm的值就不用了,另外,还有域中的各类证书散列类型破解基本都是如此,这里就不一一举例了]</code>:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force hash.txt -m 1000 -a 6 dic1.txt ?s?s?s?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ntlm.png" alt=""><br></p>
+<p>破解 mysql 4/5.x 数据库用户hash<code>[ 记得实际破解的时候把hash开头的*去掉,要不然可能识别不出来 ]</code>:<br><figure class="highlight moonscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="built_in">select</span> * <span class="keyword">from</span> mysql.user\G;</div><div class="line"># hashcat <span class="comment">--force hash.txt -m 300 -a 3 ?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql.png" alt=""><br></p>
+<p>破解 mssql系列[2005/2008/2012] 数据库用户hash:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> SELECT name, password_hash FROM master.sys.sql_logins</span></div><div class="line"><span class="meta">#</span><span class="bash"> hashcat --force hash.txt -m 132 -a 3 ?l?l?l?l?l?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mssql.png" alt=""><br></p>
+<p>破解 pgsql 数据库用户hash <code>[ 其实是md5的变种,跑的时候记得把hash开头的md5去掉,不过自己在实际跑的过程中,暂时还有些问题,如果用普通的md5来跑,跑出来的明文和我实际的密码还有一些出入 ]</code>:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> SELECT usename, passwd FROM pg_shadow;</span></div><div class="line"><span class="meta">#</span><span class="bash"> hashcat --force hash.txt -m 12 -a 3 ?l?l?l?l?l?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/pgsql.png" alt=""><br><img src="/img/pgsql_diff.png" alt=""><br></p>
+<p>破解 oracle 11g 数据库用户hash<code>[记得倒数第20个字符加 : ,要把盐区分出来]</code>:<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># SELECT name,spare4 FROM sys.user$;</span></div><div class="line"><span class="attr">S:</span><span class="attr">EC9E3B871377F217DCFA18F1B84F2F2EACFF9299:AB4B59A17C93F8CB4840</span></div><div class="line"><span class="comment"># hashcat --force hash.txt -m 112 -a 3 ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/oracle11g.png" alt=""><br></p>
+<p>破解 wpa/wpa2 握手包中的无线密码hash [可能需要你自己先把握手包用wpaclean整理一下,再用aircrack输出成hashcat认识的散列格式,非常实用,具体内容请查看无线破解相关文章]:<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hashcat -a 3 -m 2500 wpahash.hccap ?l?l?l?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p>破解 wordpress 4.x 用户密码hash <code>[实际测试版本 4.7.4]</code>,具体加密方式在wp-includes\class-phpass.php 文件中的HashPassword()函数中<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force hash.txt -m 400 -a 3 ?l?l?l?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/wp4.x.png" alt=""><br></p>
+<p>破解 joomla &lt; 2.5.18 用户密码hash <code>[实际测试版本 joomla 2.5.1]</code>,具体加密方式在 libraries\joomla\user\helper.php 文件中的genRandomPassword()和getCryptedPassword()函数中<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force hash.txt -m 11 -a 3 ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/joomla -2.5.18.png" alt=""><br></p>
+<p>破解 joomla &gt; 2.5.18 用户密码hash <code>[跟上面wp的散列类型其实是一样的,但自己实际跑的时候hash却没有识别出来,暂时还没找到问题的根源,如果有成功的朋友,麻烦也告诉我一下,实际测试版本joomla 3.7]</code>,具体加密方式在 libraries\joomla\user\helper.php 文件中的genRandomPassword()和getCryptedPassword()函数中<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force hash.txt -m 400 -a 3 ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/joomla 2.5.18 +.png" alt=""><br></p>
+<p>破解drupal 7.x 用户密码hash <code>[ 实际测试版本7.5.4 ]</code>,具体加密方式在 includes\password.inc 文件中的_password_crypt函数中<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 7900 hash.txt -a 3 ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/drupal7.png" alt=""><br></p>
+<p>破解discuz 3.x 用户密码hash <code>[实际测试版本discuz x3.2 ,暂时还有些问题]</code>,具体加密方式在 uc_client\model\user.php 文件中的add_user函数中<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 2611 hash.txt -a 3 ?l?l?l?l?l</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/discuzx3.2.png" alt=""><br></p>
+<p>破解phpbb3 用户密码hash [实际测试版本 phpbb3.2,暂时还有些问题]:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 400 hash.txt -a 3 ?l?l?l?l?l?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/phpbb3.x.png" alt=""><br></p>
+<p>破解 htpasswd 密码hash [也有些问题]:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 1500 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/htpasswd.png" alt=""><br></p>
+<p>破解Adobe PDF 11文件密码hash,后面针对这种包公套件的加密破解,都需要自己先把hash提取出来,在john基本都有对应的hash提取脚本,可直接用,后续我们再说,下面几种类型的破解有几个还有一些问题,不过,我们后面用john来搞就好了<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 10700 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>破解 Office 2013 文件密码hash:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 9600 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>破解 RAR5压缩文件密码hash:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 13000 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>破解 7-Zip压缩文件密码hash:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 11600 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>破解 WinZip压缩文件密码hash:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 13600 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>破解grub 2.x hash:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 7200 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>破解 TrueCrypt 密码hash[曾经还算是个比较强的磁盘加密工具,自己也一直在用,只不过后来发生了一段故事,导致它官方自爆不再安全,也是尴尬]:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 62XY hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>破解 Skype 密码hash [需要自己从对应的xml文件把hash提取出来,很抱歉,我没成功]:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hashcat <span class="comment">--force -m 23 hash.txt -a 3 ?d?d?d?d?d?d</span></div></pre></td></tr></table></figure></p>
+<p>0x09 关于GPU参数优化 [ 这次根本没用到 ]和自定义破解规则[比较复杂,但更智能灵活,可这也就意味着速度就..嘿嘿,你懂的]方面的东西,这里暂时就不提了,仅仅作为hash破解入门,这些差不多足以应对你日常的各种破解需求了</p>
+<p>0x10 关于在实际破解中自己的一些建议,暂以大批量hash爆破为例[事先没有任何密码规律可循,只能盲测的那种情况]<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">首先,弱口令字典先走一遍再说</div><div class="line">其次,跑掩码,把所有想跑的掩码全部事先放到.hcmask文件中,然后加载它自动跑,上面已有介绍</div><div class="line">或者,如果只是针对单条<span class="built_in">hash</span>,在上述方法都跑不出来的情况下,可以去仔细分析下目标的密码设置规律,再尝试组合,可能效率会高一点,但那也只是可能</div><div class="line">最后,如果你自己真的有能力,可以想办法把它做成分布式快速<span class="built_in">hash</span>破解产品[密码机],然后拿到市面上去卖,也是完全可行的,毕竟已经有很多成功的案例,只不过你可能更多应该考虑下怎么比别人做的效率更高,更易用,不然,很难有市场</div></pre></td></tr></table></figure></p>
+<p>0x11  关于密码安全的一些个人建议<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">密码要保持足够的随机性,绝不要让别人轻易分析出的你密码设置习惯和规律,有很多的字典生成工具中的算法就是根据这个来的,不然,很快就会被别人撞到密码</div><div class="line">密码字符要足够混乱,严禁将单纯的大小写字母,数字,作为密码,在保证密码随机性的前提下,密码中最好同时包含有数字,大小写字母,特殊字符</div><div class="line">保证必要的密码长度,推荐至少<span class="number">15</span>位以上,我们也看到了,对于那种<span class="number">8</span>,<span class="number">9</span>位的纯字母数字的密码,在hashcat面前基本是不堪一击的,当然啦,等量子或者光子计算机技术成熟以后,估计现有的各种加密算法,基本要沦陷一大半了,另外,看到很多说密码要经常改,其实,个人认为在你密码没有任何泄露而且足够复杂的前提下,根本没有必要经常改,不过,这也是建立在你没有被人搞进去的大前提下的,密码即使再复杂,如果一下被人抓到了明文,也就是个摆设了,个人一直都认为安全本来就是一个多维度的东西,渗透者需要的有时只是一个有突破性的点,而防御者却要防御所有可能被攻破的维度,所以,一个优秀的防御者,在此之前也一定是一个优秀渗透者,个人坚信,<span class="string">"运维会的那套东西,你要比他更精通,你才有可能搞定他,开发会的东西,你要比他写的更熟练积累的更多,才有可能挖到有价值的洞,天天嘴上说架构安全说的天花乱坠,不说一定要实际生产环境,甚至自己在本地连测试架构的环境都没部署过,怎么可能安全呢,说说也就只能是说说了"</span>,实在不好意思,多啰嗦了一点,个人说话可能有些犀利,大家别介意哈,也许以后你们会习惯我这种风格的,不喜欢废话, 坦诚,一针见血,既然说就说点儿上嘛, 噱头,虚头巴脑装逼的东西,在我这儿基本不会有,个人比较偏向实战,一直坚信,技术没有好坏,能搞进去就行,说的再高端,做题做的再好,如果不能用于真实的渗透场景,意义何在呢,对于渗透来讲,结果无非两个,<span class="string">"进去了或者没进去"</span>,至于方法,没人管你</div><div class="line">严禁一个密码同时用于n个账号登陆,不然,别人只需要拿着这一个密码就可以到你经常去的其它网站上把你的私人信息翻个顶儿朝天了,想必很多人为了图方便[起码在很久很久以前,自己也这样做过],可能都会这样做,很显然这是一种非常傻叉的行为,比如,专门针对此的<span class="string">"撞库攻击"</span>,其实,说到这里还想再多提一点信息搜集里的东西,<span class="string">"水坑攻击"</span>,其实,就是搜集的社交关系网,然后,在你经常去的一些偏门的站点上等着你,要么社工,要直接把那个站搞下来,嘿嘿……关于这些东西,后续还会有专门篇幅说,别着急</div><div class="line">严禁把密码随意泄露给别人,这年头,社工几乎是无处不在的</div><div class="line">认清钓鱼站,看清楚再敲,不然,账号密码就被丢到别人的机器上了</div><div class="line">严禁把明文密码直接写到文件保存到系统里, 这等于给别人留了个后门,一条命令就什么都有了</div></pre></td></tr></table></figure></p>
+<p><br><br>0x12 后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;纵观全文,单单就工具使用来讲,还是蛮简单的,希望你也是这种感觉,那我文章的目的就达到了,嘿嘿……[虽然过程中还存在着一些瑕疵,待后期找到原因会再补充上来],作为使用基本也不存在什么技术含量,真正的难点可能还是在于对各种加密算法加密细节的理解[这里没有涉及的原因,是我怕把大家带沟里了,所以,想想还是算了,我们是在讲渗透,而非专门研究加密解密]和工具自身的破解算法上,还是那句话,我们并不是为了专门研究密码学[这么复杂的数学问题还是留给那些聪明秃顶的人去搞吧,我们只需要躺着享用他们的成果就好了,站在他们的肩膀上,也许能走的更快,毕竟,我们最终的目想获取目标机器的最高权限,手段不限,而hash破解只是这其中的一个环节而已]或者编写此类的hash破解工具[千万别偏离了方向,务必懂得取舍,不然容易”走火入魔”],对于渗透者来说,我们只是想利用手里现有的各种凭证,来继续下一步的渗透动作,仅此而已,所以,大可不用在这些工具上浪费太多的时间,能快速上手,并且能跑出来自己想要的东西才是主要目的,与其花那么长的时间在这种工具上,不如花更多的时间好好想想该如何’搞’到这些hash才是正途,搞到hash起码还能说明你离目标又近了一步,连hash到搞不到才是真正的尴尬,不忘初心,方得永生!说这么多绝不是在教唆怂恿大家去干坏事儿哈,由此文章所引发的一切后果,与本公众号及本文作者无任何关系,本质还是想让大家用别人干坏事儿的方法来保护我们自己,都是成年人,不要做傻逼事儿,相信你会懂的,如果你觉得这些东西对你有用,请持续关注本人公众号,可能暂时还没什么文章,不过后续就可能会有大批你感兴趣的文章了,嘿嘿…写文章确实不容易,都不是信手拈来的,要一边测,一边截图,一边写,生怕写错,所以出文章的速度可能大打折扣,当然啦,我也可以写的很快,很粗糙,而且没有经过任何实战的考量就告诉大家,不过,我自己还是想尽量给大家一些更实用的东西,凭空意淫出来的东西,可能对大家并没有什么实质性的帮助,很久之前,在某个前辈的博客上,看到过这么一句话,觉得对我的触动一直都挺大的,这里也分享给大家共勉,”我所说过的我都做过”,希望大家谅解, hash破解的东西还没完,后续还会紧接着奉上,转载请务必注明出处,谢谢,欢迎大家一起交流<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/hashcat/">#hashcat</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

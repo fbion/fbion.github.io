@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="web渗透第一步之信息搜集[子域,旁站,C段,AS号...]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>web渗透第一步之信息搜集[子域,旁站,C段,AS号...] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/12/subdomain-info-serarch/">
+                web渗透第一步之信息搜集[子域,旁站,C段,AS号...]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-12</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/search-info/">search info</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 为什么要从子域入手<br>&nbsp;&nbsp;&nbsp;&nbsp;如果我们的目标网络规模比较大,直接从目标主域入手显然是很不理智的,因为像这种规模的目标一般主域都是重点防护区域,与其浪费那个时间,不如先从目标的某个子域进去,然后再想办法迂回接近我们的真正目标,这样无疑是个比较好的选择,此时,也就不难理解那句话了,安全本就是一个全面立体的概念,单单只是边界几个点的安全,那不叫真正的安全</p>
+<p>0x02 那么,现在问题来了,怎么尽可能多的搜集目标的高价值子域呢</p>
+<p>0x03 利用dig 检查目标ns服务器是否允许传送<br>&nbsp;&nbsp;&nbsp;&nbsp;出于习惯性反应,首先,你应该去查下目标的ns服务器是否允许区域传送,如果允许,直接把目标的整个子域备份过来即可,后面将要说的所有步骤就可以直接全省了,关于dig和nslookup的使用非常简单,请自行查看其命令帮助或谷歌,实际测试中,个人还是更推荐用dig [毕竟是从权威dns查的,结果相对较准]</p>
+<p>查出目标所有的ns记录,然后挨个尝试目标ns服务器是否允许传送[这里要注意,务必是目标自己的ns服务器,第三方的不算],虽然说,可能性不太大,但运气好也不一定呢,总之,没尝试之前谁也不知道<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dig +short @8.8.8.8 cityu.edu.hk ns</span></div><div class="line">  vax.cityu.edu.hk.</div><div class="line">  cpccspc.cityu.edu.hk.</div><div class="line">  cpccux<span class="number">0</span>.cityu.edu.hk.</div></pre></td></tr></table></figure></p>
+<p>通过上面的查询,我们确定了目标自己的三个ns服务器,下面就开始来尝试逐个传送,这里还是要注意,必须用目标自己的ns服务器来解析它自己的子域,如果还没搞清楚传送的具体原理,请务必先自行谷歌理解漏洞原理再来搞<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dig +nocmd <span class="doctag">@vax</span>.cityu.edu.hk cityu.edu.hk axfr</span></div><div class="line"><span class="comment"># dig +nocmd <span class="doctag">@cpccspc</span>.cityu.edu.hk cityu.edu.hk axfr</span></div><div class="line"><span class="comment"># dig +nocmd <span class="doctag">@cpccux</span>0.cityu.edu.hk cityu.edu.hk axfr</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dig ns cityue.edu.hk axfr.png" alt=""></p>
+<p>很显然,上面的这些ns服务器都不允许传送,为了给大家看看实际的传送效果,这里就给大家一个可以传送的实例<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dig +nocmd <span class="doctag">@dns</span>2.communilink.net i-software.com.hk axfr</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/dig axfr scuued.png" alt=""></p>
+<p>0x04 从其他的各种记录中获取子域,如,mx记录,spf记录,srv记录…<br>&nbsp;&nbsp;&nbsp;&nbsp;如果目标ns服务器实在不允许传送,我们就要开始后面正常的流程了,之所以要查各种记录,因为从这里也能获取一些目标子域,虽然想借此直接下手的可能性不太大,但对我们来讲同样有用</p>
+<p>查目标的mx记录<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dig +short cityu.edu.hk @8.8.8.8 mx</span></div><div class="line">  smtp.cityu.edu.hk</div></pre></td></tr></table></figure></p>
+<p>0x05 各类子域搜集工具<br>&nbsp;&nbsp;&nbsp;&nbsp;既然不让传送,其实也没什么特别好的办法,无非就是靠爆破或者从各类搜索引擎上现抓取,对于这类的脚本,质量也是参差不齐,既然有成品,我们不妨就直接拿过来改吧改吧接着用,像这种小脚本,没必要非花那个时间去自己写 [当然,对于自己练练代码还是很有必要的],不过,还是要先说明下,既然是个人写的小脚本,报错,不稳定,程序异常,是常有的事,毕竟,没有经过很多人长时间的测试,但我们的要求是,能用,结果正确,相对稳定可靠即可,效率可暂时不做过多考虑</p>
+<p>0x06 介绍几款自己常用的perl脚本,功能强大,且较稳定,不出意外的情况下,基本都是自己的首选</p>
+<p>dnsenum 搜集信息比较规整,全面,如,ns,mx,a记录,自动尝试区域传送,也会从搜索引擎上抓取目标子域<code>不过早已不太好使了</code>,当上述动作执行完之后,即开始爆破,最后,把获取到目标的所有的域名所在的ip段以CIDR格式列出来,工具的整个执行流程跟我们之前手工的过程几乎是一模一样的,这也是为什么之前要先带大家手工走一遍的原因,这样非常有助于我们深入去理解工具,以后如果我们自己想写工具或者定制别人的工具这些都是一手参考样本<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">常用选项:</div><div class="line">-t 		指定爆破线程</div><div class="line">--dnsserver 	指定用于查询的dns服务器地址</div><div class="line">-f 		指定子域字典</div><div class="line">--enum		三个选项的集合 --threads <span class="number">5</span> -s <span class="number">15</span> -w</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dnsenum --dnsserver 8.8.8.8 --enum -f /usr/share/dnsenum/dns.txt cityu.edu.hk</span></div></pre></td></tr></table></figure>
+<p><img src="/img/dnsenum record.png" alt=""><br><img src="/img/dnsenum translate.png" alt=""><br><img src="/img/dnsenum domain.png" alt=""><br><img src="/img/dnsenum class c.png" alt=""></p>
+<p>dnsmap 另一款比较好用的子域爆破工具,功能虽然没dnsenum那么多,但更加直观简洁,就是速度稍微有些慢,不过还好啦<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">w 指定域名字典</span></div><div class="line">-<span class="ruby">r 指定结果存放位置</span></div><div class="line">-<span class="ruby">i 把泛解析,丢到指定的地址上</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">dnsmap</span> <span class="selector-tag">cityu</span><span class="selector-class">.edu</span><span class="selector-class">.hk</span></div></pre></td></tr></table></figure>
+<p><img src="/img/dnsmap.png" alt=""></p>
+<p>fierce  功能基本同dnsenum,实际测试中,效果会更好一些,速度很快,结果相对比较准<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">常用选项:</div><div class="line">-dns		指定要爆破的目标子域</div><div class="line">-dnsserver 	指定用域查询的dns服务器</div><div class="line">-threads	指定爆破线程</div><div class="line">-wordlist	指定域名字典</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># fierce -dns cityu.edu.hk -dnsserver 8.8.8.8 -threads 20 -wordlist /usr/share/dnsenum/dns.txt</span></div></pre></td></tr></table></figure>
+<p><img src="/img/fierce res.png" alt=""><br><img src="/img/fierce class c.png" alt=""></p>
+<p>0x07 其它的一些py子域爆破脚本:</p>
+<p>后面的几个脚本基本都是用dnspython库写的,所以,这里事先安装下,不过,在最新版的kali,默认就已经装好了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># apt-get install python-dnspython</span></div></pre></td></tr></table></figure></p>
+<p>subbrute  说实话,并不怎么好用,速度慢,而且不太准,截取的信息也比较简陋,不过适合学习,关于此脚本库依赖,配置详情,请自行参考 <a href="https://github.com/TheRook/subbrute" target="_blank" rel="external">https://github.com/TheRook/subbrute</a><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">names.txt		子域字典</div><div class="line">resolvers.txt 		用于请求查询的dns服务器地址</div><div class="line">target.txt		准备好目标域名文件,可以同时跑多个子域</div><div class="line">-s 			指定自己的子域字典,默认会使用当前目录下的names.txt</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python subbrute.py -t target_domain.txt -c 16 -s /usr/share/dnsenum/dns.txt</span></div></pre></td></tr></table></figure>
+<p><img src="/img/subbrute.png" alt=""></p>
+<p>subDomainsBrute  效果很一般,用的很少,关于此脚本依赖及配置,请参考 <a href="https://github.com/lijiejie/subDomainsBrute" target="_blank" rel="external">https://github.com/lijiejie/subDomainsBrute</a><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">dns_servers.txt 存放用于请求的dns服务器地址,里面最好加上谷歌的<span class="number">8.8</span>.<span class="number">8.8</span></div><div class="line">-t 		指定扫描线程</div><div class="line">-f 		指定用于爆破的域名字典</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># pip install dnspython gevent</span></div><div class="line"><span class="comment"># python subDomainsBrute.py -t 200 -f /usr/share/dnsenum/dns.txt cityu.edu.hk</span></div></pre></td></tr></table></figure>
+<p><img src="/img/subDomainBrute.png" alt=""></p>
+<p>Sublist3r 跟上面的靠纯字典爆破不同的是,该脚本是现从各类搜索引擎中抓取的目标子域,想法还是很不错的,而且现从各种搜索引擎抓取的子域质量要比前面单纯靠爆破出来的也要高的多的多,尼玛,就是谷歌抓取一直都有问题<code>验证改的贼快,不靠人民币,看来是很难痛快的玩耍了</code>,另外,顺带的端口探测也是蛮不错的,较实用,对了,使用此脚本前务必先挂好vpn,你应该懂的,更多详情请参考 <a href="https://github.com/aboul3la/Sublist3r" target="_blank" rel="external">https://github.com/aboul3la/Sublist3r</a><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-d 	指定要爆破的目标子域</div><div class="line">-p 	扫描那些已经爆出来的子域所开放的端口</div><div class="line">-t 	指定爆破线程</div><div class="line">-e 	指定要爬取的搜索引擎,默认是从所有搜索引擎上抓取</div><div class="line">-b 	启用暴力破解模块</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># pip install -r requirements.txt</span></div><div class="line"><span class="comment"># python sublist3r.py -d cityu.edu.hk -p 80,443,8080 端口不宜太多,不然速度会很慢</span></div></pre></td></tr></table></figure>
+<p><img src="/img/sublist3r.png" alt=""><br><img src="/img/sublist3r res.png" alt=""></p>
+<p>0x08 前面基本都是一些在终端下跑的小脚本,下面再来介绍一款纯图形化的信息搜集工具[本身的功能还是非常实用的,抓取目标子域只是它的一个辅助小功能而已]foca [对于大型目标相对比较好使],它最开始是用来搜集目标站点的各种元数据的[至于元数据是什么,请自行谷歌],但现在开始逐渐支持常规的web漏洞扫描,错误配置扫描,自定义谷歌dorks,支持外部插件等等……,功能也已经趋于完善,而且纯图形化,配置选项[可使用google或者bing api]一目了然,相信大家一上手就会了,关键是能用它爬到我们想要的东西,最好再提醒一句,务必挂上vpn,谷歌可能有时还是用不了,尼玛<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">工具官方站点, <span class="symbol">https:</span>/<span class="regexp">/www.elevenpaths.com/labstools</span><span class="regexp">/foca/</span>   	可自行下载</div></pre></td></tr></table></figure></p>
+<p><img src="/img/foca.png" alt=""></p>
+<p>0x09 相比之下,国内的朋友可能对seay的Layer 更熟悉,说实话,我自己确实用的比较少,总体来讲,还不错,除了爆破,顺便还会把响应头中的各字段数据也截取一下,使用非常简单,调好线程,纯图形界面也比较友好……给个目标子域,跑起来即可,字典文件和程序在同目录,如果你觉得它的字典质量不高,可以自己往里面加一些子域名,或者干脆用自己的字典,说实话,实际测试效果很一般<br><img src="/img/layer.png" alt=""></p>
+<p>0x10 有些大公司基本一个C段都是他自己的,这都比较正常,所以,直接找下C端的目标web也未尝不可,有机会还是能直接跨过去的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># masscan -p 80,81,82,443,8080,8081 144.214.2.0/24 --rate=100</span></div></pre></td></tr></table></figure></p>
+<p>0x11 另外,如果目标规模真的是特别大的情况下,可以从AS号反查目标对应的ip段,然后再从这些段里面入手,也是靠谱的,有很多类似功能的反查站点,大家去谷歌搜搜,肯定一大堆<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span><span class="comment">//asnip.net/</span></div></pre></td></tr></table></figure></p>
+<p>0x12 如果你实在不太相信这类工具的话,<code>比如我</code>,也可以自己手工在bing,google,shodan…上慢慢翻,反正我们的最终目的只是想尽快随便找个目标子域先进去,工具有时候不见得会快很多,而且工具暂时还不具备人的经验判断的,经常跑出来很多没用的东西,虽然,手工找,可能稍微繁琐点,但往往更精准,总体算来效率还是高的,而且找到的东西往往更有价值<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">site:</span>*.cityu.edu.hk 	谷歌,bing找子域</div><div class="line"><span class="symbol">hostname:</span><span class="string">"cityu.edu.hk"</span> shodan可能效果会更好一点</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>0x13 我们通常需要重点关注的一些目标子域,总结的不是很全,一下子暂时就想到这么些,大家自己慢慢拓展吧<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">内部oa系统</div><div class="line">类似citrix的各种虚拟化办公系统</div><div class="line">监控系统</div><div class="line">日志搜集系统</div><div class="line">crm系统</div><div class="line">cmdb系统</div><div class="line">mail系统</div><div class="line">一些用于内部测试的目标站点,正常情况下,新功能上线一般都会先丢到测试机器上跑跑,没问题才会更新到线上,既是测试站点,防御自然也相对薄弱</div><div class="line">一些老旧目标站点,有些目标站可能年头有些久,但由于业务的问题暂时又不能关闭,这也是一些相对比较好下手的地方</div><div class="line">一些可能用于备份的机器,比如,边界的NFS,Rsync之类的</div><div class="line">各类java控制台</div><div class="line">各类服务器web管理面板</div><div class="line">各类路由web管理面板</div><div class="line">一些带有各类远程执行漏洞的特定版本的web中间件,比如,IIS6<span class="number">.0</span>,Tomcat,jboss...</div><div class="line">一般从子域命名大致都能看的出来,诸如,oa,zabbix,nagios,cacti,erp,sap,crm,cmdb,old,bakup,test...直接尝试针对这些的各类漏洞利用</div><div class="line">所以,这个域名字典务必要有很强的针对性,最好花点时间自己好好整理一份留着,不然也很难跑出来我们想要的东西...</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>搜集目标子域小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;有时候,比如,当你直接跑test.org子域同时跑出来了os.test.org和monitor.os.test.org,这时你不妨尝试再把os.test.org当子域跑跑,说不定从这个子域下又会有不少收获,不过上面有些脚本也会自动遍历多级子域,这确实是个不错的切入点,可能还有些泛解析的问题,不过那些问题不太大,关于子域的各类查找手段,暂时就这些了,不管是爆破还是现从各种搜索引擎上抓取,我们最终目的只是为了想法设法接近我们真正的目标或者拿到一个边界入口,为我们后续方便进入目标内部先铺好路,工具仅仅只是为了辅助我们快速完成这一目的,并非决定性因素,所以大可不必在这类的工具上花太多时间,知道你自己想要的是什么就好了,还是那句话,你所搜集的每一个信息都有它存在的价值和意义,不要盲目,切记,从上面我们不难看到,反而是越大的目标,能入手的点就越多,废话不多说,祝大家好运吧 ^_^ ,最后觉得还是要再提醒大家一下,这里只是为了给大家更直观的说明,才不得不用了一些真实站点,希望大家不要恶意破坏,否则,后果自负<br><br></p>
+<h5 id="搜集目标的C段旁站信息-主要针对某些小型单个目标站点"><a href="#搜集目标的C段旁站信息-主要针对某些小型单个目标站点" class="headerlink" title="搜集目标的C段旁站信息 [主要针对某些小型单个目标站点]:"></a>搜集目标的C段旁站信息 [主要针对某些小型单个目标站点]:</h5><p>0x01 什么是旁站<br>&nbsp;&nbsp;&nbsp;&nbsp;和搜集子域的情况类似,我们的直接目标站做的比较到位,从目标站本身基本上找不到什么比较好的入手点,这时候,如果想要快速拿下目标的话,一般都会先找个目标站点所在服务器上其他的比较好搞的站下手,然后再想办法跨到真正目标的站点目录中,前提是有权限,如果实在跨不过去,就只能想办法先提权[说实话,虚拟机其实是比较难提的]了,拿到服务器的最高权限以后就可以对目标站为所欲为了,一般我们把这种渗透方式就叫旁站,至于渗透同服其它网站的方法,和常规的web渗透并没什不同,只是相当于绕了个路进去的而已,关于web渗透,后续还会有大量的篇幅专门来说明,这里先不用着急<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">旁站: 和目标网站在同一台服务器上的其它的网站</div></pre></td></tr></table></figure></p>
+<p>0x02 什么是C段<br>&nbsp;&nbsp;&nbsp;&nbsp;和旁站差不多的是,旁站是通过同一台服器上的其它网站跨到目标站的目录里,而C段,则是通过目标所在C段的其他任意一台机器,想办法跨到我们的目标机器上,至于怎么跨,嗅探,社工,web……随你便,反正最终目的能跨过去即可,实战可能还会有个问题就是,你搞下的一台目标C段机器在内网,也就是说它根本没有公网ip[靠路由映射进去的],像如果是这种情况,这台机器对你就没什么价值了,另外,如果是虚拟机,这种方式可能也不太好使,因为光提权就比较困难,这只是其中一个问题,很多其它的问题,我们暂时先不说,后续碰到再详细说,这里先理解一下基础概念即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">C段: 和目标机器ip处在同一个C段的其它机器,即都在同一个交换机下</div></pre></td></tr></table></figure></p>
+<p>0x03 关于旁站/C段工具的基本编写原理<br>&nbsp;&nbsp;&nbsp;&nbsp;现在市面上这类的工具也是多如牛毛,但各有优劣(可能是接口质量的差别吧),但大多数都是用bing的接口,把查询到的结果数据中的旁站链接提取出来,C段和旁站唯一不一样的地方,就是C段是把整个段的ip上的旁站都轮询一遍,不过在此之前你需要先申请一下bing的搜索api,其实我自己都是选择性的用,因为不太准,手工直接在bing里面翻翻可能就有了,因为工具本身有时可能会漏掉很多有价值的参考信息,反正我们的目的就是随便找个能进去的站即可,怎么找,随意,你自己觉得怎么快就怎么来,渗透在乎更多的是结果和效率,过程几乎都不会太在意</p>
+<p>0x04 好了,这部分内容确实比较简单,工具也没太多技术含量,单纯只是为了给大家理解一些基本概念而已,就不多说了</p>
+<p>其实,还有非常多的一些提供类似功能的工具站,之前好用的,现在大多已经失效了,后期遇到好的再贴上来,大家可自行去谷歌上搜搜,确实挺多的,不过大部分似乎并不太好用,另外,大家如果有任何问题或者建议,也可直接私信我,其实,我一直都在<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.sameip.org/</span></div></pre></td></tr></table></figure></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/信息搜集/">#信息搜集</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

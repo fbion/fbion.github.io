@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="SquirrelMail &lt; 1.4.23 RCE [CVE-2017-7692]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>SquirrelMail &lt; 1.4.23 RCE [CVE-2017-7692] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/04/24/SquirrelMail-RCE/">
+                SquirrelMail < 1.4.23 RCE [CVE-2017-7692]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-04-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/SquirrelMail-Rce/">SquirrelMail Rce</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 环境简介<br>&nbsp;&nbsp;&nbsp;&nbsp;关于 SquirrelMail 就不用多说了吧[一套开源php 邮件程序][说实话,用这套程序的目标还是蛮多的,尼玛,不说了,都是泪……],在重现漏洞利用之前,我们需要先把邮件服务器简单搭起来,这里以centos 6.8 x86 为例 [为了避免安装过程出问题,iptables和selinux已事先全部关闭],大致的配置过程如下,下面是具体测试环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">kali</span> 2017: 执行<span class="selector-tag">SquirrelMail_RCE_exploit</span><span class="selector-class">.sh</span>  利用脚本</div><div class="line"><span class="selector-tag">centos</span> 6<span class="selector-class">.8</span> <span class="selector-tag">x86</span>:  完全模拟真实的生产环境,<span class="selector-tag">lamp</span>全程源码包编译配置<span class="selector-attr">[后期会把各种配置细节更新上来]</span></div><div class="line"><span class="selector-tag">SquirrelMail</span>版本 1<span class="selector-class">.4</span><span class="selector-class">.20</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x02 安装前的一点准备工作:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa sendmail		检查当前系统有没有装sendmail</span></div><div class="line"><span class="meta">#</span><span class="bash"> rpm -e sendmail 		如果装了,就暂时先把它卸载掉</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># vi /etc/hosts			修改本机host,添加下面的指向</div><div class="line"><span class="number">192.168</span><span class="number">.3</span><span class="number">.30</span> admin.rootkit.org  server</div></pre></td></tr></table></figure>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/sysconfig/network	修改当前系统的机器名 </span></div><div class="line"><span class="attr">HOSTNAME</span>=admin.rootkit.org</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> shutdown -r now</span></div><div class="line"><span class="meta">#</span><span class="bash"> rpm -ivh http://dl.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm  安装epel源</span></div></pre></td></tr></table></figure>
+<p>0x03 安装,配置,测试Postfix [一款经典的smtp服务器,默认端口25]:<br><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum install postfix -y</span></div><div class="line"><span class="comment"># vi /etc/postfix/main.cf</span></div><div class="line">  <span class="attr">myhostname</span> = admin.rootkit.org	</div><div class="line">  <span class="attr">mydomain</span> = rootkit.org</div><div class="line">  <span class="attr">myorigin</span> = $mydomain</div><div class="line">  <span class="attr">inet_interfaces</span> = all</div><div class="line">  <span class="attr">inet_protocols</span> = all</div><div class="line">  <span class="attr">mydestination</span> = $myhostname, localhost.$mydomain, localhost, $mydomain</div><div class="line">  <span class="attr">mynetworks</span> = <span class="number">192.168</span>.<span class="number">3.0</span>/<span class="number">24</span>, <span class="number">127.0</span>.<span class="number">0.0</span>/<span class="number">8</span></div><div class="line">  <span class="attr">home_mailbox</span> = Maildir/</div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/postfix start</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/postfix status</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep <span class="string">"25"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig --level 2345 postfix on</span></div></pre></td></tr></table></figure>
+<p><img src="/img/postfix start.png" alt=""><br></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd admin</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"admin"</span> | passwd --stdin admin</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install telnet -y   可能没有,顺便装下即可</span></div></pre></td></tr></table></figure>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># telnet localhost smtp</span></div><div class="line">  ehlo localhost	</div><div class="line">  mail <span class="keyword">from</span>:<span class="variable">&lt;admin&gt;</span>	发件人</div><div class="line">  rcpt <span class="keyword">to</span>:<span class="variable">&lt;admin&gt;</span>  	收件人</div><div class="line">  data </div><div class="line">  welcome <span class="keyword">to</span> klion's mail server </div><div class="line">  .  表示写信结束</div><div class="line">  quit  退出后会自动发送邮件</div></pre></td></tr></table></figure>
+<p><img src="/img/postfix config res.png" alt=""><br></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">查看收到的邮件内容</div><div class="line"><span class="meta">#</span><span class="bash"> ls /home/admin/Maildir/new/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /home/admin/Maildir/new/1497007106.V802I1600f7M865561.admin.rootkit.org</span></div></pre></td></tr></table></figure>
+<p><img src="/img/postfix config res send.png" alt=""><br></p>
+<p>0x04 安装,配置,测试 Dovecot [一款开源 IMAP/POP3 邮件服务器,默认端口110,143]<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install dovecot -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi /etc/dovecot/dovecot.conf</span></div><div class="line">  protocols = imap pop3 lmtp   让它支持邮局协议</div></pre></td></tr></table></figure></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="keyword">vi</span> /etc/dovecot/<span class="keyword">conf</span>.d/<span class="number">10</span>-mail.<span class="keyword">conf</span></div><div class="line">  mail_location = maildir:~/Maildir</div></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/dovecot/conf.d/10-auth.conf</span></div><div class="line">  <span class="attribute">disable_plaintext_auth</span> = <span class="literal">yes</span>   不允许明文验证</div><div class="line">  auth_mechanisms = plain login</div></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/dovecot/conf.d/10-master.conf</span></div><div class="line">  unix_listener auth-userdb &#123;</div><div class="line">  	#mode = 0600</div><div class="line"><span class="built_in">	user </span>= postfix</div><div class="line"><span class="built_in">	group </span>= postfix</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/dovecot start</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/dovecot status</span></div><div class="line"><span class="meta">#</span><span class="bash"> chkconfig --level 2345 dovecot on</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tuln | grep -E <span class="string">"110|143"</span></span></div></pre></td></tr></table></figure>
+<p><img src="/img/dovecot start.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># telnet localhost pop3</span></div><div class="line">  user admin</div><div class="line">  pass admin</div><div class="line">  list</div><div class="line">  retr <span class="number">1</span></div><div class="line">  quit</div></pre></td></tr></table></figure>
+<p><img src="/img/dovecot start res.png" alt=""><br></p>
+<p>0x05 下载,配置squirrelmail程序[如果你不想把它放到二级目录,单独给它配个虚拟主机也是一样的]:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://pkgs.fedoraproject.org/repo/pkgs/squirrelmail/squirrelmail-1.4.20-RC2_20090917.tar.bz2/e1828757b34c658a061b009da311f1df/squirrelmail-1.4.20-RC2_20090917.tar.bz2</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar -jxf squirrelmail-1.4.20-RC2_20090917.tar.bz2</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv squirrelmail-1.4.20-RC2 /usr/<span class="built_in">local</span>/apache2/htdocs/squirrelmail</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> squirrelmail/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mkdir attach</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod 755 attach/ data/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp config/config_default.php config/config.php</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi config/config.php    编辑squirrelmail的主配置文件,修改如下变量</span></div><div class="line"><span class="meta">  $</span><span class="bash">domain = <span class="string">'rootkit.org'</span>;</span></div><div class="line"><span class="meta">  $</span><span class="bash">smtpServerAddress = <span class="string">'localhost'</span>;</span></div><div class="line"><span class="meta">  $</span><span class="bash">imap_server_type = <span class="string">'dovecot'</span>;</span></div><div class="line"><span class="meta">  $</span><span class="bash">data_dir = <span class="string">'/usr/local/apache2/htdocs/squirrelmail/data/'</span>;</span></div><div class="line"><span class="meta">  $</span><span class="bash">attachment_dir = <span class="string">'/usr/local/apache2/htdocs/squirrelmail/attach/'</span>;</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod -R 777 squirrelmail/	这里的权限给的大了点,要不,程序不能写,没法初始化</span></div></pre></td></tr></table></figure>
+<p>0x06 所有配置完成后,尝试登陆webmail [1.4.20版本]:<br><img src="/img/postfix final login.png" alt=""><br><br><img src="/img/postfix final.png" alt=""><br></p>
+<p>0x07 关于漏洞的产生细节,这里就不细说了,网上到处都是,直接来看看具体的利用过程吧,其实非常简单:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi SquirrelMail_RCE_exploit.sh   因为我这里的路径不是默认的,所以需要先到脚本中去稍微改下</span></div><div class="line">  <span class="attribute">sqspool</span>=<span class="string">"/usr/local/apache2/htdocs/squirrelmail/attach"</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># ./SquirrelMail_RCE_exploit.sh http:<span class="comment">//admin.rootkit.org/squirrelmail</span></span></div></pre></td></tr></table></figure>
+<p><img src="/img/squiremail mail failed.png" alt=""><br></p>
+<p>0x08 原谅我等了很久shell也没弹回来,开始以为是shell的问题,后来去看了下代码,很简单啊,本质上还是用bash弹的,也看不出啥情况<br><img src="/img/php revver shell.png" alt=""><br></p>
+<p>0x09 折腾了一会儿,仍未解决<br>&nbsp;&nbsp;&nbsp;&nbsp;后来仔细看了弹回来的html,原来是发邮件的时候报错了,”501 5.1.7 Bad sender address syntax” ,510错误,谷歌知,可能是发信的格式不正确,然后,就又看了下发信的代码,发现拼接貌似也没什么问题呀,难道是locahost不对,然后我就去掉了localhost试了一下,结果然并卵,感觉不大可能是邮件服务器的配置问题,真心希望哪位表哥要是成功了,能放出来让小弟好好学习下,定感激不尽<br><img src="/img/sendmail rce.png" alt=""><br><img src="/img/squireeemail error.png" alt=""><br></p>
+<p><br></p>
+<p>最后:<br>&nbsp;&nbsp;&nbsp;&nbsp;哪位大哥如果测成功了,希望也能告知下小弟问题出在哪里,万分感激…</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/SquirrelMail/">#SquirrelMail</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

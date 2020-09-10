@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="文件隐藏 之 NTFS 交换数据流"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>文件隐藏 之 NTFS 交换数据流 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/11/13/ntfs-streams/">
+                文件隐藏 之 NTFS 交换数据流
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-13</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ntfs-stream/">ntfs stream</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 关于 NTFS 交换数据流<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">NTFS 交换数据流属于NTFS文件系统独有的特性,在NTFS文件系统下,每个文件都可以存在多个数据流</div><div class="line">也就是说,除了主文件流之外,还可以有很多非主文件流寄宿在主文件流中,内部使用资源派生来维持与文件相关的信息</div><div class="line">虽然,我们无法看到数据流文件,但是它却真实存在于系统中,更多更细致的解释,大家可自行参考百科或ntfs官方文档...</div></pre></td></tr></table></figure></p>
+<p>0x02 如何实际创建一个数据交换流文件,其实方法很简单,如下<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">命令格式 <span class="string">"宿主文件:准备与宿主文件相关联的数据流文件"</span></div></pre></td></tr></table></figure></p>
+<p>0x03 演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008r2cn</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>	</div><div class="line"><span class="selector-tag">kali</span> 		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.38</span>	等会儿弹<span class="selector-tag">meterpreter</span>用</div></pre></td></tr></table></figure></p>
+<a id="more"></a>    
+<p>0x04 先准备好正常的文件<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"alternate data streams test"</span> &gt;&gt; file.txt</span></div><div class="line"><span class="meta">#</span><span class="bash"> dir</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/NTFS files.png" alt=""></p>
+<p>0x05 开始尝试寄生文件</p>
+<p>将bad.txt文件寄生在file.txt文件上,即file.txt是宿主,bad.txt才是真正的交换数据流文件,如果你是按照正常的文件名来访问的话,是看不到<code>:bad.txt</code>的,一定程度上也确实达到了我们要隐藏文件的效果<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"hello klion"</span> &gt;&gt; file.txt:bad.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/stream txt.png" alt=""></p>
+<p>将spoof.txt文件寄生在stream目录上,即stream目录是宿主,spoof.txt是真正的交换数据流文件,对寄生文件的访问方式同上<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">type</span> file.txt &gt;&gt; stream:spoof.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/stream dir.png" alt=""></p>
+<p>将face.jpg文件寄生在file.txt文件上,当然,既是图片肯定要用<code>画板</code>才能打开,在win下,对于寄生文件的访问方式其实和我们正常文件访问方式没什么不同,是什么类型的文件,就用什么工具打开即可<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">type</span> <span class="selector-tag">smile</span><span class="selector-class">.jpg</span> &gt;&gt; <span class="selector-tag">file</span><span class="selector-class">.txt</span><span class="selector-pseudo">:face.jpg</span></div><div class="line"># <span class="selector-tag">mspaint</span> <span class="selector-tag">file</span><span class="selector-class">.txt</span><span class="selector-pseudo">:face.jpg</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/stream jpg.png" alt=""></p>
+<p>在03以下系统上寄生可执行文件的执行方式,直接像下面这样即可运行<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="built_in">type</span> <span class="keyword">shell</span>.<span class="keyword">exe</span> &gt;&gt; <span class="keyword">file</span>.tx<span class="variable">t:meterpreter</span>.<span class="keyword">exe</span></div><div class="line"># start <span class="keyword">file</span>.tx<span class="variable">t:meterpreter</span>.<span class="keyword">exe</span> /<span class="keyword">b</span></div></pre></td></tr></table></figure></p>
+<p>但在03以后的系统上寄生可执行文件的执行方式,除了上面的基本步骤之外,还多一步,需要先自己手工建立<code>mklink</code>好链接,之后才能正常访问,否则就会提示下面的错误,遗憾的是,链接文件在图形界面中是可见的,当然,这个链接也是有办法把它搞掉的,只是自己暂时还没成功,后续成功后会再更新上来<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"># <span class="built_in">type</span> <span class="keyword">shell</span>.<span class="keyword">exe</span> &gt;&gt; <span class="keyword">file</span>.tx<span class="variable">t:meterpreter</span>.<span class="keyword">exe</span></div><div class="line"># start <span class="keyword">file</span>.tx<span class="variable">t:meterpreter</span>.<span class="keyword">exe</span></div><div class="line"># mklink <span class="string">"d:\NTFS Stream\link.exe"</span> <span class="string">"d:\NTFS Stream\file.txt:meterpreter.exe"</span></div><div class="line"># start link.<span class="keyword">exe</span> /<span class="keyword">b</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/mlink error.png" alt=""><br><img src="/img/stream exe.png" alt=""><br><img src="/img/ntfs shell.png" alt=""></p>
+<p>0x06 如何查找这类寄生的文件,其实很简单,nirsoft已经为我们提供好了AlternateStreamView,如下,另外,此类的工具多如牛毛,此处就不一一说明了<br><img src="/img/stream view.png" alt=""><br><br></p>
+<p>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;有些朋友可能还会有疑问,这里非要用<code>echo</code>和<code>type</code>[功能有点儿类似各个语言中文件操作的<code>二进制方式读写</code>]吗,难道只能寄生在这些类型的文件上吗,当然不是,只不过直接用目标系统中的工具会更好一点,[脑袋快的朋友可能早想到了,是的,没错,我们用powershell一样也可以达到同样甚至更好的效果,这个就留给大家去自行发挥了],要寄生在的对象可以是任意类型的文件,最后,关于此种方式的具体用途,我只能说,看大家自己的实际需求,比如,我们经常可能会用批处理去搜集一些目标系统信息,通常会把所有命令结果都直接重定向到一个文件中,然后再下载回来慢慢看,但如果我们用正常的文件,很可能会被对方发现,此时最简单隐蔽的方式,便是把结果文件寄生在目标现有的系统文件上,同样,我们也可以用这种方式直接把马寄生在目标系统中一个现有的文件上,前提是你的马确认已经免杀好了,否则很可能会触发报警,技术点确实已经非常老了,但并不代表不可以用,这里也仅仅是留个备忘,方便有需要的朋友</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/ntfs-stream/">#ntfs stream</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

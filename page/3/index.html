@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="klion&#39;s blog"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>page - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+            <h1 id="main-title" class="title">klion's blog</h1>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/26/NetRipper/">
+                截获内存中的各类https明文密码
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-26</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/NetRipper/">NetRipper</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 利用 NetRipper 抓取内存中的https明文密码</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;优点,可以在一个相对较低的系统权限下截获加密的明文,工具已经出了有些年头了,好在作者维护一直比较勤奋,才活到了现在,它支持截获像putty,winscp,mssql,chrome,firefox,outlook中的明文密码,同时也提供了很多类型的版本,如,win cmd下的exe,msf模块,ps脚本,实战中更推荐大家直接用powershell,更多详情请自行参考其github <a href="https://github.com/NytroRST/NetRipper" target="_blank" rel="external">https://github.com/NytroRST/NetRipper</a></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> powershell -<span class="built_in">exec</span> bypass</span></div><div class="line"><span class="meta">PS&gt;</span><span class="bash"> Import-Module .\Invoke-NetRipper.ps1</span></div></pre></td></tr></table></figure>
+        </div>
+        <a href="/2017/10/26/NetRipper/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/25/privilege-local/">
+                win & linux 本地提权脑图
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-25</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/privilege/">privilege</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><img src="/img/privilege localhost.jpg" alt=""><br></p>
+
+        </div>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/25/ettercap/">
+                宝刀未老之 ettercap 基础使用 [一]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-25</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ettercap/">ettercap</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 关于ettercap<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="attribute">ettercap</span> 确实已经非常老了,也确实是那个时代的经典,而且差不多三四年这个项目也都没再更新过了</div><div class="line">对于一些防护并不是特别好的内网,依然非常实用,千万不要觉得工具老就没有它的应用场地,那样你就真的错了,如果真是这样,就不会有这么多的二次深度开发了</div><div class="line">大家可能也发现了,像这类的工具我基本都是在模拟真实的生产机器环境上编译安装的</div><div class="line">具体原因大家想必都很清楚,像这类基于二层的arp嗅探是没法直接在远程做的,毕竟不是直接处在目标的vpn内网中</div><div class="line">socks代理再牛逼,它也只是个基于端口的四层代理,并不是vpn,所以,是没法直接在本地嗅远程的arp的,至于GRE隧道,咱们抽空再另说</div><div class="line">话不多讲,直奔今天的主题,ettercap基础使用,注意,此次仅仅是基础使用</div></pre></td></tr></table></figure></p>
+<p>0x02 开启本地的路由转发<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> 1 &gt; /proc/sys/net/ipv4/ip_forward</span></div><div class="line"><span class="meta">#</span><span class="bash"> cat /proc/sys/net/ipv4/ip_forward</span></div></pre></td></tr></table></figure></p>
+<p>0x03 基础演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS</span> <span class="selector-tag">release</span> 6<span class="selector-class">.9</span> (<span class="selector-tag">Final</span>)  <span class="selector-tag">x86-64</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.4</span>  接口名称: <span class="selector-tag">eth2</span>  <span class="selector-tag">ettercap</span>所在机器</div><div class="line"><span class="selector-tag">win2008r2</span> 			   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span> </div><div class="line"><span class="selector-tag">win7cn</span>				   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.8</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/10/25/ettercap/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/24/arpoison/">
+                arp攻防之arpoison
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-24</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/arpoison/">arpoison</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 依然是先开启本地的路由转发<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /etc/sysctl.conf</span></div><div class="line">  net.ipv4.<span class="attribute">ip_forward</span>=1</div><div class="line"><span class="comment"># sysctl -p</span></div></pre></td></tr></table></figure></p>
+<p>0x02 演示环境<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">centOS 6.8 x86_64	mac: 00:0C:29:C4:A0:95<span class="built_in">	ip </span>: 192.168.3.4</div><div class="line">win7cn 			mac: 00-0C-29-3B-BF-A8 <span class="built_in"> ip </span>: 192.168.3.8</div><div class="line">win2008r2cn		mac: 00-0C-29-6C-55-D2 <span class="built_in"> ip </span>: 192.168.3.23</div><div class="line">网关			mac: dc-ee-06-96-b7-b7<span class="built_in">	ip </span>: 192.168.3.1</div></pre></td></tr></table></figure></p>
+<p>0x03 下载编译 arpoison<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install epel-release -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install libnet libnet-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget http://www.arpoison.net/arpoison-0.7.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf arpoison-0.7.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> arpoison-0.7</span></div><div class="line"><span class="meta">#</span><span class="bash"> gcc arpoison.c /usr/lib64/libnet.so -o arpoison</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp arpoison /usr/bin/</span></div><div class="line"><span class="meta">#</span><span class="bash"> arpoison -h</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/10/24/arpoison/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/23/dsniff/">
+                熟练使用 dsniff套件 进行嗅探
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/dsniff/">dsniff</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 嗅探之前,我们有必要先来大致回顾下arp和rarp的基本通信流程,假设现在交换机中的mac地址表中暂时还没有任何对应关系<code>A机器想和B机器进行通信</code><br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">arp  地址解析协议,即通过ip找对应的<span class="keyword">mac</span>:</div><div class="line">首先,A会先发arp请求[广播],向同一交换机下的所有其它机器询问,谁有B的这个ip</div><div class="line">当B收到这条消息时,就会再用arp响应给A,说,我有这个ip,我的<span class="keyword">mac</span>是多少...</div><div class="line">当完成第一次正常通信之后就会在交换机的<span class="keyword">mac</span>地址表中记录下这层指向对应关系</div><div class="line">后续就直接按照<span class="keyword">mac</span>地址表中已有的指向来通信,而不再用广播询问,这就是一次极为常规的arp通信过程</div></pre></td></tr></table></figure></p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">rarp</span>  反向地址解析协议,即通过mac找对应的<span class="built_in">ip</span>:</div><div class="line">理解完arp以后,我们再来看rarp,同样是先发请求,这个请求简单来讲也是一个广播,不过,在此广播中声明了自己的mac</div><div class="line">并请求任何收到此请求的rarp服务器分配一个<span class="built_in">ip</span>,当同网段的rarp服务器收到此请求后会检查自己的rarp列表找到该mac对应的<span class="built_in">ip</span></div><div class="line">如果此mac的<span class="built_in">ip</span>被找到,就直接响应对方使用,如果没找到,最后就会提示初始化失败</div></pre></td></tr></table></figure>
+<p>0x02 关于arp欺骗最核心的细节<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">假设同一交换机下有三台机器,分别为 A , <span class="keyword">B </span>, C,正常情况下<span class="keyword">B和C的通信数据,A是不可能看到的</span></div><div class="line">但在ARP缓存表机制中存在一个缺陷,就是当请求主机收到ARP应答包后,不会去验证自己曾经是否向对方主机发送过ARP请求</div><div class="line">就直接就把这个应答包中的<span class="built_in">IP</span>与MAC地址的对应关系更新到自己本地的ARP缓存表中,这时就直接导致原有<span class="built_in">IP</span>的对应关系被恶意替换</div><div class="line">通俗点儿理解,也就是说,我强制刷新了对方的arp缓存对应关系,把原来<span class="built_in">ip</span>的指向现在换成了我自己的地址</div><div class="line">导致现在<span class="keyword">B和C的通信都要先经过A,那么,我们在A上自然就可以顺利的看到C和B之间的所有明文通信数据,即实现了所谓的监听</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/10/23/dsniff/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/23/inetd-backdoor/">
+                基于 inetd 后门的简要分析及利用
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/inetd/">inetd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 理解<code>inetd</code>是干什么的<br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">通俗来讲就是一个监听外部网络请求 [就是一个socket] 的系统守护进程,其实有很多比较古老的服务都是基于此守护进程的</div><div class="line">具体怎么工作的呢,其实非常简单,当inetd接收到一个外部请求后,它会根据这个请求到自己的配置文件中去找到实际处理它的程序</div><div class="line">然后再把接收到的这个socket交给那个程序去处理,问题恰巧也就出在这里</div><div class="line">如果来自外部的某个socket是要执行一个可交互的<span class="keyword">shell</span><span class="bash"> [比如,我们已经在目标系统的inetd配置文件中事先定义好],这岂不是就相当于一个简易的<span class="built_in">bind</span>型后门</span></div><div class="line">另外,关于使用inet的好处就是,不用每个服务都再单独起个进程,这样可以有效降低系统资源消耗,你甚至也可以一定程度上把它理解成linux中的<span class="string">'svchost.exe'</span>进程</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/10/23/inetd-backdoor/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/19/cowrie/">
+                蜜罐学习之ssh [ cowrie ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-19</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/netsh/">netsh</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 蜜罐是什么<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">蜜罐其实就是一台无人使用但却被严密监控的网络主机,里面包含着各类虚假的高价值资源和一些已知漏洞,以此吸引入侵者来入侵该主机</div><div class="line">并且在被入侵的过程中,实时记录和审计入侵者的所有入侵攻击流量,行为和数据,以此了解入侵者的攻击方式,手段和目的,便于后期快速完成对其的溯源,取证工作</div></pre></td></tr></table></figure></p>
+<p>0x02 蜜罐的一些主要构成模块<br>按实现大概逻辑划分:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">控制,将入侵者牢牢控制在指定的网络范围中,使其不能再以此机器作为跳板来攻击其它的机器</div><div class="line">捕获,把入侵者在入侵过程中所产生的各种流量捕获住</div><div class="line">分析,将捕获到的各种数据存到数据库或者其它指定地方,便于后续还原其详细的入侵攻击过程</div></pre></td></tr></table></figure></p>
+<p>按具体实现过程划分:<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">监控各种主机项,如,进程,文件,注册表,网络...</div><div class="line">同时提交给入侵检测,以识别其更详细的入侵手段,并对整个入侵过程做详细记录</div><div class="line">入侵数据汇总分析,其实就是把上述两步所得到的各种数据进行集中分析,最后,勾勒出完整的入侵轨迹画像</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/10/19/cowrie/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/16/win-event-powershell/">
+                win入侵日志处理之powershell
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-16</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/active-directory-pentest/">active directory pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 前言:<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">很久之前,我们说过如何利用win自带的wevtutil工具来处理各种入侵日志</div><div class="line">但那有个很致命的缺点,就是删除的时候是一下全给干掉了,这很显然不是我们想要的</div><div class="line">今天我们就再来介绍另外一种相对<span class="string">[只是相对比较好,个人认为也并不是特别好,但值得在此基础上改进]</span>比较好的处理方式</div><div class="line">也正是我之前说的利用powershell来帮我们搞,具体实现如下</div></pre></td></tr></table></figure></p>
+<p>0x02 首先,我们有必要先来简单了解下windows的svchost进程是干什么的<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">简单通俗来讲,svchost主要是用来实现服务进程数据共享,以此来减少系统资源消耗的这么一个东西,下面挂靠的程序可能同时有很多个</div><div class="line">说白点,其内部其实是作为线程<span class="string">[核心就在这儿]</span>来运行的,关于更详细的简介,可直接参考维基百科上对其的说明</div></pre></td></tr></table></figure></p>
+<p>0x03 如果实在想自己手工实现该功能的话,大体思路如下:<br><figure class="highlight pf"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">找目标系统中W<span class="keyword">in</span>事件日志服务的进程名,一般都是在svchost下</div><div class="line">并从该进程中获取所对应的W<span class="keyword">in</span> 事件日志服务线程ID</div><div class="line">想办法杀掉这些id所对应的线程,以达到让目标系统日志服务无法正常工作的目的,这样系统就无法再搜集日志了</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/10/16/win-event-powershell/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/11/bypasswaf-for-webshell/">
+                全方位构造免杀 webshell 小结[一]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-11</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/webshell/">webshell</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;本文几乎涵盖了市面上所有已知的webshell免杀手段,自己也很清楚,有些东西一旦公布出去,基本就活不太久了,但好在技巧是死的,人是活的,基于前人的优秀经验基础上所衍生出来的更加刁钻诡异的思路才是最珍贵的,始终坚信,对抗是持续的,shell也是永远杀不完的…<br><br><br>0x01 首先就是基于各类最常规的命令和代码执行函数的花样变形<code>如,拆分重组,动态执行,以此来躲避静态特征检测</code>,不过像有些高危函数默认就会被运维们禁掉,甚至高版本的php默认已经不让执行系统命令[如,php7],万一再开了安全模式,就更费劲了</p>
+<p>php中一些常见的执行类型函数:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">system()</div><div class="line">exec()</div><div class="line">shell_exec()</div><div class="line">passthru()</div><div class="line">proc_open()</div><div class="line"><span class="string">``</span> 反引号执行系统命令</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;?php $_POST[<span class="string">'fun'</span>]($_REQUEST[<span class="string">'req'</span>]);?&gt;</div></pre></td></tr></table></figure>
+        </div>
+        <a href="/2017/10/11/bypasswaf-for-webshell/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/09/23/cobalt-strike/">
+                cobalt strike 快速上手 [ 一 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-09-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/cobalt-strike/">cobalt strike</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 关于 Cobalt Strike<br><figure class="highlight prolog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">一款非常优秀的后渗透平台 [ 谁用谁知道,嘿嘿……说不好用的唯一原因,可能就是很多用法还没有被自己挖掘出来,因为不会用,所以,才会感觉不好用 ]</div><div class="line">工具基于java,大部分功能在改进的基础上还是相对比较实用的,非常适合团队间协同作战</div><div class="line">更多详情请自行参考官网,这里就不啰嗦了,以下全部简称<span class="string">'cs'</span></div></pre></td></tr></table></figure></p>
+<p>0x02 基础环境简介:<br><figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">kali 	  		实际控制端		<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.144</span></div><div class="line">ubuntu <span class="number">16.04</span> 		自己公网的vps    	<span class="built_in">ip</span>:<span class="number">53.3</span><span class="meta">.3</span><span class="meta">.6</span>		</div><div class="line">win2008R2 		目标机器			<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.191</span></div><div class="line">centos6<span class="meta">.9</span> 		已控肉鸡			<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.199</span></div><div class="line">win7cn			另一台肉鸡		<span class="built_in">ip</span>:<span class="number">192.168</span><span class="meta">.1</span><span class="meta">.123</span></div></pre></td></tr></table></figure></p>
+<p>0x03 先来快速预览cs最基本的一些模块具体用途:</p>
+<p>团队服务器[teamserver]<br><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">主要是为了方便一个渗透团队内部能够及时共享所有成员的所有渗透信息,加强成员间的交流协作,以此提高渗透效率</div><div class="line">也就是说,正常情况下一个团队只需要起一个团队服务器即可,团队中的所有成员只需要拿着自己的cs客户端登录到团体服务器就能轻松实现协同作战</div><div class="line">当然,实际中可能为了尽可能久的维持住目标机器权限,还会习惯性的多开几个团队服务器,防止出现意外情况</div><div class="line">另外,团体服务器最好运行在linux平台上<span class="string">[本次演示所用的团队服务器系统为ubuntu 16.04]</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/09/23/cobalt-strike/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/09/22/snortpentest/">
+                入侵检测学习 Snort [一]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-09-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/snort/">snort</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 关于Snort<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">业界相对比较出名年头也比较久的一款基于网络的开源入侵检测工具</div><div class="line">不过,比较适合中小型网络 <span class="selector-attr">[在流量不是非常大的情况下还是很不错的选择]</span>,规则配置灵活,实战适用性相对较好</div><div class="line">只是,实在不知道为什么要弄一头猪做<span class="selector-tag">logo</span>,这文化差异大的有点儿着实让人无法理解 <span class="selector-pseudo">:)</span></div></pre></td></tr></table></figure></p>
+<p>0x02 理解snort的最基本的工作流程<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">内网中的数据 -&gt; 数据嗅探[让内网中其它机器上的数据流过自己] -&gt; 进行各种预处理[防止数据逃逸] -&gt; 规则检测引擎 -&gt; 处理报警/日志 </div><div class="line">											    |		  |</div><div class="line">										      匹配规则库	  存到数据库或者写到日志文件中</div></pre></td></tr></table></figure></p>
+<p>0x03 模块具体作用简介<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">数据包嗅探,让其它机器上的指定数据包都经过自己,以便snort分析数据,同样,用的也是libpcap库,包括在其它很多linux平台嗅探工具你都能看到它的身影</div><div class="line">预处理,包重组预处理器,主要是为了防止攻击包被拆分逃避Snort的检测,另一个是协议编码预处理器,主要负责把数据包协议解码成一个统一的格式,再丢给检测模块,最后一个是协议异常检测预处器</div><div class="line">规则匹配检测,也就是当预处理把数据包丢过来以后,规则引擎会将这些数据包逐个和规则库进行匹配,一旦发现数据包内容与某条规则匹配,就丢给报警模块去处理</div><div class="line">报警/日志模块,规则引擎将数据丢给报警模块以后,报警模块会根据snort事先定义好的规则动作(alert,<span class="keyword">log</span><span class="params">...</span>)对其进行不同的处理(写到数据库或日志文件中)</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/09/22/snortpentest/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/09/20/mysql-mul-server/">
+                一分钟部署 MySql 多实例
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-09-20</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/mysql多实例/">mysql多实例</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 到底什么是<code>MySql多实例</code><br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">说的通俗些,就是通过读取不同的<span class="keyword">my</span>.cnf配置,同时启动多个mysqld进程,共用系统资源</div><div class="line">这也就意味着,当其中一个实例并发较高或者慢查询较多的情况下,其它实例的性能也会因此受到很大的影响</div><div class="line">这种情况通常用于机器性能较好且单实例mysql无法充分利用系统资源的情况下</div></pre></td></tr></table></figure></p>
+<p>0x02 此处,我们选择自己手工编译安装<code>mysql-5.5.55</code>,根据大家自己实际的机器性能,速度可能会稍慢些,请耐心等待</p>
+<p>演示环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS</span> 6<span class="selector-class">.8</span> <span class="selector-tag">x86_64</span>     最小化,带基础环境库安装</div><div class="line"><span class="selector-tag">eth0</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.51</span></div><div class="line"><span class="selector-tag">eth1</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.19</span></div><div class="line"><span class="selector-tag">eth2</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.19</span></div></pre></td></tr></table></figure></p>
+<p>安装mysql所需的各种依赖库并创建mysql的服务用户<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install ncurses-devel libaio-devel cmake bison -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd mysql -s /sbin/nologin -M</span></div></pre></td></tr></table></figure></p>
+<p>下载并编译 mysql-5.5.55<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wget http://mirrors.sohu.com/mysql/MySQL-5.5/mysql-5.5.55.tar.gz</span></div><div class="line"><span class="comment"># tar xf mysql-5.5.55.tar.gz</span></div><div class="line"><span class="comment"># cd mysql-5.5.55</span></div><div class="line"><span class="comment"># cmake -DCMAKE_INSTALL_PREFIX=/usr/local/mysql-5.5.55 \</span></div><div class="line"><span class="attr">-DMYSQL_DATADIR</span>=/usr/local/mysql-<span class="number">5.5</span>.<span class="number">55</span>/data \</div><div class="line"><span class="attr">-DMYSQL_UNIX_ADDR</span>=/usr/local/mysql-<span class="number">5.5</span>.<span class="number">55</span>/tmp/mysql.sock \</div><div class="line"><span class="attr">-DDEFAULT_CHARSET</span>=utf8 \</div><div class="line"><span class="attr">-DDEFAULT_COLLATION</span>=utf8_general_ci \</div><div class="line"><span class="attr">-DEXTRA_CHARSETS</span>=all \</div><div class="line"><span class="attr">-DENABLED_LOCAL_INFILE</span>=<span class="literal">ON</span> \</div><div class="line"><span class="attr">-DWITH_INNOBASE_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_FEDERATED_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_BLACKHOLE_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITHOUT_EXAMPLE_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITHOUT_PARTITION_STORAGE_ENGINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_FAST_MUTEXES</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_ZLIB</span>=bundled \</div><div class="line"><span class="attr">-DENABLED_LOCAL_INFILE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_READLINE</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_EMBEDDED_SERVER</span>=<span class="number">1</span> \</div><div class="line"><span class="attr">-DWITH_DEBUG</span>=<span class="number">0</span></div><div class="line"></div><div class="line"><span class="comment"># make &amp;&amp; make install</span></div><div class="line"><span class="comment"># ln -s /usr/local/mysql-5.5.55/ /usr/local/mysql</span></div><div class="line"><span class="comment"># ll /usr/local/mysql/</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/09/20/mysql-mul-server/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/09/18/naxsiwaf/">
+                定制轻量高效的WAF Naxsi [一]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-09-18</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/env/">env</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 关于naxsi<br>&nbsp;&nbsp;&nbsp;&nbsp;同为开源waf,但跟Modsecurity的不同是,它对nginx的兼容性非常好,而且不依赖现有规则库<code>其实,我们心里都很清楚,单单基于规则库的拦截可能需要经常更新,且容易被绕过,防御起来比较被动</code>,naxsi安装定制都非常简单方便,占用系统资源相对较少,对实际业务的适用性更强[方便的白名单设置],有一定的学习能力,不过,实际测试中貌似暂时只能拦截从get或者post过来的数据,这也是个小遗憾</p>
+<p>0x02 依然是拿之前编译好的lnmp环境[具体如何编译配置,请参考博客相关文章]来做演示,我这里先把之前的配置文件备份下,等会儿好直接拿过来用<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">php5</span><span class="selector-class">.5</span><span class="selector-class">.38</span> + <span class="selector-tag">mysql-5</span><span class="selector-class">.5</span><span class="selector-class">.32</span> + <span class="selector-tag">nginx-1</span><span class="selector-class">.12</span><span class="selector-class">.1</span> + <span class="selector-tag">centOS6</span><span class="selector-class">.8_x64</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> netstat -tulnp | grep <span class="string">"80"</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> pkill nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/nginx/conf/nginx.conf ./</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /usr/<span class="built_in">local</span>/nginx/conf/extra/bwapp.conf  ./</span></div><div class="line"><span class="meta">#</span><span class="bash"> rm -rf /usr/<span class="built_in">local</span>/nginx*</span></div></pre></td></tr></table></figure>
+<p>0x03 下载naxsi,重新编译安装nginx,主要是要把naxsi模块加载进去,这里的nginx直接用的最新版的稳定版本<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> git <span class="built_in">clone</span> https://github.com/nbs-system/naxsi.git</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget http://nginx.org/download/nginx-1.12.1.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install pcre pcre-devel openssl openssl-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf nginx-1.12.1.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> nginx-1.12.1</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --prefix=/usr/<span class="built_in">local</span>/nginx-1.12.1 --user=nginx --group=nginx --with-http_ssl_module --with-http_stub_status_module --with-http_gzip_static_module --with-file-aio --with-http_dav_module --add-module=../naxsi/naxsi_src/</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/nginx-1.12.1/ /usr/<span class="built_in">local</span>/nginx</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/nginx/conf/</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv nginx.conf nginx.conf.bak &amp;&amp; egrep -v <span class="string">"^$|#"</span> nginx.conf.bak &gt;&gt; nginx.conf</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/09/18/naxsiwaf/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/09/08/pentestaction/">
+                自己总结的常规入侵流程脑图
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-09-08</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/pentest/">pentest</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br></p>
+<p><center>个人始终坚信,只有深入理解入侵者的真实想法,不断学习,并能轻松熟练地模拟出入侵者的各类入侵手段,才是最切实有效的防御</center><br>
+        </div>
+        <a href="/2017/09/08/pentestaction/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/08/05/ew-tunnel/">
+                利用 ew 轻松穿透目标多级内网
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-08-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ew/">ew</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 ew 快速穿透目标多级内网:</p>
+<p>简要环境说明:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008R2</span> 假设为目标边界<span class="selector-tag">web</span>服务器,可正常访问公网</div><div class="line">假设其公网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span></div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.131</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008</span> 假设为目标内网数据库服务器,可正常访问公网</div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.170</span></div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win7</span> 假设为自己公网的<span class="selector-tag">vps</span></div><div class="line">假设其公网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.232</span></div></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">centos</span> 5<span class="selector-class">.1</span> 假设为目标内网的一台<span class="selector-tag">linux</span>机器,没有<span class="selector-tag">dns</span>不能访问公网</div><div class="line">假设其内网<span class="selector-tag">ip</span>为 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.169</span></div></pre></td></tr></table></figure>
+<p>0x02 首先,利用ew做最简单的正向代理,其实就是大家最常用的所谓的ss:</p>
+<p>在 win2008R2 机器上执行<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ew_for_Win.exe -s ssocksd -l 1080</span></div></pre></td></tr></table></figure></p>
+<p>在win7上打开Proxifier根据上面监听的端口建立正常的socks代理即可<br>
+        </div>
+        <a href="/2017/08/05/ew-tunnel/" class="read-more">Read More</a>
+    
+
+</div>
+            
+        </section>
+    </div>
+</div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="wrap-pagination">
+                <a class="" href="/page/2/">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a class="" href="/page/4/">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

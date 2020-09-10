@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="klion&#39;s blog"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="website" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>page - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+            <h1 id="main-title" class="title">klion's blog</h1>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/23/phpsec/">
+                php-fpm.conf & php.ini 安全优化实践
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-23</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/phpsec/">phpsec</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 关于 php<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">其历史相对已经比较久远了,这里也就不废话了,属弱类型中一种解释型语言</div><div class="line">除了web开发以及写些简单的exp,暂未发现其它牛逼用途,暂以中小型web站点开发为主</div><div class="line">另外,低版本的php自身漏洞就比较多,建议,从现在开始就在新项目中使用php <span class="number">5.6</span><span class="selector-class">.x</span> 往后的版本</div><div class="line">好在官方维护的一直比较勤奋,主次版本都迭代的比较快,最新版已经到<span class="number">7.2</span>.<span class="number">0</span></div><div class="line">哼哼……是,<span class="string">'最好的语言'</span>... :)</div></pre></td></tr></table></figure></p>
+<p>0x02 此次演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8</span> <span class="selector-tag">x86_64</span>   最小化,带基础库安装 	<span class="selector-tag">eth0</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span> <span class="selector-tag">eth1</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.14</span>  <span class="selector-tag">eth2</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.14</span></div><div class="line"><span class="selector-tag">php-5</span><span class="selector-class">.6</span><span class="selector-class">.32</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span>  官方提供的源码包</div></pre></td></tr></table></figure></p>
+<p>0x03 下载 <code>php-5.6.32.tar.gz</code>,并安装好php所需的各种依赖库<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install epel-release -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install -y zlib-devel libxml2-devel freetype-devel </span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install -y libjpeg-devel  libpng-devel gd-devel curl-devel libxslt-devel</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install openssl openssl-devel libmcrypt libmcrypt-devel mcrypt mhash mhash-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf libiconv-1.15.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> libiconv-1.15</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --prefix=/usr/<span class="built_in">local</span>/libiconv-1.15 &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/libiconv-1.15/ /usr/<span class="built_in">local</span>/libiconv</span></div><div class="line"><span class="meta">#</span><span class="bash"> ll /usr/<span class="built_in">local</span>/libiconv/</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/23/phpsec/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/22/mysqlconfigsec/">
+                给自己一个更安全的 mysql
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-22</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/mysqlsec/">mysqlsec</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 在进行真正的 mysql 部署之前,我们不妨先来大致了解下,在实际入侵过程中,仅仅利用mysql,我们到底能干些什么,了解了这些最基本的点之后,我们再进行针对性防御:<br><figure class="highlight delphi"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">普通用户权限下的 <span class="string">'增删改查'</span>,即 常规sql注入,俗称<span class="string">'脱裤'</span></div><div class="line">普通用户<span class="keyword">file</span>权限下的 <span class="string">'文件读写'</span>,可尝试读取各类敏感配置,如各类账号或者尝试直接往站点目录中写webshell</div><div class="line">root用户权限下的 <span class="string">'读写文件'</span> , <span class="string">'系统命令执行'</span>... 可读写是因为root本身就有<span class="keyword">file</span>权限,另外,如果直接以root身份运行mysql服务,亦可实现<span class="string">'提权'</span>的效果</div><div class="line">针对 <span class="string">'数据库连接'</span> 的<span class="string">'DDOS'</span>,单用户大批量数据库连接可能会导致mysql无法再提供服务</div></pre></td></tr></table></figure></p>
+<p>0x02 演示环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.8</span> <span class="selector-tag">x86_64</span> 最小化,只带基础库安装  <span class="selector-tag">eth0</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span> <span class="selector-tag">eth1</span>: 192<span class="selector-class">.168</span><span class="selector-class">.4</span><span class="selector-class">.14</span>  <span class="selector-tag">eth2</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.14</span></div><div class="line"><span class="selector-tag">mysql-5</span><span class="selector-class">.6</span><span class="selector-class">.27-linux-glibc2</span><span class="selector-class">.5-x86_64</span><span class="selector-class">.tar</span><span class="selector-class">.gz</span>  此次<span class="selector-tag">mysql</span>就不再手工编译了,时间比较长,直接用<span class="selector-tag">mysql</span>官方提供好的二进制包来做演示</div></pre></td></tr></table></figure></p>
+<p>0x03 下载,解压 mysql-5.6.27-linux-glibc2.5-x86_64.tar.gz<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> tar xf mysql-5.6.27-linux-glibc2.5-x86_64.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> mv mysql-5.6.27-linux-glibc2.5-x86_64 /usr/<span class="built_in">local</span>/</span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/mysql-5.6.27-linux-glibc2.5-x86_64/ /usr/<span class="built_in">local</span>/mysql</span></div><div class="line"><span class="meta">#</span><span class="bash"> ls -l /usr/<span class="built_in">local</span>/mysql/</span></div></pre></td></tr></table></figure></p>
+<p>0x04 开始初始化mysql</p>
+<p>务必以一个伪用户身份来运行mysql服务,防止别人利用mysql进行提权,后面还会再细说,另外,web服务和数据库服务严禁用同一个系统用户,这样做主要是为了防止入侵者直接通过sql语句往网站目录中写webshell<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> useradd -s /sbin/nologin -M mysql</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/22/mysqlconfigsec/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/20/nginx-sec/">
+                从 0 开始构建一个 "固若金汤" 的nginx
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-20</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/nginxsec/">nginxsec</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 关于 nginx<br><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">配置灵活,简单,运行时占用系统资源较少,功能模块繁多,可扩展性极强,基于 <span class="keyword">C</span> ,整个工具大小<span class="number">1</span>M左右</div><div class="line">支持高并发,仅限于全部为纯静态文件的情况下,因为最终还要取决于后端 [ 脚本和数据库 ] 的实际处理速度</div><div class="line">默认 nginx 会自动选择最佳的网络<span class="keyword">I</span>/<span class="keyword">O</span>模型,和nginx不同的是,apache默认就会使用select模型,效率较低</div><div class="line">上面这些话的意思也就是说,你的<span class="keyword">C</span>要牛逼到一定的程度,不然,想做深度二次开发基本是扯淡,真心挺佩服毛子的</div><div class="line">更多说明,请直接参考官方文档...</div></pre></td></tr></table></figure></p>
+<p>0x02 正确理解 linux 对文件,目录,<code>[ 读 写 执行 ]</code> 权限的真正含义,这东西不能靠干说,因为根本理解不扎实,大家可以自己在系统中创建两个普通用户,不停地切换目录文件权限,以深入仔细体会,后面网站目录权限设置要用到这些基础,如果连这些都搞不清,想灵活应用就难了,耐心点,等透彻理解之后,你就会发现真TM简单 </p>
+<p>目录 <code>读[r / 4]</code> <code>写[w / 2]</code> <code>执行[x / 1]</code><br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">读:   <span class="keyword">ls</span> , dir <span class="string">...</span> 			表示可查看该目录下的文件列表</div><div class="line">写:   rm , mv, cp, mkdir ,touch <span class="string">...</span>	表示可在该目录下创建,删除,修改文件或者子目录,不过在这之前,一定要先有执行权限,不然进都进不去,又怎么写呢</div><div class="line">执行: <span class="keyword">cd</span>  <span class="string">...</span>				表示可进入该目录</div></pre></td></tr></table></figure></p>
+<p>文件 <code>读[r / 4]</code> <code>写[w / 2]</code> <code>执行[x / 1]</code><br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">读:	cat , tac , more , less ,head , tail <span class="string">...</span> 表示可查看该文件中的内容</div><div class="line">写:	vi , nano , <span class="keyword">echo</span> <span class="string">...</span>			 只表示可对文件中的 内容 进行增删改,删除文件还要取决于当前用户对该文件所在目录是否有写权限</div><div class="line">执行:	可执行文件,shell脚本<span class="string">...</span>			 在linux中任何文件都可以有执行权限,但只有可执行文件和脚本才能真正执行</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/20/nginx-sec/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/18/lsyncd/">
+                lsyncd + rsync 实时同步海量小文件
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-18</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/lsyncd/">lsyncd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 关于lsyncd<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">inotify</span>的优秀替代品,基于<span class="selector-tag">lua</span>,不过,它也依然使用 <span class="selector-tag">linux</span> 2<span class="selector-class">.6</span><span class="selector-class">.13</span>以后内核的<span class="selector-tag">inotify</span>触发机制</div><div class="line">配置简单灵活,在同步海量小文件时,性能表现优异,废话不多讲,咱们直奔主题</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>环境准备:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">RsyncServer</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.4</span></div><div class="line"><span class="selector-tag">RsyncClient26</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.5</span><span class="selector-class">.7</span></div></pre></td></tr></table></figure></p>
+<p>0x02 在需要进行实时同步的 rsync 客户端机器上<code>[ 这里是RsyncClient26 ]</code>编译安装lsyncd,如下<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install lua lua-devel asciidoc cmake -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/lsyncd/lsyncd-2.1.5.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf lsyncd-2.1.5.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> lsyncd-2.1.5/</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure --prefix=/usr/<span class="built_in">local</span>/lsyncd-2.1.5 &amp;&amp; make &amp;&amp; make install</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">echo</span> $? &amp;&amp; <span class="built_in">cd</span></span></div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/<span class="built_in">local</span>/lsyncd-2.1.5/ /usr/<span class="built_in">local</span>/lsyncd/</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/lsyncd/bin/ &amp;&amp; ./lsyncd</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/18/lsyncd/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/17/etherape/">
+                纯图形化实时流量分析 [ etherape ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-17</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/etherape/">etherape</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 关于 etherape:<br><figure class="highlight prolog"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">一款纯图形化的网络流量分析工具,既是图形界面,所以系统中务必要有各类图形库支持才行</div><div class="line">很多数时候,我们可能只是想简单的看看数据流向,了解总体数据流向或某单个网络节点状况,并不想关心数据包里面到底是什么东西</div><div class="line">此时,etherape 则无疑是个比较不错的选择,另外,它对各个协议的支持相对还算比较到位</div><div class="line">当然,缺点也是有的,毕竟是实时分析,如果流量瞬间激增,很容易把程序卡崩掉[不知道是有点儿溢出,还是io跟不上],也正常,毕竟只是个小工具肯定没商业工具那么完善</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>0x02 环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">kali</span> 			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.30</span></div><div class="line"><span class="selector-tag">centos6</span><span class="selector-class">.9_x64</span> 		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.16</span> <span class="selector-attr">[eth1]</span>  192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.19</span> <span class="selector-attr">[eth0]</span></div><div class="line"><span class="selector-tag">win2008R2cn</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.178</span><span class="selector-class">.3</span><span class="selector-class">.23</span></div><div class="line"><span class="selector-tag">win7cn</span>			<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.2</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/17/etherape/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/15/hping3/">
+                老旧但不乏经典的高级组包工具 [ hping3 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-15</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/hping3/">hping3</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>前言:<br>&nbsp;&nbsp;&nbsp;&nbsp;一款经典的高级组包工具,虽然老旧,但不乏经典,你完全可以利用它任意组装专属的 tcp,udp,icmp 数据报文格式,废话不多说,咱们直奔主题…</p>
+<p>0x01 实验环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">kali</span> 			<span class="selector-tag">ip</span><span class="selector-pseudo">:192.168.3.38</span></div><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.9</span> <span class="selector-attr">[MidLAMP]</span> 	<span class="selector-tag">ip</span><span class="selector-pseudo">:192.168.3.16</span><span class="selector-attr">[eth1]</span>  192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.19</span><span class="selector-attr">[eth0]</span>	在此机器上编译安装<span class="selector-tag">hping3</span></div></pre></td></tr></table></figure></p>
+<p>0x02 编译安装 hping3:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> yum install libpcap-devel tcl-devel -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> wget http://www.hping.org/hping3-20051105.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> tar xf hping3-20051105.tar.gz</span></div><div class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">cd</span> hping3-20051105</span></div><div class="line"><span class="meta">#</span><span class="bash"> vi bytesex.h</span></div><div class="line">  || defined(__x86_64__) \	为了防止后续编译出错,需要在第一个判断下添加此句,如下图所示,添加64位系统平台</div><div class="line"><span class="meta">#</span><span class="bash"> ln -s /usr/include/pcap-bpf.h /usr/include/net/bpf.h</span></div><div class="line"><span class="meta">#</span><span class="bash"> ./configure &amp;&amp; make &amp;&amp; make strip &amp;&amp; make install</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/15/hping3/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/13/ntfs-streams/">
+                文件隐藏 之 NTFS 交换数据流
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-13</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/ntfs-stream/">ntfs stream</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 关于 NTFS 交换数据流<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">NTFS 交换数据流属于NTFS文件系统独有的特性,在NTFS文件系统下,每个文件都可以存在多个数据流</div><div class="line">也就是说,除了主文件流之外,还可以有很多非主文件流寄宿在主文件流中,内部使用资源派生来维持与文件相关的信息</div><div class="line">虽然,我们无法看到数据流文件,但是它却真实存在于系统中,更多更细致的解释,大家可自行参考百科或ntfs官方文档...</div></pre></td></tr></table></figure></p>
+<p>0x02 如何实际创建一个数据交换流文件,其实方法很简单,如下<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">命令格式 <span class="string">"宿主文件:准备与宿主文件相关联的数据流文件"</span></div></pre></td></tr></table></figure></p>
+<p>0x03 演示环境<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008r2cn</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>	</div><div class="line"><span class="selector-tag">kali</span> 		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.38</span>	等会儿弹<span class="selector-tag">meterpreter</span>用</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/13/ntfs-streams/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/10/dnstunnel/">
+                DNS隧道 之 端口转发 [ 一 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-10</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/dnstunnel/">dnstunnel</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 本次实验环境大致如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">centos7_x64</span><span class="selector-attr">[heightlamp]</span>  公网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.42</span>        		        假设为入侵者自己的公网机器,即<span class="selector-tag">dns2tcp</span>客户端</div><div class="line"><span class="selector-tag">centos7_x64</span><span class="selector-attr">[heightlnmp]</span>	 公网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.41</span>   内网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.123</span>   假设为目标<span class="selector-tag">DMZ</span>中的机器,有防火墙,即<span class="selector-tag">dns2tcp</span>服务端</div><div class="line"><span class="selector-tag">win2012r2en</span>		 公网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.123</span>         		  	假设为入侵者自己公网的<span class="selector-tag">dns</span>服务器</div><div class="line"><span class="selector-tag">centos6</span><span class="selector-class">.8_x64</span><span class="selector-attr">[Midlnmp]</span>	 内网<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.212</span>			        假设为目标内网中的一台<span class="selector-tag">linux</span>机器</div></pre></td></tr></table></figure></p>
+<p>0x02 我们要实现的最终目的<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">正常情况下,我们本想通过heightlnmp机器来访问目标内网中Midlnmp的ssh,但苦于heightlamp和heightlamp之间的防火墙</div><div class="line">且防火墙只允许真正的dns流量通过,所以,我们现在想通过在自己公网的dns服务器上做转发来绕过它们之间的防火墙</div><div class="line">即在heightlamp和heightlnmp之间建立一层dns隧道,把要转发的端口数据都封装在dns流量里面进行穿透</div><div class="line">最后实现的效果就是,当我访问heightlamp的某个指定端口,就可以直接访问到目标内网中的Midlnmp的ssh</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/10/dnstunnel/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/06/bettercap/">
+                轻量高效的 MITMF [ bettercap ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-06</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/bettercap/">bettercap</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 关于bettercap:<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">一款相对还不错的中间人工具,出来也有些年头了,不过貌似维护的并不是特别勤快</div><div class="line">从名字就不难看出,作者似乎是有意在向我们说明,这是一款比ettercap更好的中间人工具,<span class="string">'b'</span> <span class="keyword">is</span> better ^_^</div><div class="line">此外,工具本身基于<span class="keyword">ruby</span>,官方要求的 <span class="keyword">ruby</span>版本为 &gt;= <span class="number">1.9</span></div></pre></td></tr></table></figure></p>
+<p>0x02 基本介绍:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">ubuntu</span> 16<span class="selector-class">.04</span><span class="selector-class">.3</span> <span class="selector-tag">LTS</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.12</span>    入侵者机器</div><div class="line"><span class="selector-tag">win2008r2cn</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>    模拟正常服务器,事先已准备好各种服务</div><div class="line"><span class="selector-tag">win2008cn</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.131</span>   模拟正常服务器,事先已准备好各种服务</div><div class="line"><span class="selector-tag">win2012r2cn</span>		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.122</span>   模拟正常服务器,事先已准备好各种服务</div></pre></td></tr></table></figure></p>
+<p>0x03 首先,安装好bettercap,如果你系统的ruby版本小于1.9记得务必先升级一下,更多详情请参考其官方说明,如下<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"># apt-<span class="built_in">add</span>-repository <span class="keyword">pp</span><span class="variable">a:brightbox</span>/<span class="keyword">ruby</span>-ng</div><div class="line"># apt-<span class="built_in">get</span> <span class="keyword">update</span></div><div class="line"># apt-<span class="built_in">get</span> install ruby2.<span class="number">3</span> ruby2.<span class="number">3</span>-dev</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/06/bettercap/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/05/win-cmd/">
+                基础命令使用 [ win篇 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-05</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/win-cmd/">win cmd</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 基础命令使用:</p>
+<p>演示环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008R2cn</span>     <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>    假设为入侵者机器</div><div class="line"><span class="selector-tag">win2012R2cn</span>     <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.122</span>   假设为目标机器</div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> whoami /all			  查当前用户在目标系统中的具体权限,这可能会成为你一上来的习惯性动作 ^_^</span></div><div class="line"><span class="meta">#</span><span class="bash"> query user			  查当前机器中正在线的用户,注意管理员此时在不在</span></div><div class="line"><span class="meta">#</span><span class="bash"> hostname			  查当前机器的机器名,知道当前机器是干啥的</span></div><div class="line"><span class="meta">#</span><span class="bash"> net user 			  查当前机器中所有的用户名,开始搜集准备用户名字典</span></div><div class="line"><span class="meta">#</span><span class="bash"> net localgroup		  查当前机器中所有的组名,了解不同组的职能,如,IT,HR,ADMIN,FILE...</span></div><div class="line"><span class="meta">#</span><span class="bash"> net localgroup <span class="string">"Administrators"</span> 查指定组中的成员列表</span></div></pre></td></tr></table></figure>
+<p>查看本机ip配置:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> ipconfig /all		查看本机ip配置,观察本机是否在域内,内网段有几个,网关在哪里</span></div><div class="line"><span class="meta">#</span><span class="bash"> ipconfig /displaydns	查看本地DNS缓存</span></div></pre></td></tr></table></figure></p>
+<p>查看当前机器中所有的网络连接:<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> net start				查看本机运行的所有服务</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -ano				查看本机所有的tcp,udp端口连接及其对应的pid</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -anob				查看本机所有的tcp,udp端口连接,pid及其对应的发起程序</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -ano | findstr <span class="string">"ESTABLISHED"</span>	查看当前正处于连接状态的端口及ip</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -ano | findstr <span class="string">"LISTENING"</span>	查看当前正处于监听状态的端口及ip</span></div><div class="line"><span class="meta">#</span><span class="bash"> netstat -ano | findstr <span class="string">"TIME_WAIT"</span></span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/05/win-cmd/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/11/02/termite/">
+                灵活击穿目标多级内网纵深 [ termite ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-11-02</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/termite/">termite</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 关于termite <code>[ Earthworm的升级版 ]</code>,程序地址, <a href="http://rootkiter.com/Termite/" target="_blank" rel="external">http://rootkiter.com/Termite/</a><br><figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">一款极度小巧灵活的跳板机,有别于传统socks代理,它对于复杂内网环境下的渗透适用性更强,操作也极为简便</div><div class="line">废话不多说,大家可自行在实战中多多体会,工具本身其实并无好坏,大部分还在乎用工具的人,退一万步来讲,即使工具再好,也顶不住别人用的烂 ^<span class="keyword">_</span>^</div><div class="line">在此也非常感谢 rootkiter 的无私贡献,真心希望圈子能多一些这样少说话多做事的人 ^<span class="keyword">_</span>^</div></pre></td></tr></table></figure></p>
+<p>0x02 程序分为两部分,<code>admin[为控制端]</code>和<code>agent[为代理端节点]</code>,admin和agent所有选项用途均一致<br><figure class="highlight haml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-<span class="ruby">l 指定本地socks端口,等待远程连</span></div><div class="line">-<span class="ruby">c 指定远程socks机器ip</span></div><div class="line">-<span class="ruby">p 指定远程socks机器端口</span></div></pre></td></tr></table></figure></p>
+<p>0x03 此次模拟环境如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">lnmp01</span>	  	假设为我们自己的<span class="selector-tag">vps</span> 	其公网<span class="selector-tag">ip</span>为: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.30</span></div><div class="line"><span class="selector-tag">MidLAMP</span>	  	目标内网的<span class="selector-tag">linux</span>机器 	其内网<span class="selector-tag">ip</span>为: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.192</span> </div><div class="line"><span class="selector-tag">win2008r2cn</span>	目标内网的<span class="selector-tag">win</span>机器 	其内网<span class="selector-tag">ip</span>为: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.134</span></div><div class="line"><span class="selector-tag">win7cn</span>		入侵者本地内网机器	其内网<span class="selector-tag">ip</span>为: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.168</span> <span class="selector-attr">[因为这里用虚拟机模拟的,所以内网段和目标一样]</span></div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/11/02/termite/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/31/icmp-tunnel/">
+                利用icmp隧道 轻松穿透 tcp/udp四层 封锁
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-31</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/icmp/">icmp</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>关于icmp 隧道使用场景简单说明:<br><figure class="highlight llvm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">两台机器间,除了允许相互ping [ 即<span class="keyword">icmp</span>通信 ],其他的tcp/udp端口一律不允许,此时我们就可考虑利用<span class="keyword">icmp</span>隧道进行穿透</div></pre></td></tr></table></figure></p>
+<p>0x01 此次用于演示的环境大致如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">lnmp01</span>  	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.30</span> 	入侵者机器		</div><div class="line"><span class="selector-tag">MidLAMP</span> 	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.19</span>	为目标<span class="selector-tag">linux</span>机器,即<span class="selector-tag">icmp</span>跳板机	</div><div class="line"><span class="selector-tag">win2008R2cn</span>	<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.23</span>	为目标<span class="selector-tag">windows</span>机器,开启了3389</div><div class="line"><span class="selector-tag">win7en</span> 		<span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.17</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight smali"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">lnmp01想访问win2008R2cn的3389,由于win2008R2cn开了防火墙且做了ip限制,没法直接从lnmp01上进行访问</div><div class="line">虽然win2008R2cn开启了防火墙,但好在MidLAMP能ping通win2008R2cn,即没有阻断它们之间的icmp通信</div></pre></td></tr></table></figure>
+        </div>
+        <a href="/2017/10/31/icmp-tunnel/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/28/teamviewer-vpn/">
+                内网渗透之 teamviewer隧道
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-28</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/teamviewer/">teamviewer</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p><br><br>0x01 关于teamviewer<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">一款优秀的远控工具,通信数据全程加密,用户量也非常庞大,想必大家早都用烂了,这里就不多废话了,咱们直奔主题...</div></pre></td></tr></table></figure></p>
+<p>0x02 此次实验环境:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">win2008R2cn</span>  <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.32</span><span class="selector-class">.134</span> 假设为目标内网中的一台已控<span class="selector-tag">win</span>服务器,已装好<span class="selector-tag">teamviewer</span>且为启动状态,<span class="selector-tag">vpn</span>功能也已打开</div><div class="line"><span class="selector-tag">win7en</span> 	     <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.17</span>   假设为自己本地内网中的一台普通<span class="selector-tag">win</span>机器,已装好<span class="selector-tag">teamviewer</span>且为启动状态,<span class="selector-tag">vpn</span>功能也已打开</div></pre></td></tr></table></figure></p>
+<p>0x03 想实现的最终目的<br><figure class="highlight 1c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">通过teamviewer自带的vpn功能,对目标内网进行渗透</div><div class="line">想在目标win2008R2cn和本地win7en之间通过teamviewer搭建一条专有通道,方便对目标内网进一步渗透</div><div class="line">即通过teamviewer 实现简易的 '双内网'通信</div></pre></td></tr></table></figure></p>
+<p>0x04 在两端机器上安装好teamviewer,务必记得安装时,选择’高级’安装,把’vpn功能’都勾选上,主要就是用这个功能<br>
+        </div>
+        <a href="/2017/10/28/teamviewer-vpn/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/27/mysql-master-slave/">
+                MySQL 主从复制 完全上手指南
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-27</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/MySQL-主从复制/">MySQL 主从复制</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>0x01 在说mysql主从复制之前,我们先来大致了解一些关于不同级别的同步方案</p>
+<p><code>基于文件级别的同步</code></p>
+<p>非实时同步<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">scp/sftp/ftp/samba/rsync/<span class="class"><span class="keyword">union</span>....</span></div></pre></td></tr></table></figure></p>
+<p>实时同步<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">NFS/inotify/sersync/lsyncd....</div></pre></td></tr></table></figure></p>
+<p><code>基于文件系统级别的同步</code><br><figure class="highlight gams"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="title">drbd</span></span>...</div></pre></td></tr></table></figure></p>
+<p><code>基于数据库级别的同步</code>,对于数据库而言基本都属于实时同步,但实时并不一定意味着就是同步操作,也可能是用异步的方式在操作<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">mysql   replication 虽然异步的,但实现的效果基本上是实时的</div><div class="line"><span class="keyword">oracle</span></div><div class="line">redis</div><div class="line">mongodb</div></pre></td></tr></table></figure></p>
+        </div>
+        <a href="/2017/10/27/mysql-master-slave/" class="read-more">Read More</a>
+    
+
+</div>
+            
+                
+<div class="post">
+
+    <div class="post-header index">
+        <h1 class="title">
+            <a href="/2017/10/26/LaZagne/">
+                一键抓取目标机器上的所有明文密码
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-10-26</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/LaZagne/">LaZagne</a>
+                </span>
+            
+        </div>
+    </div>
+
+    
+        <div class="content">
+            <p>几乎支持市面上大部分常用工具,另外,脚本自身基于py,跨平台性相对较好,免杀效果也还不错,不过,实战中务必要在一个较高权限[最好是提权后的root或system]下运行,否则你很可能什么都抓不到,实战中用过几次,主要是想用它来搜集内网机器上的各种密码,但,并不是特别靠谱,有些行为还是很容易被杀软捕捉到,自己如果不会免杀,就很头疼了,更多详情大家可自行参考其github, <a href="https://github.com/AlessandroZ/LaZagne" target="_blank" rel="external">https://github.com/AlessandroZ/LaZagne</a> 话说回来,作为学习样本还是很不错的</p>
+<p><img src="/img/softwares.png" alt=""><br>
+        </div>
+        <a href="/2017/10/26/LaZagne/" class="read-more">Read More</a>
+    
+
+</div>
+            
+        </section>
+    </div>
+</div>
+
+
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="wrap-pagination">
+                <a class="" href="/">
+                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                </a>
+                <a class="" href="/page/3/">
+                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

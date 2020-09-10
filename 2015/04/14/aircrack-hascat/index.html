@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="aircrack &amp; hashcat 非字典高速破解目标无线密码"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>aircrack &amp; hashcat 非字典高速破解目标无线密码 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2015/04/14/aircrack-hascat/">
+                aircrack & hashcat 非字典高速破解目标无线密码
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2015-04-14</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/wpa-wpa2-crack/">wpa/wpa2 crack</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 挂载好外置无线网卡<br>&nbsp;&nbsp;&nbsp;&nbsp;把用于抓包的无线网卡挂到kali中,正常情况下,网卡在成功载入系统后,应该是如下的效果,在虚拟机设置中选择’可移动设备’把你的网卡连到虚拟机里<br><img src="/img/1.png" alt="&quot;将网卡载入kali&quot;"><br>如下图可以看到系统已自动识别该网卡,并且已自动搜到附近的无线信号<br><img src="/img/2.png" alt="查看系统是否已经识别该网卡"><br><img src="/img/3.png" alt="看看能不能收到附近的无线信号"></p>
+<p>0x02 检查无线网卡驱动是否能正常工作<br>&nbsp;&nbsp;&nbsp;&nbsp;紧接着,来看下当前系统中是否已经识别出该无线网卡的驱动,假设当前系统内核中已经有了该种无线网卡的驱动,它就会直接显示出当前无线网卡所使用的芯片组,可以看到,我这里用的是RT2800的芯片组(推荐大家直接去某宝买),如果没有,则可能需要你自己去手工编译安装相应的无线网卡驱动,然后再更新下内核模块即可(在linux中编译安装驱动着实是一件比较麻烦的事情,建议买的时候就直接去买aircrack所支持的网卡型号,起码用的时候不至于这么费劲,要相信万能的某宝),但这并不代表你只要把无线网卡驱动安装好就可以用了,需要搞清楚的是,你所使用的无线网卡芯片组必须要被aircrack所支持才可以,因为用无线网卡的最终目的还是用来捕获握手包<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> airmon-ng  查看当前系统中的所有可用的无线网卡接口</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/4.png" alt="看看aircrack是否已经识别芯片组"><br></p>
+<p>0x03 关于aircrack所支持的网卡芯片组列表,请自行参考aircrack官方说明:<br><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>//www.aircrack-ng<span class="meta">.org</span>/doku.php?id=compatibility_drivers</div></pre></td></tr></table></figure></p>
+<p>0x04 为了保证aircrack套件在运行的时候不被其他进程所干扰,我们需要先执行以下命令<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> airmon-ng check <span class="built_in">kill</span></span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/5.png" alt="aircrack启动检查"></p>
+<p>0x05 可以看到,当前网卡默认还处在管理模式,这时我们需要手动将其变成监听模式,这样才能进行正常的抓包<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> iwconfig  使用此命令可查看无线网卡的当前工作模式</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/6.png" alt="查看网卡工作模式"><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> airmon-ng start wlan0   把网卡改为监听模式</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/7.png" alt="将网卡切换为监听模式"><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> iwconfig  再次查看无线网卡工作模式是否真的已经改过来了</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/45.png" alt="看看网卡工作模式是否已经切换成功"></p>
+<p>0x06<br>&nbsp;&nbsp;&nbsp;&nbsp;另外,你的无线网卡在启动监听模式以后,网卡接口名称就变成了wlan0mon,以后只要是在aircrack套件中需要指定网卡接口名称的,都要用这个名字,在老版本的aircrack中默认名称是mon0,而新版本则统一变成了wlan0mon,恩,一切准备就绪之后,我们开始尝试扫描附近的无线接入点,找个有客户端在线的再单独监听,一定要注意,”目标无线必须要有客户端在线”,否则是抓不到包的,这也是整个无线破解最核心的地方,因为我们要把对方的某个在线客户端蹬掉线,才能截获他的握手包<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> airodump-ng wlan0mon 开始尝试扫描附近的无线信号,这里就用我们自己的wifi来进行测试,用于测试的wifi的mac和热点名称如下(klionsec)</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/8.png" alt="扫描附近的无线信号"></p>
+<p>0x07<br>&nbsp;&nbsp;&nbsp;&nbsp;通过上面的扫描,我们选定了名称为”klionsec”的wpa2无线热点作为我们的攻击目标,这里我们需要先记录下目标无线的工作信道以及对应的mac,(后面单独监听时需要用到这些信息),而后,单独监听目标无线热点,注意这里在监听目标无线的过程中不要断开,直到整个抓包过程完成为止,接下来要做的事情就是等待客户端上线,然后进行抓包,例如,下面就表示有一个客户端在线,其实,抓握手包的原理就是先把这个在线的用户给蹬掉线,然后再截获它的握手包,而这个包里就有我们想要的无线密码<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">airodump-ng</span> <span class="selector-tag">--bssid</span> <span class="selector-tag">DC</span><span class="selector-pseudo">:EE</span><span class="selector-pseudo">:06</span><span class="selector-pseudo">:96</span><span class="selector-pseudo">:B7</span><span class="selector-pseudo">:B8</span> <span class="selector-tag">-c</span> 6 <span class="selector-tag">-w</span> <span class="selector-tag">sec</span> <span class="selector-tag">wlan0mon</span> 监听目标无线,并把截获到的数据写到指定文件中</div></pre></td></tr></table></figure></p>
+<p><img src="/img/9.png" alt="单独监听目标无线"></p>
+<p>0x08<br>&nbsp;&nbsp;&nbsp;&nbsp;发现客户端在线稳定后,就可以向目标发射’ddos’流量了,直到我们在监听的终端下看到有握手包出现为止,如果第一轮包发完成后,并没看到握手包,别着急,先等个几十秒,或者隔个五六秒再发一次即可,正常情况下,基本一次就能搞定<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">aireplay-ng</span> <span class="selector-tag">--deauth</span> 15 <span class="selector-tag">-a</span> <span class="selector-tag">DC</span><span class="selector-pseudo">:EE</span><span class="selector-pseudo">:06</span><span class="selector-pseudo">:96</span><span class="selector-pseudo">:B7</span><span class="selector-pseudo">:B8</span> <span class="selector-tag">wlan0mon</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/10.png" alt="开始发动ddos攻击"></p>
+<p>可以看到,这时握手包已被正常抓获,此时监听也就可以断开了,注意观察终端的右上角,那个带有<code>handshake</code>标志的就是握手包的意思<br><img src="/img/11.png" alt="成功获取握手包"></p>
+<p>0x09<br>&nbsp;&nbsp;&nbsp;&nbsp;在我们抓获握手包以后,接下来的事情就非常简单了,你可以直接用aircrack加载弱口令字典进行爆破,当然,个人是十分不建议用字典(效率,实用性,太低,过于浪费时间),推荐大家直接把包处理一下丢给hashcat或者某宝去跑就行了,两种方法具体操作如下:</p>
+<p>(1)第一种,利用aircrack加载字典进行爆破,反正我自己很少用,基本没用过,先不说速度如何,关键还是看你的字典是否靠谱,实际测试中,个人并不建议用,因为根本没有靠谱性可言,因为这里仅仅是测试,实际渗透中,哪有太多的时间让你去跑[比如,实地渗透]<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">aircrack-ng</span> <span class="selector-tag">--bssid</span> <span class="selector-tag">DC</span><span class="selector-pseudo">:EE</span><span class="selector-pseudo">:06</span><span class="selector-pseudo">:96</span><span class="selector-pseudo">:B7</span><span class="selector-pseudo">:B8</span> <span class="selector-tag">-w</span> <span class="selector-tag">pass</span><span class="selector-class">.txt</span> <span class="selector-tag">sec-01</span><span class="selector-class">.cap</span>   会有三个文件,但最终的密码在<span class="selector-tag">cap</span>文件</div></pre></td></tr></table></figure></p>
+<p><img src="/img/12.png" alt="破解握手包中的无线密码"></p>
+<p>(2)第二种,直接利用hashcat跑hash,不过需要你事先稍微整理下数据包<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"># <span class="selector-tag">wpaclean</span> <span class="selector-tag">wpapass</span><span class="selector-class">.cap</span> <span class="selector-tag">sec-01</span><span class="selector-class">.cap</span>  	  可以看到这里已经成功识别出了目标无线<span class="selector-tag">id</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/13.png" alt="提取数据包中的hash"><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> aircrack-ng wpapass.cap -J wpahash  把数据包转换成hashcat能认识的<span class="built_in">hash</span>类型</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/15.png" alt="转换成hashcat认识的hash格式"><br><figure class="highlight apache"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># hashcat -m 2500 -a 3 wpahash.hccap ?u?l?l?l?l?d?d?d  因为我事先已经知道密码,所以直接这样给掩码会跑的更快一些</span></div></pre></td></tr></table></figure></p>
+<p>下面是hashcat的破解结果,可以看到,像wpa这种加密算法,对于hashcat来讲,几乎是瞬间就被秒出来了,因为事先忘记了把wifi改的简单点(<code>汗……</code>),所以这里不得不拿之前的一个测试案例来说明了,因为这次用于测试的wifi密码比较复杂,要是硬破,估计明年也破不出来,所以没必要在这里浪费时间,重要的是把方法告诉大家就好,测试结果并不是最重要的,能把要说明的问题说清楚即可<br><img src="/img/hash.png" alt="破解结果"><br></p>
+<p>0x10<br>&nbsp;&nbsp;&nbsp;&nbsp;至此,整个无线密码破解的经典步骤就算完成了,纵观全文,其实,并没多少技术含量在里面,跟着我的文档一步步的来,抓个包,跑个密码基本还是没什么问题的,其实,如果真的特别想关注底层的细节,不妨自己通过wireshark手工完成这一过程,可以明确告诉大家的是,这样是绝对可行的,请自行尝试<br><br><br>一点小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;在破解无线密码的问题上,大家大可不用太过纠结,破密码的最终目的,也是希望能通过这种方式来在目标上开个口子,仅此而已,如果真的是哪天运气爆棚,直接捅到目标的办公网,自然是求之不得,因为毕竟是在实地,可能留给我们的时间也不会太多,还会有其它诸多的不便,想短时间内把整个内网摸透,可能也来不及,但想办法先在目标内网留个shell稳住入口,回去接着慢慢搞,还是可行的,一般对于从外部打进去非常难的情况下,这也许也是一种切实可行的渗透手段,祝大家好运吧,不过,最后,还是有句话不得不提醒大家,访问未授权的系统本身就是违法的,望大家洁身自好……!</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/wpa2/">#wpa2</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

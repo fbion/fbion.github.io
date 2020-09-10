@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="快速搜集目标的各类web管理入口,敏感目录,文件及错误配置"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>快速搜集目标的各类web管理入口,敏感目录,文件及错误配置 - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/16/dirscan/">
+                快速搜集目标的各类web管理入口,敏感目录,文件及错误配置
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-16</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/dirscan/">dirscan</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 下面是自己找网站后台的一些常规办法[注意,对于找后台主要都是针对一些非开源web程序,如果是开源程序,直接把代码down下来看下目录结构,不就什么都有了,何苦找呢]:<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">首先,看看目标站自己的前端页面上,有没有给我们提供后台入口,很多脑残的政府和学校站很可能都会这么干,直接把后台入口丢在前端页面上,你方便,别人也方便</div><div class="line">尝试访问目标的robots.txt文件,如果有的话,看看里面有没有后台或者上传点之类的敏感目录,至于robots.txt文件本身的作用,大家请自行谷歌,这里就不多做解释了</div><div class="line">习惯性的盲打一些常见的后台目录名,如:/admin/,/manage/,/cms/,/system/,/administrator/,/wp-login.php,/control/等,记得大小写变换下多试几个……</div><div class="line">使用各类基于字典的目录爆破及爬行工具,如:dirb,wwwscan,cansina,uniscan,破壳以及其它的各种py脚本,非常多,现在也有很多在线的目录爆破工具站,这类的工具其实并没什么太多的技术含量,实际效果还得取决于你的字典质量和目标的防护程度,抛开防护先不说,起码网站敏感目录文件字典要好好花点儿时间精心准备</div><div class="line">"cscan"谷歌浏览器小插件,速度快,误报极高,具体原理,本人暂时还没弄明白,不过可以尝试下,自己用的比较少,记得有一次实在没办法就就抱着侥幸试了一下,结果真就跑出来了,可能是运气吧</div><div class="line">对于大型站点,可利用之前提到的google hacking,这里就不细说了,请仔细看前面的说明</div><div class="line">用各种wvs爬,也许也能爬出来一些,关于这类web漏洞扫描器的具体使用,后面会有详细说明,这里就先不细说了,例如: awvs,appscan,netsparker……</div><div class="line">如果是windows的话,不妨尝试下短文件漏洞扫描工具,鸡肋的是,它只能扫出前6个字节(6个英文字符),也就是说你只能看一部分猜一部分,好处在于前6个字节起码是绝对正确的</div><div class="line">配合网站的域名或者业务社工,比如:商城站一般我们会想到什么呢,shop?,有的后台目录也可能是依据目标域名的各种变形,多尝试……</div><div class="line">尝试各种万能密码,虽然很low,但很直接,存在万能密码问题的程序毕竟也不在少数,如:phpmyadmin 2.11.3-2.11.4 等……</div><div class="line">如果实在找不到,就想想办法直接问管理员吧,至于套不套的出来,就要看你自己的本事了,嘿嘿……</div></pre></td></tr></table></figure></p>
+<p>0x02 除了一些常规网站后台入口,我们也可以尝试各种java web入口,尤其是针对各种java控制台的,当然,前提是目标要有,基本进去后,shell权限都非常大:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">tomcat[默认端口<span class="number">8080</span> 需要用户名密码,还是那句话多尝试些弱口令,进去以后上传war马]</div><div class="line">jboss [默认端口<span class="number">8080</span>无需任何验证,进去以后上传war马]</div><div class="line">weblogic [默认端口<span class="number">7001</span>,实际很多是在<span class="number">8080</span>上,进去以后上传war马]</div><div class="line">Websphere[默认端口<span class="number">9043</span>,实际很多是在<span class="number">8080</span>上,进去以后上传war马]</div><div class="line">webmin[web版的服务器管理工具,默认端口<span class="number">10000</span>,可以把它当做图形版的ssh管理工具]</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>0x03 查找其它的各类敏感文件目录,自己所说的敏感文件及目录一般包括如下内容:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">网站源码备份文件,数据库备份文件,配置文件备份等...一般命名都是类似wwwroot.zip,wwwroot.sql这种的,建议直接用专门的备份的字典跑</div><div class="line">目标服务器的各种探针类文件,例如<span class="symbol">:phpinfo</span>.php,test.asp,info.aspx……</div><div class="line">目标网站的物理路径,注意物理路径和网站路径的区别,网站路径都是以www为根目录,而物理路径则是指系统某个分区下的绝对路径,如<span class="symbol">:c</span><span class="symbol">:</span>\windows\system32  /usr/local/lib</div><div class="line">网站后台目录,上传目录,如: 各类上传点,各类漏洞编辑器中的敏感路径</div><div class="line">网站数据库连接配置类文件</div><div class="line">各类数据库的web管理入口,例如<span class="symbol">:phpmyadmin</span>,adminer……之流</div><div class="line">目标网站后台脚本源码泄露及各种各样的网站报错信息</div><div class="line">svn 文件泄露如,.svn,用户命令历史文件泄露,如,.history...</div><div class="line">其它各种第三方服务的核心配置文件,里面可能会有用户密码……例如<span class="symbol">:cisco</span> vpn,ser-u……</div><div class="line">目标内部的各种账号密码信息,并不仅限于邮箱,vpn,ftp……</div><div class="line">web服务器配置错误所导致的目录遍历</div><div class="line">别人的webshell,目录扫描工具对这个的扫描似乎不太靠谱,因为有些shell隐藏的比较深,所以还是建议直接用google爬各种webshell特征</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>0x04 另外,还有一些目标内部的OA系统入口,不过这些通常都不在常规的web端口上,又该怎么办呢,其实,很多情况下,你可以习惯性的尝试访问以下目标的81,82,83,86,88,8081,8082,8088这样的web端口,说不定就会有惊喜:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">在目标防火墙没有开启的情况下,可以用一些之前介绍过的公网端口扫描工具,进行全端口扫描,然后根据扫到的结果,看着可能是web端口的,再尝试在浏览器中逐个访问</div><div class="line">如果目标开起了防火墙[waf],除了谷歌,或者直接在目标网站上找找,基本也就没谁了,扫可能是不太现实的,嘿嘿……如果大家有更好的思路也期待能一起交流</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>0x05 搜集目标的各种元数据,如果能搜集到一些有用的账号密码,自然是最好不过了<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">foca 工具除了挖掘各种元数据之外,包括目标子域识别,服务器错误配置,web高危扫描……功能还是非常好用的,尤其是针对大中型站点,效果相对比较明显</div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;对于后台查找自己知道的基本也就这么多了,如果实在找不到,不妨换换别的思路,web只是我们渗透过程中的其中一个入手点,却不是唯一的入手点,别太死板就行,更多手法,也期待能和大家一起交流学习</p>
+<p><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/信息搜集/">#信息搜集</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

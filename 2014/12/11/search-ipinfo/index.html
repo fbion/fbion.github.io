@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="web渗透第一步 之 信息搜集 [ 搜集目标真实ip信息 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>web渗透第一步 之 信息搜集 [ 搜集目标真实ip信息 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/11/search-ipinfo/">
+                web渗透第一步 之 信息搜集 [ 搜集目标真实ip信息 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-11</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/信息搜集/">信息搜集</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01 在实际渗透中,给我们的目标可能仅仅就是一个域名或者某个组织名,那么该如何仅仅通过一个目标域名或者组织域名来确定目标所在的一些真实ip段呢,下面我们就开始整个信息搜集任务的第一步,搜集目标ip及域名信息,注意,这里我们暂且先不考虑目标是否用了CDN的问题,如何透过cdn找真实ip在后面会做单独说明,这里就先以正常的情况来说明</p>
+<p>0x02 以<code>www.cityu.edu.hk</code> 为例,拿到目标域名的第一反应,没别的,先ping下目标域名看看解析情况再说<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ping www.cityu.edu.hk</span></div><div class="line">www.cityu.edu.hk (<span class="number">144.214</span>.<span class="number">5.62</span>) ping 目标主域解析到的ip是这个</div></pre></td></tr></table></figure></p>
+<p>0x03 虽然没ping通,但这并不影响我们看它解析到的ip,不通的原因,还要看它提示的是什么,如果是超时,多半是因为防火墙拦截了imcp请求,不过这并不是重点,重点是我们已经发现这个域名被解析到了这个ip上,而且被解析的这个域名依然是 www.cityu.edu.hk,其实,从这里基本就已经可以确定这个ip就是目标的真实ip段内的[搞多了,自然就会有感觉],不信的话,我们可以直接尝试在浏览器中访问下解析到的这个ip,看看是不是会自动跳转到www.cityu.edu.hk 这个域名上的网页上,但仅仅就这一个ip还是远远不够的,对一个这种规模的大学来讲,机器肯定不再少数,我们接着往下走……<br><img src="/img/www.cityu.edu.hk.png" alt=""><br></p>
+<p>0x04 ping 完主域,顺手再来ping下子域,依然是没ping通,不过我们看到这个子域也被解析到了这个ip上[很可能是代理服务器或者负载均衡器什么的]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># ping cityu.edu.hk</span></div><div class="line">cityu.edu.hk (<span class="number">144.214</span>.<span class="number">5.62</span>)</div></pre></td></tr></table></figure></p>
+<p><img src="/img/cityu.edu.hk.png" alt=""></p>
+<p>0x05 通过上面简单的ping,我们已初步发现目标所在的其中一个真实ip段,但仅仅只有这一个段还是远远不够的[像这种规模的大学,几乎整个B段都可能是它的],接着我们可以从目标的mx,ns,a记录入手,至于这些记录具体都是干什么的,这里就不细说了,大家请自行谷歌,因为我们今天的重点并不在这些记录本身,而仅仅是想通过这些记录[子域]获取一些目标的真实ip段,如下,推荐dig,nslookup不太准[非权威查询]<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">查目标的mx记录:</div><div class="line"><span class="comment"># dig +short @8.8.8.8 cityu.edu.hk mx</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">smtp.cityu.edu.hk (<span class="number">144.214</span><span class="meta">.4</span><span class="meta">.72</span>)  </div><div class="line">很显然,这只是目标的一个子域,根据ping解析到的结果我们发现这个<span class="built_in">ip</span>也确实是香港<span class="built_in">ip</span></div><div class="line">跟ping主域返回的结果是<span class="number">144.214</span><span class="meta">.5</span><span class="meta">.62</span>,貌似是差了一个<span class="string">'C'</span>段,不过,大致可以确定是目标的真实<span class="built_in">ip</span>段</div></pre></td></tr></table></figure>
+<p><img src="/img/cityu mx 1.png" alt=""><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">cityu-edu-hk.mail.protection.outlook.com (<span class="number">65.55</span>.<span class="number">88.234</span>)  </div><div class="line">注意此域名,它并非目标子域,很显然是挂到outlook上的,ip也不是香港的</div><div class="line">所以,此ip对我们实际的渗透意义并不大,可以忽略</div></pre></td></tr></table></figure></p>
+<p><img src="/img/cityu mx 2.png" alt=""><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">查目标ns记录:</div><div class="line"><span class="comment"># dig +short @8.8.8.8 cityu.edu.hk ns</span></div><div class="line">cpccspc.cityu.edu.hk (<span class="number">144.214</span>.<span class="number">5.254</span>) 目标子域,ip和主域处在同一C段中,可以确定为目标真实ip</div></pre></td></tr></table></figure></p>
+<p><img src="/img/cityu ns 1.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">vax.cityu.edu.hk (<span class="number">144.214</span>.<span class="number">2.1</span>) 目标子域,同处在B段中,初步确定为目标真实ip</div></pre></td></tr></table></figure>
+<p><img src="/img/cityu ns 2.png" alt=""></p>
+<p>cpccux0.cityu.edu.hk (144.214.5.253) 目标子域,ip和主域处在同一C段中,可以确定为目标真实ip<br><img src="/img/cityu ns 3.png" alt=""><br><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">查目标a记录:</div><div class="line"><span class="comment"># dig +short cityu.edu.hk a</span></div><div class="line"><span class="number">144.214</span>.<span class="number">5.62</span>   和直接ping的结果一致,确定为真实ip</div></pre></td></tr></table></figure>
+<p>0x06 当然,你可以从一些第三方网站上获取到目标的一些ip及域名信息,下面就推荐几个自己常用的<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ip138的数据库还是蛮不错的,主要是更新频繁,只需提供一个目标ip或者域名[给子域就好了]即可定位ip所在地</div><div class="line">如果你想把它写到脚本中批量查,它也提供查询接口,付点儿费,然后把接口写到你的脚本中即可</div><div class="line">www.ip138.com</div></pre></td></tr></table></figure></p>
+<p><img src="/img/ip138 ip info res.png" alt=""><br><img src="/img/ip138 ip info.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">这是个相对比较老的信息搜集站,直接给个目标子域,它会把目标的一些子域也都列出来</div><div class="line">然后你可以挨个点到每个子域里面再去看该子域详情,域名详情包括这个域名ip变更的历史记录</div><div class="line">[比如,我们发现在www.cityu.edu.hk这个域名上曾经解析到过三个ip,尝试ping下以前的ip看看还在不在</div><div class="line">说不定是个入手点呢],web服务器版本型号,操作系统类型[如果是一些低版本的操作系统,我们可以直接尝试比较经典的漏洞exp,比如iis(<span class="number">2000</span> <span class="number">2003</span>)写等等……]</div><div class="line">域名注册商[如果你想做域名劫持可能会用到],域名所在地等等……</div><div class="line">从结果看到我们看到,主域其实是一台f5负载均衡设备[印证了前面的猜测]</div><div class="line">另外从别的子域里面我们又发现了很多其它的真实ip段</div><div class="line">www.netcraft.com</div></pre></td></tr></table></figure>
+<p><img src="/img/netcraft.com.png" alt=""><br><img src="/img/netcraft.com res.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">最后再来查下目标域名的 whois 信息,里面的一些内容对我们渗透也是有一定帮助的,比如,注册时留下的各种联系信息,邮箱,电话,姓名等等...</div><div class="line">www.whois.com/whois</div></pre></td></tr></table></figure>
+<p>whois里面对我们有用的信息可能也就下面这些:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">注册信息中的邮箱,名字,域名注册时间,过期时间以及当前注册状态</div></pre></td></tr></table></figure></p>
+<p><img src="/img/Registrant Contact Information.png" alt=""><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">管理员各种联系信息,包括管理员邮箱电话,传真,各种名字[可以用来制作字典]</div></pre></td></tr></table></figure></p>
+<p><img src="/img/Administrative Contact.png" alt=""><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">目标技术的联系方式,包括邮箱,电话,传真,名称</div></pre></td></tr></table></figure></p>
+<p><img src="/img/Technical Contact.png" alt=""><br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">用于解析该域名的所有ns服务器,从这里面我们发现了两个我们之前在ns记录没查到的域名,不过一看,这很显然就不是目标自己的ns服务器,所以,忽略</div></pre></td></tr></table></figure></p>
+<p><img src="/img/Name Servers Information.png" alt=""></p>
+<p>0x07 通过上面的初步搜集,我们大致整理出了下面的一些目标真实ip段,因为段比较多,这里并没有都写上去……,关键是大家的搜集思路清晰就好:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="number">144.214</span>.<span class="number">2.0</span>/<span class="number">24</span></div><div class="line"><span class="number">144.214</span>.<span class="number">4.0</span>/<span class="number">24</span></div><div class="line"><span class="number">144.214</span>.<span class="number">5.0</span>/<span class="number">24</span></div><div class="line"><span class="number">144.214</span>.<span class="number">236.0</span>/<span class="number">24</span></div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>0x08 到这一步,初步的ip及域名信息搜集就基本算是完成了,内容确实比较简单,关于工具的使用也比较容易,实在不会,看看命令的相关帮助应该就能明白了,可能最需要注意的地方还是 ping 的时候最好多ping几次,有时候因为自己的网速或者目标的网络问题,也会导致超时,并非一定是防火墙的原因,所以,一般ping 个5,6次就差不多了,当然,这里只是大家告诉你怎么手工去找,相信这里的一点铺垫,到后面会更利于你去理解和使用这一类的信息搜集工具,因为它们的工作流程大致都是如此,只不过我们现在是在手工实现它,还是那句话,实际渗透中怎么快怎么来[以效率为重],后面会说到dnsenum,一个脚本基本就可以把上面说的东西全干了……</p>
+<p>0x09 当然啦,这仅仅还是万里长征的第一步,拿到准确的目标ip段信息,也是为了方便我们后面,对目标机器大概的部署情况做一些简要判断,从中找到一些可能的突破口,这中间还会涉及到cdn的问题,不过不用太着急,后面会再专门针对cdn做单独的详细说明,至于拿到这些真实ip信息以后的事情,就自己随意了,旁站,C段,ddos,爆破…………,自己想怎么发挥都行…</p>
+<p>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;没啥技术含量,方便加深对此类工具的深层理解,顺带留给有需要的朋友<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/信息搜集/">#信息搜集</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

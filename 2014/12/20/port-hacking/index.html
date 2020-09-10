@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="web渗透第一步之信息搜集  [ 端口渗透 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>web渗透第一步之信息搜集  [ 端口渗透 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2014/12/20/port-hacking/">
+                web渗透第一步之信息搜集  [ 端口渗透 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2014-12-20</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/port-hacking/">port hacking</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p><br><br>0x01  扫描前奏 </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;开始正式的说明之前,我们不妨先来简单了解下telnet,这也是到目前为止,个人认为最靠谱的tcp端口扫描工具,没有之一,如果你只是想快速地探测目标的某几个tcp端口是否开放,直接telnet一下,无疑是极好的,也根本犯不着一上来就搂着专业的端口扫描工具去一通乱扫,这样做可以有效避免因某些工具动静儿过大[如,nmap之流…],而造成一些不必要的麻烦,如,触发对方防护报警[后续再搞很可能就要换ip了,tor暂时也不是想象的那么好用],简单使用实例,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># telnet cc.target.edu.hk 1443</span></div><div class="line"><span class="comment"># telnet cc.target.edu.hk 3389</span></div><div class="line"><span class="comment"># telnet cc.target.edu.hk 22</span></div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>0x02  关于端口扫描工具<br>&nbsp;&nbsp;&nbsp;&nbsp;除了用telnet对某单个机器进行快速常规高危端口探测之外,如果我们想短时间内对多个目标进行批量端口扫描,又该怎么办呢,这里就简单介绍下几款经常会用到的公网端口扫描工具,masscan和zmap,同是基于无状态的的端口扫描,这里顺便科普下什么是无状态,简单来说,普通的端口扫描工具,在发出请求包以后还有一个等待数据回应的过程,然后根据回应的数据包头标志(不同系统平台的协议栈对每种标志的数据包响应状态也是不一样的)以此来判断目标的某个端口或者服务是否开放,用的什么操作系统等等……但这样做,无疑会很大程度上拖慢扫描速度,所以,后来大牛们就搞出了无状态扫描,这也就意味着,当请求包发送以后就被不再管了,也不再等待回应,所有的验证都放在数据包本身,这可能也是它快的主要原因,另外,此类工具为了减少触发目标ids的几率,都采用了分组扫描算法[这种东西其实并不算新奇],让扫描的ip随机分布[尽可能规避目标防护],而不是密麻集中在某个点……好了,简单科普就先到这里,过深的东西,也不是我目前的能力所能企及的,关键我们能把工具用起来就行,接着就来分别介绍下两款工具的一些常规用法,实际渗透中,个人还是更推荐masscan…原因我这里不多嘴了,还是留给大家,自行慢慢体会吧</p>
+<p>0x03 masscan [扫描速度取决于你的实际带宽,默认只扫描tcp端口,但也可扫udp]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">https:</span>/<span class="regexp">/github.com/robertdavidgraham</span><span class="regexp">/masscan</span></div></pre></td></tr></table></figure></p>
+<p>masscan 常用选项:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">-p 		指定要扫描的端口,同时指定多个端口要用逗号隔开</div><div class="line">--rate  	指定发包速率,根据你自己的实际带宽来定,我自己是<span class="number">20</span>M的光纤,一般给<span class="number">1000</span>足矣,一两兆的vpn,给<span class="number">100</span>就差不多了,都是粗略估计的,懒的算</div><div class="line">--open-only 	仅显示开放的端口 </div><div class="line">--banners 	获取banners</div><div class="line">-c      	使用自定义的扫描配置文件</div><div class="line">--ping  	扫之前是否要先ping下目标</div><div class="line">-oL     	把扫描结果存到指定文件中</div><div class="line">--excludefile   排除不扫描的ip段</div></pre></td></tr></table></figure></p>
+<p>masscan 配置文件格式,如下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># klion masscan config  '#'表注释</span></div><div class="line">rate =<span class="number">1000.00</span>       	<span class="comment"># 指定发包速率,根据自己的实际带宽计算</span></div><div class="line">output-format=list 	<span class="comment"># 指定扫描结果保存的文件格式,这里我就用最普通的文本存,当然,它是支持直接输出成xml格式的,后续方便用程序处理</span></div><div class="line">output-filename=<span class="regexp">/root/</span>Desktop/port_hacking.txt 	<span class="comment"># 指定要把扫描的结果文件保存到哪里</span></div><div class="line">output-status=open 	<span class="comment"># 只保留开放的端口信息</span></div><div class="line">ports=<span class="number">80</span>,<span class="number">443</span>,<span class="number">8080</span>,<span class="symbol">U:</span><span class="number">53</span>  <span class="comment"># 指定要扫描的端口,默认tcp,当然,你也可以指定UDP的端口,U即udp </span></div><div class="line">range=<span class="number">203.174</span>.<span class="number">48.0</span>/<span class="number">24</span>   <span class="comment"># 指定要扫描的ip段,可以连续指定多个,中间记得逗号隔开就好了</span></div><div class="line">ping=<span class="literal">false</span>              <span class="comment"># 扫描的时候要不要先ping下,true表示真,即ping</span></div><div class="line">banners=<span class="literal">true</span>		<span class="comment"># 获取端口banner信息</span></div><div class="line">excludefile=<span class="regexp">/etc/zmap</span><span class="regexp">/blacklist.conf	# 指定不扫描的ip段,可以把不想扫描的一些ip段都加到这个文件中,如:内网ip段是不需要扫的</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/masscan config.png" alt=""></p>
+<p>masscan 实例用法[支持同时进行tcp及udp扫描]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">手工指定选项扫描</div><div class="line"><span class="comment"># masscan --rate=1000 -p21,22,23,25,U:69,110,143,U:161,80,81,82,83,88,443,445,512,513,514,1433,1521,2082,2083,2181,2601,2604,3128,3690,4848,8088,8086,8081,8080,3306,5432,3389,5984,6379,7001,7002,8069,9200,9300,11211,10000,27017,27018,50000,50070,50030 --banners 202.181.132.0/24 103.15.135.0/24 203.174.48.0/24 203.124.10.0/24 202.65.218.0/24 202.181.196.0/24 -oL port_hacking.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/masscan manual.png" alt=""></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">直接加载自定义配置文件进行扫描</div><div class="line"><span class="comment"># masscan -c masscan.conf</span></div></pre></td></tr></table></figure>
+<p><img src="/img/masscan config res.png" alt=""></p>
+<p>一句话快速锁定各类敏感服务特征:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cat port_hacking.txt | egrep "ProFTPD|vsFTPd|FileZilla Server|Microsoft FTP Service|Pure-FTPd|OpenSSH|Remote Management Console|User Access Verification|Welcome to the server management|imap|smtp|pop|snmp"</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/masscan manual ftp.png" alt=""><br></p>
+<p>0x04 zmap [扫描速度依然是取决于你的实际带宽,不过,在实际测试中准确率要比masscan稍差,同样的目标,masscan能扫出来,zmap却扫不出来,内部具体原因,暂未深究]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">其官方站点: <span class="symbol">https:</span>/<span class="regexp">/zmap.io</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">zmap常用选项 [选项作用其实跟masscan差不太多,只不过zmap默认是tcp模式扫描,如果要用其它的协议扫描就必须自己单独用选项指定]:</div><div class="line">[注意:如果你要手工指定扫描选项,就务必先把zmap.conf文件中的所有选项都注释掉,不然会出错,原因暂未知,貌似它默认应该会先读取这个文件,一般我都是直接把它默认的配置文件选项全部注释掉,直接手工指定扫描选项]:</div><div class="line">-p  指定要扫描的端口</div><div class="line">-b  指定扫描ip黑名单,如,内网ip,我们是不需要扫的</div><div class="line">-o  保存扫描结果到指定的文件中</div><div class="line">-w  可以把要扫描的ip段事先都放在一个文件中,进行批量扫描,注意格式,一行对应一个ip段</div><div class="line">-r  指定扫描发包速率</div><div class="line">-B  指定你的实际带宽,比如你带宽10M,实际指定4-6M即可</div><div class="line">-C  也可以直接加载自定义配置文件进行扫描</div><div class="line">-s  在扫描完成后进行简单汇总</div><div class="line">--probe-module=icmp_echoscan   	icmp模式扫描</div><div class="line">--probe-module=udp   		udp模式扫描</div></pre></td></tr></table></figure>
+<p>zmap 扫描配置文件格式说明:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">interface <span class="string">"eth0"</span>   		<span class="comment"># 指定用于扫描的网卡接口</span></div><div class="line">probe-<span class="class"><span class="keyword">module</span> <span class="title">tcp_synscan</span>	<span class="comment"># 扫描模式,默认是是tcp的syn</span></span></div><div class="line">target-port <span class="number">3389</span>		<span class="comment"># 要扫描的端口,不知道为什么在配置文件中不能同时指定多个,难道是我格式写错了,回头抽空再好好看看帮助</span></div><div class="line">rate <span class="number">100</span>			<span class="comment"># 设置发包速率</span></div><div class="line">bandwidth <span class="number">1</span>M			<span class="comment"># 设置带宽</span></div><div class="line">blacklist-file <span class="string">"/etc/zmap/blacklist.conf"</span>	<span class="comment"># 指定扫描黑名单ip段[如,内网ip,特殊ip,所有你不想扫描的ip...]</span></div><div class="line">output-file <span class="string">"/root/Desktop/port_res.txt"</span>	<span class="comment"># 指定扫描结果的存放位置</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/zmap config.png" alt=""><br></p>
+<p>zmap 常规用法 [ 支持tcp,udp,icmp模式扫描,最好不要挂vpn扫,原因暂未知,即使加上–vpn貌似也不太好使 ]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># zmap -B 1M  -p [21,22,23,25,110,143,80,81,82,83,88,443,445,512,513,514,1433,1521,2082,2083,2181,2601,2604,3128,3690,4848,8088,8086,8081,8080,3306,5432,3389,5984,6379,7001,7002,8069,9200,9300,11211,10000,27017,27018,50000,50070,50030] -b /etc/zmap/blacklist.conf -r 1000 202.181.132.0/24 -o Desktop/port_res.txt</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/zmap mausal.png" alt=""><br></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># zmap -C /etc/zmap/zmap.conf 202.181.132.0/24  加载自定配置文件进行扫描</span></div></pre></td></tr></table></figure>
+<p><img src="/img/zmap config res.png" alt=""><br></p>
+<p>0x05 在用上面两款工具时,有些地方还是需要注意下:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">实际使用中,最好先根据你的实际带宽估算下最合适的发包速率,因为你的带宽和发包的速率会直接影响扫描结果的准确性</div><div class="line">像这类的工具一般对带宽和速率的控制要求比较高,还有,在扫描之前它会预先提示你要扫描多少台机器,机器的多少也是根据你所给的掩码自动算出来的</div><div class="line">扫完以后,先随便telnet几个ip的端口,看看精度如何,务必不要过度的依赖这些工具扫出来的结果</div><div class="line">不单单是针对这两款工具,对所有工具都是如此,理解作者的实际编写思路比使用工具本身更重要,因为这是灵活运用的前提</div><div class="line">即使你暂时还写不出来很优秀的代码,但总有一天你会写出来的,先把自己的基础打好</div><div class="line">假如以后你想在这方面继续深入,这些都是很优秀的学习样板,所以过硬的编码能力在任何时候都跑不掉,贵在坚持嘛</div></pre></td></tr></table></figure></p>
+<p>0x06 最后再来看下老旧的 nmap,作为一款家喻户晓的探测工具,想必大家对它早已经非常熟悉 [一直为人诟病的是老版本速度非常慢,可能是发包然后等待验证的过程比较复杂吧,不过,新版本确实已经改进不少],一般在linux目标机器中稍微懂一些的运维都会把这个预先装上,这样反而极大的方便了我们:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nmap -v 192.168.3.240  扫描某单个目标[目标可以是域名,ip后者ip段]</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nmap -iL ip.txt  	同时扫描多个目标,把目标的ip/ip段事先放在一个文件中,每行对应一个</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nmap -Pn 192.168.3.240  	扫描前先不要ping</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nmap -sV -v 192.168.3.240  探测远程机器上详细的服务信息,如,详细的名称版本,有banner的可能直接就把banner获取过来了,没banner的可能就慢慢的匹配特征,耗时会相对较长</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nmap -O -v 192.168.3.240   探测远程操作系统平台,如内核名称,版本...</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">扫描自己指定的端口,默认如果你不指定端口,它会自动扫描事先写死在程序中的<span class="number">1000</span>个高危端口</div><div class="line"><span class="comment"># nmap -p 80,81,82,83,84,1433  192.168.3.189</span></div><div class="line"><span class="comment"># nmap -p U:53,111,137,T:21-25,80,139,8080 192.168.3.189</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">全面扫描目标主机的所有信息,包括操作系统,端口,服务,相当于-O -sV 的总和……</div><div class="line"><span class="comment"># nmap -A  -v 192.168.3.240</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">快速扫描整个C段,速度级别从<span class="number">0</span>到<span class="number">5</span>,默认用icmp请求,极易被防火墙阻拦</div><div class="line"><span class="comment"># nmap -T5 -v 192.168.3.240</span></div><div class="line"><span class="comment"># nmap -T5 -v 192.168.3.0/24</span></div><div class="line"><span class="comment"># nmap -T5 --open 192.168.3.0/24</span></div><div class="line"><span class="comment"># nmap -v  192.168.3.1-10</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nmap --packet-trace  192.168.3.0/24  观察扫描时的详细发包过程</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># nmap -sU 192.168.3.240  所谓隐蔽的UDP扫描,其实并不隐蔽</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">几种常用的扫描方式,tcp的syn和ack扫描另外还有connect(推荐用这个)</div><div class="line"><span class="comment"># nmap -sT 192.168.3.240  个人推荐的扫描方式</span></div><div class="line"><span class="comment"># nmap -sS 192.168.3.240</span></div><div class="line"><span class="comment"># nmap -sA 192.168.3.240</span></div></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">内网arp扫描,探测内网存活主机还是非常不错的,可轻易bypass掉各种应用层防火墙,既然是arp就没必要扫端口了,所以记得带上 -sn 选项 禁用端口扫描</div><div class="line"><span class="comment"># nmap -sn -PR 192.168.3.0/24</span></div></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">最常用的<span class="keyword">nmap</span>组合,其实关于<span class="keyword">nmap</span>的这些基本选项用法,不说大家也应该都早用的熟透了,每个选项参数作用在工具帮助里就已经说的非常清楚</div><div class="line"># <span class="keyword">nmap</span> --<span class="keyword">open</span> -<span class="keyword">p</span> port -Pn -v -sT -sV --script script_name ip/domain/cidr</div></pre></td></tr></table></figure>
+<p>0x07 如何快速对目标网站的一些基本情况做简要判断,如,对方用的什么web服务器,后端脚本是啥,数据库是啥,系统平台又是啥等……,下面就来简单熟悉一些常见的web架构:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">asp  + access + iis5.<span class="number">0</span>/<span class="number">6.0</span> + win2003/<span class="number">03</span>r2</div><div class="line">aspx + mssql2005/mssql2008 + iis7.<span class="number">0</span>/iis7.<span class="number">5</span> + win2008/08r2</div><div class="line">php[<span class="number">5.2</span>,<span class="number">5.4</span>,<span class="number">5.6</span>]  + mysql[<span class="number">5.1</span>,<span class="number">5.5</span>]/postgresql + apache[<span class="number">2.2</span>,<span class="number">2.4</span>]/iis + linux/win</div><div class="line">php/jsp + mysql + ngnix + linux/win</div><div class="line">java/jsp  + oracle/mssql + tomcat + linux/win</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>利用httprint 识别web目标服务器指纹 [ 其实是个比较鸡肋的一个小工具,一般看下响应头中的server字段就有了,不过,这里的并不准,很容易被改掉 ]:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># httprint -h 144.214.20.118 -s ./Desktop/signature.txt</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">web服务器指纹字典下载地址:</div><div class="line"><span class="symbol">http:</span>/<span class="regexp">/www.net-square.com/signature</span>.txt</div></pre></td></tr></table></figure>
+<p>常用的几个相对比较实用的firefox插件,自己在配置渗透环境的时候最好都预先装上:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">hackbar</div><div class="line">tamper data</div><div class="line">live http headers</div><div class="line">firebug</div><div class="line">downthemall</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>使用 whatweb [探测到的信息相对比较全面],返回的结果中大致包括以下内容:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">请求返回的状态码</div><div class="line">web服务器版本</div><div class="line">ip所在国家</div><div class="line">操作系统详细的版本信息</div><div class="line">脚本语言版本信息</div><div class="line">域名解析到的ip</div><div class="line">截取并显示网站标题</div><div class="line">等等……</div></pre></td></tr></table></figure></p>
+<p>如何快速判断目标使用的系统平台:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">在url中尝试变化大小写,进行请求,观察页面响应,windows默认对大小写不敏感,linux则严格区分大小写,所以返回的页面肯定是不一样的</div><div class="line">观察各种报错信息,看看里面有没有泄露服务器的相关信息</div><div class="line">等等……</div></pre></td></tr></table></figure></p>
+<p>0x08 一些常见端口渗透用途汇总:</p>
+<table>
+<thead>
+<tr>
+<th>端口号</th>
+<th style="text-align:center">端口服务/协议简要说明</th>
+<th style="text-align:center">关于端口可能的一些渗透用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>tcp 20,21</td>
+<td style="text-align:center">ftp 默认的数据和命令传输端口[可明文亦可加密传输]</td>
+<td style="text-align:center">允许匿名的上传下载,爆破,嗅探,win提权,远程执行(proftpd 1.3.5),各类后门(proftpd,vsftp 2.3.4)</td>
+</tr>
+<tr>
+<td>tcp 22</td>
+<td style="text-align:center">ssh[数据ssl加密传输]</td>
+<td style="text-align:center">可根据已搜集到的信息尝试爆破,v1版本可中间人,ssh隧道及内网代理转发,文件传输,等等…常用于linux远程管理…</td>
+</tr>
+<tr>
+<td>tcp 23</td>
+<td style="text-align:center">telnet[明文传输]</td>
+<td style="text-align:center">爆破,嗅探,一般常用于路由,交换登陆,可尝试弱口令,也许会有意想不到的收获</td>
+</tr>
+<tr>
+<td>tcp 25</td>
+<td style="text-align:center">smtp[简单邮件传输协议,多数linux发行版可能会默认开启此服务]</td>
+<td style="text-align:center">邮件伪造,vrfy/expn 查询邮件用户信息,可使用smtp-user-enum工具来自动跑</td>
+</tr>
+<tr>
+<td>tcp/udp 53</td>
+<td style="text-align:center">dns[域名解析]</td>
+<td style="text-align:center">允许区域传送,dns劫持,缓存投毒,欺骗以及各种基于dns隧道的远控</td>
+</tr>
+<tr>
+<td>tcp/udp 69</td>
+<td style="text-align:center">tftp[简单文件传输协议,无认证]</td>
+<td style="text-align:center">尝试下载目标及其的各类重要配置文件</td>
+</tr>
+<tr>
+<td>tcp 80-89,443,8440-8450,8080-8089</td>
+<td style="text-align:center">web[各种常用的web服务端口]</td>
+<td style="text-align:center">各种常用web服务端口,可尝试经典的top n,vpn,owa,webmail,目标oa,各类java控制台,各类服务器web管理面板,各类web中间件漏洞利用,各类web框架漏洞利用等等……</td>
+</tr>
+<tr>
+<td>tcp 110</td>
+<td style="text-align:center">[邮局协议,可明文可密文]</td>
+<td style="text-align:center">可尝试爆破,嗅探</td>
+</tr>
+<tr>
+<td>tcp 137,139,445</td>
+<td style="text-align:center">samba[smb实现windows和linux间文件共享,明文]</td>
+<td style="text-align:center">可尝试爆破以及smb自身的各种远程执行类漏洞利用,如,ms08-067,ms17-010,嗅探等……</td>
+</tr>
+<tr>
+<td>tcp 143</td>
+<td style="text-align:center">imap[可明文可密文]</td>
+<td style="text-align:center">可尝试爆破</td>
+</tr>
+<tr>
+<td>udp 161</td>
+<td style="text-align:center">snmp[明文]</td>
+<td style="text-align:center">爆破默认团队字符串,搜集目标内网信息</td>
+</tr>
+<tr>
+<td>tcp 389</td>
+<td style="text-align:center">ldap[轻量级目录访问协议]</td>
+<td style="text-align:center">ldap注入,允许匿名访问,弱口令</td>
+</tr>
+<tr>
+<td>tcp 512,513,514</td>
+<td style="text-align:center">linux rexec</td>
+<td style="text-align:center">可爆破,rlogin登陆</td>
+</tr>
+<tr>
+<td>tcp 873</td>
+<td style="text-align:center">rsync备份服务</td>
+<td style="text-align:center">匿名访问,文件上传</td>
+</tr>
+<tr>
+<td>tcp 1194</td>
+<td style="text-align:center">openvpn</td>
+<td style="text-align:center">想办法钓vpn账号,进内网</td>
+</tr>
+<tr>
+<td>tcp 1352</td>
+<td style="text-align:center">Lotus domino邮件服务</td>
+<td style="text-align:center">弱口令,信息泄漏,爆破</td>
+</tr>
+<tr>
+<td>tcp 1433</td>
+<td style="text-align:center">mssql数据库</td>
+<td style="text-align:center">注入,提权,sa弱口令,爆破</td>
+</tr>
+<tr>
+<td>tcp 1521</td>
+<td style="text-align:center">oracle数据库</td>
+<td style="text-align:center">tns爆破,注入,弹shell…</td>
+</tr>
+<tr>
+<td>tcp 1500</td>
+<td style="text-align:center">ispmanager    主机控制面板</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 1025,111,2049</td>
+<td style="text-align:center">nfs</td>
+<td style="text-align:center">权限配置不当</td>
+</tr>
+<tr>
+<td>tcp 1723</td>
+<td style="text-align:center">pptp</td>
+<td style="text-align:center">爆破,想办法钓vpn账号,进内网</td>
+</tr>
+<tr>
+<td>tcp 2082,2083</td>
+<td style="text-align:center">cpanel主机管理面板登录</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 2181</td>
+<td style="text-align:center">zookeeper</td>
+<td style="text-align:center">未授权访问</td>
+</tr>
+<tr>
+<td>tcp 2601,2604</td>
+<td style="text-align:center">zebra路由</td>
+<td style="text-align:center">默认密码zerbra</td>
+</tr>
+<tr>
+<td>tcp 3128</td>
+<td style="text-align:center">squid代理服务</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 3312,3311</td>
+<td style="text-align:center">kangle主机管理登录</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 3306</td>
+<td style="text-align:center">mysql数据库</td>
+<td style="text-align:center">注入,提权,爆破</td>
+</tr>
+<tr>
+<td>tcp 3389</td>
+<td style="text-align:center">windows rdp远程桌面</td>
+<td style="text-align:center">shift后门[需要03以下的系统],爆破,ms12-020[蓝屏exp]</td>
+</tr>
+<tr>
+<td>tcp 4848</td>
+<td style="text-align:center">glassfish控制台</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 4899</td>
+<td style="text-align:center">radmin远程桌面管理工具,现在已经非常非常少了</td>
+<td style="text-align:center">抓密码拓展机器</td>
+</tr>
+<tr>
+<td>tcp 5000</td>
+<td style="text-align:center">sybase/DB2数据库</td>
+<td style="text-align:center">爆破,注入</td>
+</tr>
+<tr>
+<td>tcp 5432</td>
+<td style="text-align:center">postgresql数据库</td>
+<td style="text-align:center">爆破,注入,弱口令</td>
+</tr>
+<tr>
+<td>tcp 5632</td>
+<td style="text-align:center">pcanywhere远程桌面管理工具</td>
+<td style="text-align:center">抓密码,代码执行,已经快退出历史舞台了</td>
+</tr>
+<tr>
+<td>tcp 5900,5901,5902</td>
+<td style="text-align:center">vnc远程桌面管理工具</td>
+<td style="text-align:center">弱口令爆破,如果信息搜集不到位,成功几率很小</td>
+</tr>
+<tr>
+<td>tcp 5984</td>
+<td style="text-align:center">CouchDB</td>
+<td style="text-align:center">未授权导致的任意指令执行</td>
+</tr>
+<tr>
+<td>tcp 6379</td>
+<td style="text-align:center">redis未授权</td>
+<td style="text-align:center">可尝试未授权访问,弱口令爆破</td>
+</tr>
+<tr>
+<td>tcp 7001,7002</td>
+<td style="text-align:center">weblogic控制台</td>
+<td style="text-align:center">java反序列化,弱口令</td>
+</tr>
+<tr>
+<td>tcp 7778</td>
+<td style="text-align:center">kloxo</td>
+<td style="text-align:center">主机面板登录</td>
+</tr>
+<tr>
+<td>tcp 8000</td>
+<td style="text-align:center">Ajenti主机控制面板</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 8443</td>
+<td style="text-align:center">plesk主机控制面板</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 8069</td>
+<td style="text-align:center">zabbix</td>
+<td style="text-align:center">远程执行,sql注入</td>
+</tr>
+<tr>
+<td>tcp 8080-8089</td>
+<td style="text-align:center">Jenkins,jboss</td>
+<td style="text-align:center">反序列化,控制台弱口令</td>
+</tr>
+<tr>
+<td>tcp 9080-9081,9090</td>
+<td style="text-align:center">websphere控制台</td>
+<td style="text-align:center">java反序列化/弱口令</td>
+</tr>
+<tr>
+<td>tcp 9200,9300</td>
+<td style="text-align:center">elasticsearch</td>
+<td style="text-align:center">远程执行</td>
+</tr>
+<tr>
+<td>tcp 10000</td>
+<td style="text-align:center">webmin linux主机web控制面板入口</td>
+<td style="text-align:center">弱口令</td>
+</tr>
+<tr>
+<td>tcp 11211</td>
+<td style="text-align:center">memcached</td>
+<td style="text-align:center">未授权访问</td>
+</tr>
+<tr>
+<td>tcp 27017,27018</td>
+<td style="text-align:center">mongodb</td>
+<td style="text-align:center">爆破,未授权访问</td>
+</tr>
+<tr>
+<td>tcp 3690</td>
+<td style="text-align:center">svn服务</td>
+<td style="text-align:center">svn泄露,未授权访问</td>
+</tr>
+<tr>
+<td>tcp 50000</td>
+<td style="text-align:center">SAP Management Console</td>
+<td style="text-align:center">远程执行</td>
+</tr>
+<tr>
+<td>tcp 50070,50030</td>
+<td style="text-align:center">hadoop</td>
+<td style="text-align:center">默认端口未授权访问</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>0x09 说了这么多,想必大家应该很清楚这些端口具体该怎么利用了</p>
+<p>0x10 最后,在介绍个小脚本,whatportis 专门用来查询某个端口具体作用的</p>
+<p>0x11 如果你有兴趣,想针对某个国家网段进行大规模扫描也可以把它写成这样,当然,我这里是随便写的,你要想实际用肯定是远远不够的,单单只是提供个小demo,能自动化的事情还有很多,写个shell还是比较简单的,还是留给大家根据自己的实际需求自行发挥吧,反正工具就在那里,相互配合才能出效果,各自为战是很难有所作为的<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></div><div class="line">while read LINE</div><div class="line">do</div><div class="line">   masscan -p 21 --rate=100 $LINE | tee -a 21.txt</div><div class="line">done &lt; hk_ip.txt</div><div class="line"><span class="meta"></span></div><div class="line"></div><div class="line">#<span class="bash"> tail -f 21.txt</span></div><div class="line"><span class="meta">#</span><span class="bash"> awk &#123;<span class="string">'print $6'</span>&#125; 21.txt &gt;&gt; result.txt</span></div><div class="line"><span class="meta">#</span><span class="bash"> nmap -p 21 -iL result.txt  -oN ftp_anonymous.txt  -v --script ftp-anon.nse</span></div></pre></td></tr></table></figure></p>
+<p><br></p>
+<p>后话:<br>&nbsp;&nbsp;&nbsp;&nbsp;关于端口渗透,如果不是你自己写工具的情况下,其实本身使用上并没多少技术含量,至于无状态扫描的具体内部实现还是比较复杂的,至今为止,很多东西我自己也扔在学习中,如果大家真想深入去理解,非常建议自己直接拿着wireshark一边跑一边认真观察分析,没有什么比数据包更能说明问题,篇幅限制,这里我就不一一把每种扫描方式都带着大家跑一遍了,有些东西还是需要自己亲自尝试,不然,别人的东西永远都只是别的,端口这个东西,怎么说呢,有很多运气和经验敏感度的成分在里面,可能还要外加一个高质量的字典,另外,再多说一句,在没有十足的把握的情况下,直接在公网跑字典基本是不太靠谱的,实际测试中,对一些稍有防护的目标,爆破的成率还是蛮低的[虽然低,但往往非常有效,走投无路时不妨尝试],当然啦,对于端口,爆破只是很小的一个方面,比如,当我们发现某个工具或者系统服务存在远程溢出或者代码执行[不仅限于此类的可远程利用的漏洞,任何可以直接远程主动getshell的都可以],还是那句话,如果你手里有某个主流服务的通杀远程0day,不管是你自己挖的还是买的,也许只有这时才能体现端口扫描的真正价值,另外,还有多如牛毛的小工具,这里都没提到,后续涉及到内网时我们再仔细说明,对于公网扫描,有这些,暂时足矣,祝大家好运,切记不要干坏事就好!<br><br></p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/信息搜集/">#信息搜集</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>

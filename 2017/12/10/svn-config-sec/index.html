@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!--Description-->
+    
+        <meta name="description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="klion">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="不再让 `泄露` 拖你的后腿 [ subversion篇 ]"/>
+    
+
+    <!--Open Graph Description-->
+    
+        <meta property="og:description" content="专注于web和内网攻防研究,安全开发,安全运维,架构安全,热衷于高质量实用干货分享,提供全方位网络安全培训,更多请扫码关注自己博客下方的微信公众号,同时也期待更多志同道合的兄弟能一起并肩作战" />
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="klion&#39;s blog"/>
+
+    <!--Type page-->
+    
+        <meta property="og:type" content="article" />
+    
+
+    <!--Page Cover-->
+    
+
+    <meta name="twitter:card" content="summary" />
+    
+
+    <!-- Title -->
+    
+    <title>不再让 `泄露` 拖你的后腿 [ subversion篇 ] - klion&#39;s blog</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+
+    <!-- Custom Fonts -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- Google Analytics -->
+    
+
+
+</head>
+
+
+<body>
+
+<div class="bg-gradient"></div>
+<div class="bg-pattern"></div>
+
+<!-- Menu -->
+<!--Menu Links and Overlay-->
+<div class="menu-bg">
+    <div class="menu-container">
+        <ul>
+            
+            <li class="menu-item">
+                <a href="/">
+                    home
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/archives">
+                    archives
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/about">
+                    about me
+                </a>
+            </li>
+            
+            <li class="menu-item">
+                <a href="/contact">
+                    blogs
+                </a>
+            </li>
+            
+        </ul>
+    </div>
+</div>
+
+<!--Hamburger Icon-->
+<nav>
+    <a href="#menu"></a>
+</nav>
+
+<div class="container">
+
+    <!-- Main Content -->
+    <div class="row">
+    <div class="col-sm-12">
+
+        <!--Title and Logo-->
+        <header>
+    <div class="logo">
+        <a href="/"><i class="logo-icon fa " aria-hidden="true"></i></a>
+        
+    </div>
+</header>
+
+        <section class="main">
+            
+<div class="post">
+
+    <div class="post-header">
+        <h1 class="title">
+            <a href="/2017/12/10/svn-config-sec/">
+                不再让 `泄露` 拖你的后腿 [ subversion篇 ]
+            </a>
+        </h1>
+        <div class="post-info">
+            
+                <span class="date">2017-12-10</span>
+            
+            
+            
+                <span class="category">
+                    <a href="/categories/svn/">svn</a>
+                </span>
+            
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Gallery -->
+        
+
+        <!-- Post Content -->
+        <p>0x01 关于 svn<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">同属C/S架构,对于svn服务端来讲,任何一个文件,在任何时刻的变化,都会被svn详细记录,并自动备份修改之前的结果,方便后续回滚</div><div class="line">其实,底层也是靠一个独立的`文件系统 FSFS`在维护,更多内部工作细节,大家可以直接去参考百科说明,此处废话不多讲,我们真奔主题...</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>演示环境,注,此处为独立部署svn服务器,并非配合web服务一起使用<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="selector-tag">CentOS6</span><span class="selector-class">.9_x86_64</span> <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.59</span></div><div class="line"><span class="selector-tag">win7cn</span>		 <span class="selector-tag">ip</span>: 192<span class="selector-class">.168</span><span class="selector-class">.3</span><span class="selector-class">.70</span></div></pre></td></tr></table></figure></p>
+<p>0x02 作为一名入侵者,从<code>svn</code>中你都能发掘到什么宝藏<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">可能最容易拿到的就是数据库的各种连接账号密码,前提是,目标数据库允许外连,这样你才能更优雅的脱裤或者想办法构造上传webshell</div><div class="line">一些邮箱账号密码,如果目标有自己的vpn或者owa之类的入口还是很值得尝试的</div><div class="line">直接的后端代码,除了能局部审下代码之外,在注释里面也许还能看到一些关于开发人员的敏感信息</div><div class="line">其它的各种敏感配置信息,非常多,这里就不一一细说了</div><div class="line">注意,有些信息,确实不能让我们一刀毙敌,但高效的渗透往往是对各类敏感信息的相互配合及深度利用,这非常重要</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<a id="more"></a>
+<p>0x03 既是说svn,觉得还是非常有必要先来了解下关于svn的详细部署及使用过程,总得先把它玩熟了,懂它是怎么工作的,对后续漏洞的理解才会更深刻,相信做开发的朋友,对这个早都已经非常熟练了,废话到此为止,首先,我们先来安装好 <code>subversion</code><br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> rpm -qa subversion</span></div><div class="line"><span class="meta">#</span><span class="bash"> yum install subversion -y</span></div><div class="line"><span class="meta">#</span><span class="bash"> svnversion --version		这里用的svn版本为1.6.11,也就是说,目录结构都存在wc.db中</span></div></pre></td></tr></table></figure></p>
+<p>0x04 准备好各种目录,<code>svn</code>为总的svn所有数据存放目录,<code>svndata</code>为代码数据文件存放目录,<code>svnpasswd</code>为密码和权限管理文件存放目录<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir /svn/&#123;svndata,svnpasswd&#125; -p 	创建svn所需的各种目录</span></div><div class="line"><span class="meta">#</span><span class="bash"> svnserve -d -r /svn/svndata		指定svn根目录并后台运行svn服务</span></div><div class="line"><span class="meta">#</span><span class="bash"> lsof -i :3690				subversion默认工作在3690端口</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> 创建项目目录,一般来讲一个项目对应一个目录</span></div><div class="line"><span class="meta">#</span><span class="bash"> 另外注意,这里必须要用svnadmin工具来创建,因为它要生成指定格式的数据,符合`FSFS 文件系统`格式的数据</span></div><div class="line"><span class="meta">#</span><span class="bash"> svnadmin create /svn/svndata/svndoc	</span></div><div class="line"><span class="meta">#</span><span class="bash"> tree /svn/svndata/svndoc</span></div><div class="line"><span class="meta">#</span><span class="bash"> tree /svn/svndata/svndoc/conf</span></div></pre></td></tr></table></figure>
+<p>0x05 开始针对此项目配置svn账户<br><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># cd /svn/svndata/svndoc/conf</span></div><div class="line"><span class="comment"># cp svnserve.conf svnserve.conf.bak</span></div><div class="line"><span class="comment"># vi svnserve.conf </span></div><div class="line">  [general] 	<span class="comment"># 公共选项设置区域</span></div><div class="line">  <span class="attr">anon-access</span> = none		      <span class="comment"># 禁止svn被匿名访问</span></div><div class="line">  <span class="attr">auth-access</span> = write		      <span class="comment"># 让用户可写,即,能提交</span></div><div class="line">  <span class="attr">password-db</span> = /svn/svnpasswd/passwd <span class="comment"># 指定svn账号密码文件 </span></div><div class="line">  <span class="attr">authz-db</span> = /svn/svnpasswd/authz     <span class="comment"># 指定svn授权管理文件</span></div><div class="line">  </div><div class="line">  [sasl]	<span class="comment"># 该区域一般会配合域控或ldap一起使用</span></div><div class="line">  </div><div class="line"><span class="comment"># mv authz passwd /svn/svnpasswd/</span></div><div class="line"><span class="comment"># cd /svn/svnpasswd/</span></div></pre></td></tr></table></figure></p>
+<p>创建svn账号密码,因为svn默认直接存的是明文账号密码,为了防止其他人看到密码,所以要先把权限剔干净<br><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi passwd	 </span></div><div class="line">  [users]  <span class="comment"># 实际中的密码,肯定是要严格按照`密码复杂性要求`来给的</span></div><div class="line">  <span class="attr">web</span> = <span class="number">654321</span></div><div class="line">  <span class="attr">webadmin</span> = admin110</div><div class="line">  <span class="attr">admin</span> = <span class="number">123456</span></div><div class="line">  <span class="attr">bakuser</span> = admin</div><div class="line">  <span class="attr">guest</span> = svn110</div><div class="line">  <span class="attr">svn</span> = svnadmin</div><div class="line"></div><div class="line"><span class="comment"># chmod 600 passwd</span></div></pre></td></tr></table></figure></p>
+<p>对不同的svn用户可以分别进行授权<br><figure class="highlight nix"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># vi authz</span></div><div class="line">  [aliases]</div><div class="line">  [groups] 	     <span class="comment"># 对不同业务的用户可以进行分组授权</span></div><div class="line">  <span class="attr">administrator</span> = web</div><div class="line">  <span class="attr">sec</span> = webadmin,admin</div><div class="line"></div><div class="line">  [svndoc:/]</div><div class="line">  <span class="attr">svn</span> = rw</div><div class="line">  @<span class="attr">administrator</span> = rw <span class="comment"># 只需要用@即可引用指定的分组用户,如,在此让administrator组的用户可以正常读写</span></div><div class="line"></div><div class="line">  [svndoc:/web01]     <span class="comment"># 为每个不同的用户创建一个子分支,让指定的用户只能待在指定的分支下</span></div><div class="line">  <span class="attr">bakuser</span> = rw</div><div class="line"></div><div class="line">  [svndoc:/web02]</div><div class="line">  <span class="attr">guest</span> = rw</div></pre></td></tr></table></figure></p>
+<p>所有配置完成后,记得重启svn服务才能生效,此处是都直接是用root来运行svn的,如果你觉得权限过高,完全可以单独创建一个普通系统用户来搞,个人暂时觉得,这关系并不大<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> pkill svnserve</span></div><div class="line"><span class="meta">#</span><span class="bash"> svnserve -d -r /svn/svndata</span></div><div class="line"><span class="meta">#</span><span class="bash"> lsof -i :3690</span></div></pre></td></tr></table></figure></p>
+<p>0x06 关于linux下svn客户端工具的基本使用说明</p>
+<p>如果你想直接在svn服务器上查看指定项目下的所有文件,如下,只需按照目录层级,一级一级往下看即可<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># svn <span class="keyword">list</span> <span class="keyword">file</span>:<span class="comment">///svn/svndata/svndoc --verbose</span></div><div class="line"># svn <span class="keyword">list</span> <span class="keyword">file</span>:<span class="comment">///svn/svndata/svndoc/web01/vsftp --verbose</span></div></pre></td></tr></table></figure></p>
+<p>checkout 导出所有数据<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> mkdir ./svndata</span></div><div class="line"><span class="meta">#</span><span class="bash"> svn co svn://192.168.3.59/svndoc ./svndata/ --username=svn --password=svnadmin</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/checkout linux.png" alt=""><br>update 更新数据<br><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="comment">#</span> <span class="comment">svn</span> <span class="comment">up</span> <span class="string">.</span><span class="comment">/svndata/</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">username=svn</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">password=svnadmin</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/update linux.png" alt=""><br>commit 提交代码,务必记得,要先加入,后提交<br><figure class="highlight shell"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#</span><span class="bash"> svn add *</span></div><div class="line"><span class="meta">#</span><span class="bash"> svn ci -m <span class="string">"test"</span>  带更新说明提交</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/commit linux.png" alt=""></p>
+<p>0x07 在win下则可使用tortoisesvn svn客户端,想必做开发朋友,对此工具都已经熟的不能再熟了,只需要指定项目地址,提交正确的svn账号密码update一下就可以滋润的写代码了 ^_^<br><figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">svn:</span><span class="comment">//192.168.3.59/svndoc</span></div></pre></td></tr></table></figure></p>
+<p><img src="/img/checkout.png" alt=""><br><img src="/img/checkout login.png" alt=""><br><img src="/img/checkout login res.png" alt=""><br>如果你不小心用tortoisesvn保存了密码,此时又想切换到不同的svn用户来测试权限,密码文件默认保存路径如下,直接去把该目录下的所有文件全部干掉即可<br><figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">C:<span class="symbol">\U</span>sers<span class="symbol">\k</span>lion<span class="symbol">\A</span>ppData<span class="symbol">\R</span>oaming<span class="symbol">\S</span>ubversion<span class="symbol">\a</span>uth<span class="symbol">\s</span>vn.simple</div></pre></td></tr></table></figure></p>
+<p>0x08 关于svn泄露利用工具的底层实现细节,其实,个人觉得此类工具的技术含量并不高,除了msf自身提供的利用模块,关于此类的工具早已多如牛毛,使用也基本全程傻瓜化,此处就不具体演示了<br><figure class="highlight css"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">在<span class="selector-tag">svn</span>版本 &lt; 1<span class="selector-class">.6</span> 时,会先去读取<span class="selector-tag">entries</span>文件的中的目录结构,因为默认文件名都是直接明文存的</div><div class="line">所以直接通过逐个拼接遍历访问即可读取<span class="selector-tag">entries</span>中所有的文件内容</div></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">在svn版本 &gt;= 1.6 时,文件名会先被<span class="built_in">hash</span>下,然后再按照文件名对应<span class="built_in">hash</span>的方式存到wc.db中,就是个sqlite数据库</div><div class="line">而我们之后要做的事情也非常简单,只要拿着指定的<span class="built_in">hash</span>去wc.db中查到对应的文件名,再逐个进行拼接遍历访问读取即可</div></pre></td></tr></table></figure>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">另外,针对.git泄露的利用,其实跟上面的原理基本是一模一样的,只是找文件名的地方不同而已,换汤不换药,这里就不细说了</div><div class="line">当然,专门针对github的更多信息搜集技巧,后续抽空也会单独拿出来说明,这里就先不多啰嗦了 ^<span class="keyword">_</span>^</div></pre></td></tr></table></figure>
+<p>0x09 针对svn的绝大部分安全问题可能都在泄露上,所以,为了更好的解决这些问题,下面给出了一些针对性的防护策略<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">禁止各类搜索引擎对<span class="selector-class">.svn</span>,.git以及其它的一些敏感目录进行爬取,一般可在robots.txt文件中定义</div><div class="line">如果是配合web一起使用,则可利用apache或者nginx自身配置,对<span class="selector-class">.svn</span>,<span class="selector-class">.git</span>,<span class="selector-class">.ds_store</span>...之类的敏感目录禁止访问</div><div class="line">删除svn服务器上所有的<span class="selector-class">.svn</span>...等不必要的敏感目录</div><div class="line">禁止开发人员在使用svn时,直接复制代码,务必严格使用导出功能</div><div class="line">至于爆破svn,本人还从来没成功过,如果有哪位朋友成功了,也非常期待能一起交流……^_^</div><div class="line">...</div></pre></td></tr></table></figure></p>
+<p>0x10 关于其它的各种web泄露,防御方法都非常简单,对所有的这些敏感目录直接在web服务器配置中禁止对其访问即可,实在没用的就直接删掉,不然留那儿,别人扫目录很可能就随随便便扫到了,或者你也可以想办法直接不让他扫,如下,是我们常见的一些泄露,有时候实在搞不懂为什么会犯这么低级的错误<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">网站各种备份泄露,如,数据库,后端代码文件<span class="params">...</span></div><div class="line">svn及git泄露,如,各类账号密码,敏感配置<span class="params">...</span></div><div class="line">WEB<span class="params">-INF</span>/web.<span class="built_in">xml</span>敏感配置泄露</div><div class="line">DS_store 文件泄露</div><div class="line">等,等,等<span class="params">...</span></div></pre></td></tr></table></figure></p>
+<p><br><br>小结:<br>&nbsp;&nbsp;&nbsp;&nbsp;大家也看到了,这其实跟技术关系并不大,意识到了,自然就防住了,实在没什么好说的,因为侧重主要还是在防入侵上,关于svn涉及到的其它的一些边缘性的安全问题这里就没细说了,最后,如果大家还有更多更刁钻的手法,也非常期待能一起交流 ^_^</p>
+
+    </div>
+
+    
+
+    
+        <div class="post-tags">
+            <i class="fa fa-tags" aria-hidden="true"></i>
+            <a href="/tags/svn/">#svn</a>
+        </div>
+    
+
+    <!-- Comments -->
+    
+
+</div>
+        </section>
+
+    </div>
+</div>
+
+</div>
+
+<!-- Footer -->
+<div class="push"></div>
+
+<footer class="footer-content">
+
+<center>
+<span>有偿提供各类全面靠谱的安全优化加固方案,入侵取证及全方位企业内部及个人网络安全培训...<font color="red"> &nbsp;&nbsp;klion@protonmail.com</span><br>
+<br>
+<br>
+<font size="5" color="#00FF7F" style="margin-left=-10px;">关注公众号</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">随意捐助 [ 微信 ]</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font size="5" color="#00FF7F">加入小密圈</font>
+<br>
+<br>
+<img src="/img/small.jpg"  alt="klionsec" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/klion.png" with="262" height="254" alt="klionsec" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/img/xiaomi.png" with="260" height="257">
+<br><br>
+<br><font color="yellow" size="4">
+如果觉得内容还不错,也希望您能高抬贵手帮忙转发一下,让更多需要的人都能看到,本人不胜感激
+</font><br><br>
+<font color="#00FF7F" size="4">
+相信您的支持和鼓励换来的将会是更高质量的不懈创作,本人将一直秉承博客初衷,坚持高质量原创实用干货分享</font>
+<br><br><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<span id="busuanzi_container_site_pv">博客累计访问量 <span id="busuanzi_value_site_pv"></span> </span>
+<span id="busuanzi_container_site_uv">
+累计访客数 <span id="busuanzi_value_site_uv"></span> 
+</span>
+<span id="showDays"></span>
+<script>
+var birthDay = new Date("12/28/2014");
+var now = new Date();
+var duration = now.getTime() - birthDay.getTime(); 
+var total= Math.floor(duration / (1000 * 60 * 60 * 24));
+document.getElementById("showDays").innerHTML = " 其实,博客已默默独自坚挺了 "+total+" 天";
+</script>
+<br>
+<br>
+多年实战渗透经验积累[大中小型网络] + 娴熟的底层及脚本编写能力 + 熟练的协议分析能力 + 多个大中型安全架构实际设计部署经验 + 良好的逆向分析能力[一定的0day挖掘能力] = 合格安全架构师
+<br>
+<br>
+<br>
+<font size=6 color="white">唯一不变的,就是一直在变</font>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <ul class="list-inline footer-social-icons">
+                    
+                    <li class="list-inline-item">
+                        <a href="https://github.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-github"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://twitter.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-twitter"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.facebook.com/klionsec">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-facebook"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="http://www.jianshu.com/u/2a4d8b1f03e0">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-instagram"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="https://www.zhihu.com/people/klionsec/activities">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-dribbble"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+                    
+                    
+                    <li class="list-inline-item">
+                        <a href="mailto:klion@protonmail.com">
+                            <span class="footer-icon-container">
+                                <i class="fa fa-envelope-o"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="footer-copyright">
+                    <strong><font size=4 color=#00FF7F> Blog by klionsec </font></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--
+<audio autoplay="autoplay" width="300" height="200">
+	<source src="/img/Bandari - Childhood Memory.mp3" type="audio/mpeg" />
+</audio>
+-->
+</footer>
+
+
+
+<!-- After footer scripts -->
+
+<!-- jQuery -->
+<script src="//code.jquery.com/jquery-2.1.4.min.js"></script>
+
+<!-- Tween Max -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/gsap/1.18.5/TweenMax.min.js"></script>
+
+<!-- Gallery -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/featherlight/1.3.5/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Custom JavaScript -->
+<script src="/js/main.js"></script>
+
+<!-- Disqus Comments -->
+
+
+
+</body>
+
+</html>
